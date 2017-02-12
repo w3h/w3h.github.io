@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>工匠实验室</title><link href="http://www.icsmaster.com/" rel="alternate"></link><link href="http://www.icsmaster.com/feeds/w3h.atom.xml" rel="self"></link><id>http://www.icsmaster.com/</id><updated>2014-05-19T05:24:00+08:00</updated><entry><title>关于本站</title><link href="http://www.icsmaster.com/other/about.html" rel="alternate"></link><updated>2014-05-19T05:24:00+08:00</updated><author><name>W3H</name></author><id>tag:www.icsmaster.com,2014-05-19:other/about.html</id><summary type="html">&lt;h4&gt;&lt;strong&gt;关于本站&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;本站主要关注工控网络安全，提供最新的工控安全咨询、资源、工具和研究成果，目前内容正在丰富中...&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;联系方式&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;QQ：2969192546&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;E-Mail：2969192546@qq.com&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;GitHub：&lt;a href="https://github.com/w3h"&gt;w3h&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;TEL：186*****203&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="关于"></category></entry></feed>
