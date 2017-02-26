@@ -45,7 +45,7 @@
 
             <a href="../" class="navbar-brand">
 <img src="../logo.png" width="40" height="40"/>             </a>
-                <div class="brand">工匠实验室 - 专注工控安全研究</div>
+                <div class="brand" id="titlename">工匠实验室 - 专注工控安全研究</div>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
@@ -73,7 +73,7 @@
         <div class="col-sm-9">
 
             <article>
-	   <div class="entry-content">	
+	   <div class="article-list">	
        <div class="panel panel-default">
            <div class="panel-title"> 
                 <h2>&nbsp&nbsp<a href="../news/Ransomware for Industrial Control Systems.html">失控：工业控制系统勒索软件</a></h2>
@@ -86,7 +86,7 @@
 
 <blockquote>
 <p>摘要 – 勒索软件最近成为网络犯罪的热门新商业模式，对医院进行了高调攻击，揭示了操作关键资产用于获取勒索赎金盈利的技术 ...</p></blockquote>
-                    <a class="btn btn-default btn-xs" href="../news/Ransomware for Industrial Control Systems.html">阅读更多 ...</a>
+                    <a class="readmore" href="../news/Ransomware for Industrial Control Systems.html">READ MORE</a>
                 </div>
            </div>
         </div>
@@ -95,7 +95,7 @@
 
         </div>
         <div class="col-sm-3" id="sidebar">
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -117,7 +117,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -145,7 +145,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -160,7 +160,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -186,10 +186,17 @@
          <div class="col-xs-10">&copy; 2017 W3H
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
       </div>
    </div>
 </footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 <!-- <script src="../theme/js/bootstrap.min.js"></script> -->
@@ -199,6 +206,9 @@
 
 <!-- For the Tags Cloud -->
 <script type="text/javascript">
+if(document.body.scrollWidth < 700){
+      document.getElementById("titlename").innerHTML="工匠实验室";
+}
 </script>
 
     <!-- GitHub JS -->

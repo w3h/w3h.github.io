@@ -45,7 +45,7 @@
 
             <a href="../" class="navbar-brand">
 <img src="../logo.png" width="40" height="40"/>             </a>
-                <div class="brand">工匠实验室 - 专注工控安全研究</div>
+                <div class="brand" id="titlename">工匠实验室 - 专注工控安全研究</div>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
@@ -89,12 +89,24 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-gong-ju">工具 <span class="badge pull-right">1</span></a>
+                    </h4>
+                </div>
+                <div id="collapse-gong-ju" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p><span class="categories-timestamp"><time datetime="2017-02-23T15:24:00+08:00">2017-02-23 17:27:44</time></span> <a href="../tool/icstools.html">工控安全工具集</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse-guan-yu">关于 <span class="badge pull-right">1</span></a>
                     </h4>
                 </div>
                 <div id="collapse-guan-yu" class="panel-collapse collapse">
                     <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2014-05-19T05:24:00+08:00">2017-02-12 16:05:56</time></span> <a href="../other/about.html">关于本站</a></p>
+                        <p><span class="categories-timestamp"><time datetime="2014-05-19T05:24:00+08:00">2017-02-12 16:05:56</time></span> <a href="../other/about.html">关于</a></p>
                     </div>
                 </div>
             </div>
@@ -103,7 +115,7 @@
     </section>
         </div>
         <div class="col-sm-3" id="sidebar">
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -114,13 +126,18 @@
                 </div>
                     <ul class="list-group" id="recentposts">
                         <li class="list-group-item">
+                            <a href="../tool/icstools.html">
+                                工控安全工具集
+                            </a>
+                        </li>
+                        <li class="list-group-item">
                             <a href="../news/Ransomware for Industrial Control Systems.html">
                                 失控：工业控制系统勒索软件
                             </a>
                         </li>
                         <li class="list-group-item">
                             <a href="../other/about.html">
-                                关于本站
+                                关于
                             </a>
                         </li>
                     </ul>
@@ -130,7 +147,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -158,7 +175,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -173,7 +190,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -199,10 +216,17 @@
          <div class="col-xs-10">&copy; 2017 W3H
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
       </div>
    </div>
 </footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 <!-- <script src="../theme/js/bootstrap.min.js"></script> -->
@@ -212,6 +236,9 @@
 
 <!-- For the Tags Cloud -->
 <script type="text/javascript">
+if(document.body.scrollWidth < 700){
+      document.getElementById("titlename").innerHTML="工匠实验室";
+}
 </script>
 
     <!-- GitHub JS -->

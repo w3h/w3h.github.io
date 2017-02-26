@@ -1,5 +1,5 @@
 body {
-    font-family: "Microsoft YaHei", "Arial", "Verdana", "Tahoma";
+    font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei"; 
     background-color: #f6f6f6;
     border-color: #080808;;
     padding-top: 80px;
@@ -8,7 +8,7 @@ body {
 
 .myheader {
     width: 100%;
-    min-width: 1220px;
+    /*min-width: 1220px;*/
     height: 70px;
     line-height: 50px;
     background: #282828;
@@ -16,7 +16,7 @@ body {
 
 .myfooter {
     width: 100%;
-    min-width: 1220px;
+    /*min-width: 1220px;*/
     height: 100px;
     line-height: 50px;
     background: #282828;
@@ -36,7 +36,7 @@ body {
     font-size: 20px;
     float: left;
     line-height: 30px;
-    color: #f2983b;
+    color: #FF8800;
     /* padding-left: 0px; */
     position: relative;
     top: 1px;
@@ -49,12 +49,12 @@ body {
 
 .nav>li>a:hover, .nav>li>a:focus {
     text-decoration: none;
-    background-color: #f2983b;
+    background-color: #FF8800;
 }
 
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: "Microsoft YaHei UI", "Microsoft YaHei", "Arial", "Verdana", "Tahoma";
+    /*font-family: "Microsoft YaHei UI", "Microsoft YaHei", "Arial", "Verdana", "Tahoma";*/
     font-weight: 500;
 }
 
@@ -127,15 +127,29 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     margin-right: 3px;
 }
 
-a, a:hover {
+a {
     /* color: inherit; */
+    color:#FF8800;
+}
+
+a:hover {
+    /* color: inherit; */
+    color:#EE7700;
 }
 
 .entry-content {
     color: #585858;
     font-size: 15px;
-    line-height: 26px;
-    padding: 0 20px;
+    line-height: 36px;
+    padding: 0 10px; */
+    width: 100%;
+}
+
+.article-list {
+    color: #585858;
+    font-size: 15px;
+    line-height: 36px;
+    /*padding: 0 20px;*/
     width: 100%;
 }
 
@@ -151,6 +165,7 @@ a, a:hover {
     padding: 1px;
 }
 
+/*
 .entry-content a {
     text-decoration: none;
     border-bottom: 1px dotted;
@@ -160,9 +175,10 @@ a, a:hover {
     text-decoration: none;
     border-bottom: 1px solid;
 }
+*/
 
 .entry-content img {
-    max-width: 100%;
+    max-width: 90%;
     height: auto;
 }
 
@@ -254,12 +270,12 @@ figure.floatcenter, .align-center {
 
 .fa-arrow-up:before {
     content: "\f062";
-    color: #428bca;
+    color: #FF8800;
 }
 
 .col-xs-10 {
     width: 83.33333333333334%;
-    color: #428bca;
+    color: #FF8800;
 }
 
 .article-meta {
@@ -271,18 +287,19 @@ figure.floatcenter, .align-center {
 
 .article-title {
     margin-top: 0;
-    font-size: 26px;
+    font-size: 36px;
     line-height: 36px;
 	margin: 0 auto;
-	text-align:center
+	text-align:center;
+    color: #000;
 }
 
 .summary {
     float: left;
     width: 100%;
-    max-height: 160px;
-    font-size: 12px;
-    font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei";
+    /*max-height: 160px;*/
+    font-size: 15px;
+    /*font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei";*/
     margin: 10px 0px;
     overflow: hidden;
 	
@@ -291,18 +308,28 @@ figure.floatcenter, .align-center {
     line-height: 20px;
 }
 
+.summary h1, h2 {
+    font-size: 20px;
+}
+
 .panel-title h2 {
     float: left;
     width: 100%;
     line-height: 22px;
-    font-family: 微软雅黑, serif;
+    /*font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei";*/
     font-size: 18px;
     color: rgb(60, 60, 60);
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 
 .panel-title h2 a:link, .panel-title h2 a:visited, .panel-title h2 dt a:active {
-    color: #000;
+    /*color: #000;*/
+    font-size: 22px;
+}
+
+.panel-body a:hover {
+    background: #EE7700;
+    color: #FFFFFF!important;
 }
 
 #sidebar h4 {
@@ -331,7 +358,7 @@ figure.floatcenter, .align-center {
     color: #585858;
     font-size: 15px;
     line-height: 26px;
-    padding: 0 20px;
+    /*padding: 0 20px; */
     width: 100%;
 }
 
@@ -340,12 +367,17 @@ figure.floatcenter, .align-center {
 }
 
 
-.entry-content .btn-default {
+.readmore {
     color: #FFF;
     float: right;
     background-repeat: repeat-x;
-    background-color: #428bca;
-    width: 80px;
-    height: 28px;
+    background-color: #FF8800;
     text-align: center;
+    line-height: 1;
+    padding: 0.5em;
+    font-size: 12px;
+}
+
+.sidebar_main {
+    /**/
 }

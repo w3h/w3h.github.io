@@ -45,7 +45,7 @@
 
             <a href="../" class="navbar-brand">
 <img src="../logo.png" width="40" height="40"/>             </a>
-                <div class="brand">工匠实验室 - 专注工控安全研究</div>
+                <div class="brand" id="titlename">工匠实验室 - 专注工控安全研究</div>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
@@ -229,7 +229,12 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
         <ul>
             <li>
                 <a href="../other/about.html">
-                    上一篇文章：关于本站
+                    上一篇文章：关于
+                </a>
+            </li>
+            <li>
+                <a href="../tool/icstools.html">
+                    下一篇文章：工控安全工具集
                 </a>
             </li>
         </ul>
@@ -261,7 +266,7 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 	</div>
         </div>
         <div class="col-sm-3" id="sidebar">
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -272,13 +277,18 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
                 </div>
                     <ul class="list-group" id="recentposts">
                         <li class="list-group-item">
+                            <a href="../tool/icstools.html">
+                                工控安全工具集
+                            </a>
+                        </li>
+                        <li class="list-group-item">
                             <a href="../news/Ransomware for Industrial Control Systems.html">
                                 失控：工业控制系统勒索软件
                             </a>
                         </li>
                         <li class="list-group-item">
                             <a href="../other/about.html">
-                                关于本站
+                                关于
                             </a>
                         </li>
                     </ul>
@@ -288,7 +298,7 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -316,7 +326,7 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -331,7 +341,7 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -357,10 +367,17 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
          <div class="col-xs-10">&copy; 2017 W3H
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
       </div>
    </div>
 </footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 <!-- <script src="../theme/js/bootstrap.min.js"></script> -->
@@ -370,6 +387,9 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 
 <!-- For the Tags Cloud -->
 <script type="text/javascript">
+if(document.body.scrollWidth < 700){
+      document.getElementById("titlename").innerHTML="工匠实验室";
+}
 </script>
 
     <!-- GitHub JS -->

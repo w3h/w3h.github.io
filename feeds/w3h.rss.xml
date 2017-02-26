@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠实验室</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/w3h.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 22 Feb 2017 19:24:00 +0800</lastBuildDate><item><title>失控：工业控制系统勒索软件</title><link>http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文由工匠实验室翻译，非官方中文译文，原文《Out of Control: Ransomware for Industrial Control Systems》。
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠实验室</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/w3h.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 23 Feb 2017 15:24:00 +0800</lastBuildDate><item><title>工控安全工具集</title><link>http://icsmaster.com/tool/icstools.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;1、S7 Client Demo&lt;/h2&gt;
+&lt;p&gt;开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息（如固件版本，块信息等），还可以直接操作控制器的CPU的启停。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/s7clientdemo.rar"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/1.gif" title="=100*100" /&gt;&lt;/p&gt;
+&lt;h2&gt;2、PLCSCAN&lt;/h2&gt;
+&lt;p&gt;通过探测设备，获取关于设备的供应商类型、模块信息等，目前仅支持S7协议与MODBUS协议。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/plcscan.rar"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/2.gif" title="=100*100" /&gt;&lt;/p&gt;
+&lt;h2&gt;3、QTester104&lt;/h2&gt;
+&lt;p&gt;使用QT和C++实现IEC104通讯规约，可以连接IEC104的设备。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/qtester104-v1.18.zip"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/3.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;4、S7-Brute-Offline&lt;/h2&gt;
+&lt;p&gt;S7密码离线暴力破解工具。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/s7-brute-offline.py"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/4.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;5、SCADA_Metasploit_Modules&lt;/h2&gt;
+&lt;p&gt;列举了MSF上所有的针对工业控制系统的漏洞脚本。&lt;a href="https://github.com/w3h/icsmaster/tree/master/SCADA_Metasploit_Modules.csv"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/5.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;6、Scada_Password&lt;/h2&gt;
+&lt;p&gt;列举了工业控制系统中的常见的用户和密码。&lt;a href="https://github.com/w3h/icsmaster/tree/master/Scada_Password.csv"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/6.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;7、Scada_Dorks&lt;/h2&gt;
+&lt;p&gt;收集针对工业控制系统中常见的DORK。&lt;a href="https://github.com/w3h/icsmaster/tree/master/Scada_Dorks.csv"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/7.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;8、Scapy&lt;/h2&gt;
+&lt;p&gt;Scapy的是一个强大的交互式数据包处理程序（使用python编写）。它能够伪造或者解码大量的网络协议数据包，能够发送、捕捉、匹配请求和回复包等等。它可以很容易地处理一些典型操作，比如端口扫描，tracerouting，探测，单元测试，攻击或网络发现（可替代hping，NMAP，arpspoof，ARP-SK，arping，tcpdump，tethereal，P0F等）。最重要的他还有很多更优秀的特性——发送无效数据帧、注入修改的802.11数据帧、在WEP上解码加密通道（VOIP）、ARP缓存攻击（VLAN）等，这也是其他工具无法处理完成的。
+该工具主要用于工控协议解析，常用协议攻击（如tcp_land、arp fload等），工控协议FUZZ测试和漏洞利用脚本的编写。&lt;a href="https://github.com/secdev/scapy.git"&gt;下载地址&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Thu, 23 Feb 2017 15:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-23:tool/icstools.html</guid><category>工具</category></item><item><title>失控：工业控制系统勒索软件</title><link>http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文由工匠实验室翻译，非官方中文译文，原文《Out of Control: Ransomware for Industrial Control Systems》。
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -99,7 +126,7 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 [14] R. Spenneberg, M. Brggemann, and H. Schwartke. Plc-blaster: A worm living solely in the plc, 2016.
 [15] H. Taylor. Ransomware: Lucrative, fast growing, hard to stop. http://www.cnbc.com/2016/04/11/ransomware-lucrative-fast-growing-hard-to-stop.html.
 [16] E. Vadala. Downtime costs auto industry $22k/minute- survey. http://news.thomasnet.com/companystory/downtime-costs-auto-industry-22k-minute-survey-481017.
-[17] T. J. Williams. The purdue enterprise reference architecture: a technical guide for cim planning and implementation. 1992.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Wed, 22 Feb 2017 19:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-22:news/Ransomware for Industrial Control Systems.html</guid><category>翻译</category></item><item><title>关于本站</title><link>http://icsmaster.com/other/about.html</link><description>&lt;h1&gt;本站简介&lt;/h1&gt;
+[17] T. J. Williams. The purdue enterprise reference architecture: a technical guide for cim planning and implementation. 1992.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Wed, 22 Feb 2017 19:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-22:news/Ransomware for Industrial Control Systems.html</guid><category>翻译</category></item><item><title>关于</title><link>http://icsmaster.com/other/about.html</link><description>&lt;h2&gt;&lt;strong&gt;关于我们&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;“工匠实验室”，由国内多名资深的工控行业专家、传统网络安全专家、工控网络安全专家组成，一直从事着工控安全方面的研究和工作，曾参加过多个行业的工控安全现场检测（如电力能源、石油石化、烟草、智能智造等），多个工控安全攻防仿真的建设，多个工控设备的漏洞挖掘。我们主要目的是通过我们的努力，提升工控网络安全水平。本站提供最新的工控安全咨询、资源、工具和研究成果，我们还可提供如下工控安全服务，欢迎垂询。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;ul&gt;
@@ -120,7 +147,7 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/blockquote&gt;
-&lt;h1&gt;联系方式&lt;/h1&gt;
+&lt;h2&gt;&lt;strong&gt;联系方式&lt;/strong&gt;&lt;/h2&gt;
 &lt;blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;

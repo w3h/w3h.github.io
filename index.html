@@ -45,7 +45,7 @@
 
             <a href="./" class="navbar-brand">
 <img src="./logo.png" width="40" height="40"/>             </a>
-                <div class="brand">工匠实验室 - 专注工控安全研究</div>
+                <div class="brand" id="titlename">工匠实验室 - 专注工控安全研究</div>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
@@ -73,7 +73,27 @@
         <div class="col-sm-9">
 
             <article>
-	   <div class="entry-content">	
+	   <div class="article-list">	
+       <div class="panel panel-default">
+           <div class="panel-title"> 
+                <h2>&nbsp&nbsp<a href="./tool/icstools.html">工控安全工具集</a></h2>
+           </div>
+
+           <div class="panel-body">
+                <div class="summary"><div class="highlight"><pre>本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+</pre></div>
+
+
+<h2>1、S7 Client Demo</h2>
+<p>开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息 ...</p>
+                    <a class="readmore" href="./tool/icstools.html">READ MORE</a>
+                </div>
+           </div>
+        </div>
+		</div>
+            </article>
+            <article>
+	   <div class="article-list">	
        <div class="panel panel-default">
            <div class="panel-title"> 
                 <h2>&nbsp&nbsp<a href="./news/Ransomware for Industrial Control Systems.html">失控：工业控制系统勒索软件</a></h2>
@@ -86,23 +106,23 @@
 
 <blockquote>
 <p>摘要 – 勒索软件最近成为网络犯罪的热门新商业模式，对医院进行了高调攻击，揭示了操作关键资产用于获取勒索赎金盈利的技术 ...</p></blockquote>
-                    <a class="btn btn-default btn-xs" href="./news/Ransomware for Industrial Control Systems.html">阅读更多 ...</a>
+                    <a class="readmore" href="./news/Ransomware for Industrial Control Systems.html">READ MORE</a>
                 </div>
            </div>
         </div>
 		</div>
             </article>
             <article>
-	   <div class="entry-content">	
+	   <div class="article-list">	
        <div class="panel panel-default">
            <div class="panel-title"> 
-                <h2>&nbsp&nbsp<a href="./other/about.html">关于本站</a></h2>
+                <h2>&nbsp&nbsp<a href="./other/about.html">关于</a></h2>
            </div>
 
            <div class="panel-body">
-                <div class="summary"><h1>本站简介</h1>
+                <div class="summary"><h2><strong>关于我们</strong></h2>
 <p>“工匠实验室”，由国内多名资深的工控行业专家、传统网络安全专家、工控网络安全专家组成，一直从事着工控安全方面的研究和工作，曾参加过多个行业的工控安全现场检测（如电力能源、石油石化、烟草、智能智造等），多个工控安全攻防仿真的建设，多个工控设备的漏洞挖掘。我们主要目的是通过我们的努力，提升工控网络安全水平 ...</p>
-                    <a class="btn btn-default btn-xs" href="./other/about.html">阅读更多 ...</a>
+                    <a class="readmore" href="./other/about.html">READ MORE</a>
                 </div>
            </div>
         </div>
@@ -111,7 +131,7 @@
 
         </div>
         <div class="col-sm-3" id="sidebar">
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -122,13 +142,18 @@
                 </div>
                     <ul class="list-group" id="recentposts">
                         <li class="list-group-item">
+                            <a href="./tool/icstools.html">
+                                工控安全工具集
+                            </a>
+                        </li>
+                        <li class="list-group-item">
                             <a href="./news/Ransomware for Industrial Control Systems.html">
                                 失控：工业控制系统勒索软件
                             </a>
                         </li>
                         <li class="list-group-item">
                             <a href="./other/about.html">
-                                关于本站
+                                关于
                             </a>
                         </li>
                     </ul>
@@ -138,7 +163,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -166,7 +191,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -181,7 +206,7 @@
 </div> 
 </div> 
 
-<div class="row sidebar_main">
+<div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
@@ -207,10 +232,17 @@
          <div class="col-xs-10">&copy; 2017 W3H
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
-         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
       </div>
    </div>
 </footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 <!-- <script src="./theme/js/bootstrap.min.js"></script> -->
@@ -220,6 +252,9 @@
 
 <!-- For the Tags Cloud -->
 <script type="text/javascript">
+if(document.body.scrollWidth < 700){
+      document.getElementById("titlename").innerHTML="工匠实验室";
+}
 </script>
 
     <!-- GitHub JS -->
