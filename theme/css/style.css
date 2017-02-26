@@ -381,3 +381,11 @@ figure.floatcenter, .align-center {
 .sidebar_main {
     /**/
 }
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    background-color: #282828;
+}
+
+.container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse, .container-fluid>.navbar-collapse {
+    min-height: 69px;
+}
