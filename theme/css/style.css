@@ -389,3 +389,63 @@ figure.floatcenter, .align-center {
 .container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse, .container-fluid>.navbar-collapse {
     min-height: 69px;
 }
+
+
+.icsnav {
+    /*font-size: 87.5%;*/ 
+}
+
+.icsnav .current {
+    border-bottom: 2px solid #4183c4;
+    float: left;
+    text-decoration: none;
+}
+
+.icsnav h2 {
+    display: block;
+    font-weight: bold;
+    font-size: 18px;
+    /*border-bottom: 1px solid #ccc;*/
+    color: #000;
+    line-height: 1.714285714;
+
+    -webkit-margin-before: 0.83em;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+.icsnav .entry-content table, .comment-content table {
+    border-bottom: 1px solid #fff;
+    line-height: 2;
+    margin: 0 0 24px;
+    margin: 0 0 1.714285714rem;
+    border-top: 1px solid #fff;
+    padding: 6px 30px 6px 0;
+}
+
+.icsnav .entry-content td, .comment-content td {
+    border-top: 1px solid #fff;
+    padding: 6px 30px 6px 0;
+}
+
+
+@media screen and (max-width: 600px) {
+    .icsnav table tr {
+      margin-bottom: 10px;
+      display: block;
+      
+    }
+
+    .icsnav table td {
+      display: block;
+      text-align: left;
+    }
+
+    .icsnav table td:before {
+      content: attr(data-label);
+      float: left;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+  }

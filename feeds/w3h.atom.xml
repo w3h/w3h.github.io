@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>工匠实验室</title><link href="http://icsmaster.com/" rel="alternate"></link><link href="http://icsmaster.com/feeds/w3h.atom.xml" rel="self"></link><id>http://icsmaster.com/</id><updated>2017-02-23T15:24:00+08:00</updated><entry><title>工控安全工具集</title><link href="http://icsmaster.com/tool/icstools.html" rel="alternate"></link><updated>2017-02-23T15:24:00+08:00</updated><author><name>W3H</name></author><id>tag:icsmaster.com,2017-02-23:tool/icstools.html</id><summary type="html">&lt;div class="highlight"&gt;&lt;pre&gt;本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+<feed xmlns="http://www.w3.org/2005/Atom"><title>工匠实验室 | 专注于工控安全</title><link href="http://icsmaster.com/" rel="alternate"></link><link href="http://icsmaster.com/feeds/w3h.atom.xml" rel="self"></link><id>http://icsmaster.com/</id><updated>2017-02-23T15:24:00+08:00</updated><entry><title>工控安全工具集</title><link href="http://icsmaster.com/tool/icstools.html" rel="alternate"></link><updated>2017-02-23T15:24:00+08:00</updated><author><name>W3H</name></author><id>tag:icsmaster.com,2017-02-23:tool/icstools.html</id><summary type="html">&lt;div class="highlight"&gt;&lt;pre&gt;本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
 &lt;/pre&gt;&lt;/div&gt;
 
 
