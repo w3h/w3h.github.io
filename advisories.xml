@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xml:base="https://ics-cert.us-cert.gov/advisories/advisories.xml" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ICS-CERT Advisory Feed</title>
+    <link>https://ics-cert.us-cert.gov/advisories/advisories.xml</link>
+    <description></description>
+    <language>en</language>
+     <atom:link href="https://ics-cert.us-cert.gov/advisories/advisories.xml" rel="self" type="application/rss+xml" />
+      <item>
+    <title>Schneider Electric ClearSCADA</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-068-01</link>
+    <description>This advisory contains mitigation details for an input validation vulnerability in Schneider Electric&amp;#039;s ClearSCADA.</description>
+     <pubDate>Thu, 09 Mar 2017 10:00:21 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2265</guid>
+  </item>
+  <item>
+    <title>Schneider Electric Wonderware Intelligence</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-066-01</link>
+    <description>This advisory contains mitigation details for a credentials management vulnerability in Schneider Electric&amp;#039;s Wonderware Intelligence software.</description>
+     <pubDate>Tue, 07 Mar 2017 10:00:00 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2261</guid>
+  </item>
+  <item>
+    <title>Eaton xComfort Ethernet Communication Interface</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-061-01</link>
+    <description>This advisory contains mitigation details for an improper access controls vulnerability in the Eaton xComfort Ethernet Communication Interface.</description>
+     <pubDate>Thu, 02 Mar 2017 10:10:18 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2237</guid>
+  </item>
+  <item>
+    <title>Schneider Electric Conext ComBox</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-061-02</link>
+    <description>This advisory contains mitigation details for a resource exhaustion vulnerability in Schneider Electric’s Conext ComBox solar battery monitor.</description>
+     <pubDate>Thu, 02 Mar 2017 10:05:00 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2239</guid>
+  </item>
+  <item>
+    <title>Siemens SINUMERIK Integrate and SINUMERIK Operate</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-061-03</link>
+    <description>This advisory contains mitigation details for a man-in-the-middle vulnerability in the Siemens SINUMERIK Integrate and SINUMERIK Operate.</description>
+     <pubDate>Thu, 02 Mar 2017 10:00:00 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2245</guid>
+  </item>
+  <item>
+    <title>Siemens RUGGEDCOM NMS</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-059-01</link>
+    <description>This advisory contains mitigation details for cross-site request forgery and cross-site scripting vulnerabilities in the Siemens RUGGEDCOM NMS.</description>
+     <pubDate>Tue, 28 Feb 2017 10:00:33 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2231</guid>
+  </item>
+  <item>
+    <title>VIPA Controls WinPLC7</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-054-01</link>
+    <description>This advisory contains mitigation details for a stack buffer overflow vulnerability in VIPA Controls&amp;#039; WinPLC7.</description>
+     <pubDate>Thu, 23 Feb 2017 10:10:24 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2211</guid>
+  </item>
+  <item>
+    <title>Red Lion Controls Sixnet-Managed Industrial Switches, AutomationDirect STRIDE-Managed Ethernet Switches Vulnerability</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-054-02</link>
+    <description>This advisory contains mitigation details for a hard-coded cryptographic key vulnerability in Red Lion Controls&amp;#039; Sixnet-Managed Industrial Switches and AutomationDirect&amp;#039;s STRIDE-Managed Ethernet Switches.</description>
+     <pubDate>Thu, 23 Feb 2017 10:05:53 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2208</guid>
+  </item>
+  <item>
+    <title>Schneider Electric Modicon M340 PLC</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-054-03</link>
+    <description>This advisory contains mitigation details for a resource exhaustion vulnerability in Schneider Electric&amp;#039;s Modicon M340 PLC.</description>
+     <pubDate>Thu, 23 Feb 2017 10:00:38 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2217</guid>
+  </item>
+  <item>
+    <title>Advantech WebAccess</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-045-01</link>
+    <description>This advisory contains mitigation details for a DLL hijacking vulnerability in Advantech&amp;#039;s WebAccess.</description>
+     <pubDate>Tue, 14 Feb 2017 10:15:18 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2159</guid>
+  </item>
+  <item>
+    <title>Geutebrück IP Cameras</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-045-02</link>
+    <description>This advisory contains mitigation details for authentication bypass and improper neutralization of special elements vulnerabilities in Geutebrück IP cameras.</description>
+     <pubDate>Tue, 14 Feb 2017 10:10:02 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2165</guid>
+  </item>
+  <item>
+    <title>Siemens SIMATIC Authentication Bypass</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-045-03</link>
+    <description>This advisory contains mitigation details for an authentication bypass in Siemens&amp;#039; SIMATIC.</description>
+     <pubDate>Tue, 14 Feb 2017 10:05:59 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2167</guid>
+  </item>
+  <item>
+    <title>Hanwha Techwin Smart Security Manager</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-040-01</link>
+    <description>This advisory contains mitigation detail for remote code execution vulnerabilities in Hanwha Techwin&amp;#039;s Smart Security Manager.</description>
+     <pubDate>Thu, 09 Feb 2017 10:10:36 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2153</guid>
+  </item>
+  <item>
+    <title>Sielco Sistemi Winlog SCADA Software</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-038-01</link>
+    <description>This advisory contains mitigation details for an uncontrolled search path vulnerability in Sielco Sistemi&amp;#039;s Winlog SCADA Software.</description>
+     <pubDate>Tue, 07 Feb 2017 10:10:27 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2151</guid>
+  </item>
+  <item>
+    <title>BD Alaris 8000 Insufficiently Protected Credentials Vulnerability</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSMA-17-017-01</link>
+    <description>This advisory was originally posted to the NCCIC Portal on January 17, 2017, and is being released to the NCCIC/ICS-CERT web site. This advisory contains mitigation details for an insufficiently protected credentials vulnerability in BD’s Alaris 8000 Point of Care unit, which provides a common user interface for programming intravenous infusions.</description>
+     <pubDate>Tue, 07 Feb 2017 10:05:29 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2147</guid>
+  </item>
+  <item>
+    <title>BD Alaris 8015 Insufficiently Protected Credentials Vulnerabilities</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSMA-17-017-02</link>
+    <description>This advisory was originally posted to the NCCIC Portal on January 17, 2017, and is being released to the NCCIC/ICS-CERT web site. This advisory contains mitigation details for protected credentials vulnerabilities in BD’s Alaris 8015 Point of Care unit, which provides a common user interface for programming intravenous infusions.</description>
+     <pubDate>Tue, 07 Feb 2017 10:00:17 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2141</guid>
+  </item>
+  <item>
+    <title>Honeywell XL Web II Controller Vulnerabilities</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-033-01</link>
+    <description>This advisory contains mitigation details for vulnerabilities in Honeywell’s XL Web II controller application.</description>
+     <pubDate>Thu, 02 Feb 2017 10:00:34 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2132</guid>
+  </item>
+  <item>
+    <title>BINOM3 Electric Power Quality Meter (Update A)</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-031-01A</link>
+    <description>This updated advisory is a follow-up to the original advisory titled ICSA-17-031-01 BINOM3 Electric Power Quality Meter that was published January 31, 2017, on the NCCIC/ICS-CERT web site. This updated advisory contains mitigation details for vulnerabilities in BINOM3&amp;#039;s electric power quality meter.</description>
+     <pubDate>Tue, 31 Jan 2017 10:10:28 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2122</guid>
+  </item>
+  <item>
+    <title>Ecava IntegraXor</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-031-02</link>
+    <description>This advisory contains mitigation details for an SQL injection vulnerability in the Ecava IntegraXor web server.</description>
+     <pubDate>Tue, 31 Jan 2017 10:05:13 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2126</guid>
+  </item>
+  <item>
+    <title>Eaton ePDU Path Traversal Vulnerability</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-026-01</link>
+    <description>This advisory contains mitigation details for a path traversal vulnerability in certain legacy Eaton ePDUs.</description>
+     <pubDate>Thu, 26 Jan 2017 10:10:30 EST</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2085</guid>
+  </item>
+  </channel>
+</rss>
