@@ -6,6 +6,54 @@
     <language>en</language>
      <atom:link href="https://ics-cert.us-cert.gov/advisories/advisories.xml" rel="self" type="application/rss+xml" />
       <item>
+    <title>LCDS - Leão Consultoria e Desenvolvimento de Sistemas LTDA ME LAquis SCADA</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-082-01</link>
+    <description>This advisory contains mitigation details for a path traversal vulnerability in the LCDS - Leão Consultoria e Desenvolvimento de Sistemas LTDA ME LAquis SCADA software.</description>
+     <pubDate>Thu, 23 Mar 2017 10:05:21 EDT</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2297</guid>
+  </item>
+  <item>
+    <title>BD Kiestra PerformA and KLA Journal Service Applications Hard-Coded Passwords Vulnerability</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSMA-17-082-01</link>
+    <description>This advisory contains mitigation details for a hard-coded password vulnerability in the Becton, Dickinson and Company (BD) Kiestra PerformA and KLA Journal Service applications that access the BD Kiestra Database.</description>
+     <pubDate>Thu, 23 Mar 2017 10:00:52 EDT</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2302</guid>
+  </item>
+  <item>
+    <title>Rockwell Automation Connected Components Workbench</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-047-01</link>
+    <description>This advisory was originally posted to the NCCIC Portal on February 16, 2017, and is being released to the ICS-CERT web site. This advisory contains mitigation details for a DLL hijack vulnerability in Rockwell Automation’s Connected Components Workbench.</description>
+     <pubDate>Tue, 21 Mar 2017 10:10:05 EDT</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2285</guid>
+  </item>
+  <item>
+    <title>Rockwell Automation FactoryTalk Activation</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-047-02</link>
+    <description>This advisory was originally posted to the NCCIC Portal on February 16, 2017, and is being released to the ICS-CERT web site. This advisory contains mitigation details for an unquoted search path or element vulnerability in Rockwell Automation’s FactoryTalk Activation.</description>
+     <pubDate>Tue, 21 Mar 2017 10:00:04 EDT</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2289</guid>
+  </item>
+  <item>
+    <title>LCDS - Leão Consultoria e Desenvolvimento de Sistemas LTDA ME LAquis SCADA</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-075-01</link>
+    <description>This advisory contains mitigation details for an improper access control vulnerability in the LCDS - Leão Consultoria e Desenvolvimento de Sistemas LTDA ME LAquis SCADA software.</description>
+     <pubDate>Thu, 16 Mar 2017 10:00:53 EDT</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2278</guid>
+  </item>
+  <item>
+    <title>Fatek Automation PLC Ethernet Module</title>
+    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-073-01</link>
+    <description>This advisory contains mitigation details for a stack-based buffer overflow vulnerability in Fatek Automation&amp;#039;s PLC Ethernet module.</description>
+     <pubDate>Tue, 14 Mar 2017 10:00:42 EDT</pubDate>
+ <dc:creator>Advisory Document</dc:creator>
+ <guid isPermaLink="false">/node/2271</guid>
+  </item>
+  <item>
     <title>Schneider Electric ClearSCADA</title>
     <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-068-01</link>
     <description>This advisory contains mitigation details for an input validation vulnerability in Schneider Electric&amp;#039;s ClearSCADA.</description>
@@ -116,54 +164,6 @@
      <pubDate>Tue, 07 Feb 2017 10:10:27 EST</pubDate>
  <dc:creator>Advisory Document</dc:creator>
  <guid isPermaLink="false">/node/2151</guid>
-  </item>
-  <item>
-    <title>BD Alaris 8000 Insufficiently Protected Credentials Vulnerability</title>
-    <link>https://ics-cert.us-cert.gov/advisories/ICSMA-17-017-01</link>
-    <description>This advisory was originally posted to the NCCIC Portal on January 17, 2017, and is being released to the NCCIC/ICS-CERT web site. This advisory contains mitigation details for an insufficiently protected credentials vulnerability in BD’s Alaris 8000 Point of Care unit, which provides a common user interface for programming intravenous infusions.</description>
-     <pubDate>Tue, 07 Feb 2017 10:05:29 EST</pubDate>
- <dc:creator>Advisory Document</dc:creator>
- <guid isPermaLink="false">/node/2147</guid>
-  </item>
-  <item>
-    <title>BD Alaris 8015 Insufficiently Protected Credentials Vulnerabilities</title>
-    <link>https://ics-cert.us-cert.gov/advisories/ICSMA-17-017-02</link>
-    <description>This advisory was originally posted to the NCCIC Portal on January 17, 2017, and is being released to the NCCIC/ICS-CERT web site. This advisory contains mitigation details for protected credentials vulnerabilities in BD’s Alaris 8015 Point of Care unit, which provides a common user interface for programming intravenous infusions.</description>
-     <pubDate>Tue, 07 Feb 2017 10:00:17 EST</pubDate>
- <dc:creator>Advisory Document</dc:creator>
- <guid isPermaLink="false">/node/2141</guid>
-  </item>
-  <item>
-    <title>Honeywell XL Web II Controller Vulnerabilities</title>
-    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-033-01</link>
-    <description>This advisory contains mitigation details for vulnerabilities in Honeywell’s XL Web II controller application.</description>
-     <pubDate>Thu, 02 Feb 2017 10:00:34 EST</pubDate>
- <dc:creator>Advisory Document</dc:creator>
- <guid isPermaLink="false">/node/2132</guid>
-  </item>
-  <item>
-    <title>BINOM3 Electric Power Quality Meter (Update A)</title>
-    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-031-01A</link>
-    <description>This updated advisory is a follow-up to the original advisory titled ICSA-17-031-01 BINOM3 Electric Power Quality Meter that was published January 31, 2017, on the NCCIC/ICS-CERT web site. This updated advisory contains mitigation details for vulnerabilities in BINOM3&amp;#039;s electric power quality meter.</description>
-     <pubDate>Tue, 31 Jan 2017 10:10:28 EST</pubDate>
- <dc:creator>Advisory Document</dc:creator>
- <guid isPermaLink="false">/node/2122</guid>
-  </item>
-  <item>
-    <title>Ecava IntegraXor</title>
-    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-031-02</link>
-    <description>This advisory contains mitigation details for an SQL injection vulnerability in the Ecava IntegraXor web server.</description>
-     <pubDate>Tue, 31 Jan 2017 10:05:13 EST</pubDate>
- <dc:creator>Advisory Document</dc:creator>
- <guid isPermaLink="false">/node/2126</guid>
-  </item>
-  <item>
-    <title>Eaton ePDU Path Traversal Vulnerability</title>
-    <link>https://ics-cert.us-cert.gov/advisories/ICSA-17-026-01</link>
-    <description>This advisory contains mitigation details for a path traversal vulnerability in certain legacy Eaton ePDUs.</description>
-     <pubDate>Thu, 26 Jan 2017 10:10:30 EST</pubDate>
- <dc:creator>Advisory Document</dc:creator>
- <guid isPermaLink="false">/node/2085</guid>
   </item>
   </channel>
 </rss>
