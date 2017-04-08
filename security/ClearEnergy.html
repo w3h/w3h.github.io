@@ -3,7 +3,7 @@
       xmlns:og="http://ogp.me/ns#"
       xmlns:fb="https://www.facebook.com/2008/fbml">
 <head>
-    <title>other - 工匠实验室 | 专注于工控安全</title>
+    <title>工业控制系统ClearEnergy勒索软件攻击 - 工匠实验室 | 专注于工控安全</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -11,10 +11,10 @@
     
 
     <!-- Open Graph tags -->
-            <meta property="og:type" content="website"/>
-            <meta property="og:title" content="工匠实验室 | 专注于工控安全"/>
-            <meta property="og:url" content=".."/>
-            <meta property="og:description" content="工匠实验室 | 专注于工控安全"/>
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="工业控制系统ClearEnergy勒索软件攻击"/>
+            <meta property="og:url" content="../security/ClearEnergy.html"/>
+            <meta property="og:description" content="1、背景 今年2月份佐治亚理工学院电气和计算机工程学院的科学家们在有限的范围内模拟了一个概念勒索软件（LogicLocker），主要目的是使用勒索软件的攻击手法来攻击关键基础设施、SCADA和工业控制系统。（此研究前期跟踪过，链接） 这只是一个模拟测试，仅仅过了1个多月，针对可编程逻辑控制器（PLC）中梯形图逻辑图的勒索软件攻击已经成型，代号ClearEnergy ..."/>
 
     <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
     <meta name="keywords" content="工匠实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航" />
@@ -74,23 +74,101 @@
     <div class="row">
         <div class="col-sm-9">
 
-            <article>
-	   <div class="article-list">	
-       <div class="panel panel-default">
-           <div class="panel-title"> 
-                <h2>&nbsp&nbsp<a href="../other/about.html">关于</a></h2>
-           </div>
+   <div class="article-content">
+    <section id="content">
+        <article>
+        <div class="panel panel-default">
+            <header class="page-header">
+                <h1 class="article-title">
+                        工业控制系统ClearEnergy勒索软件攻击
+                    </a>
+                </h1>
 
-           <div class="panel-body">
-                <div class="summary"><h2><strong>关于我们</strong></h2>
-<p>“工匠实验室”，由国内多名资深的工控行业专家、传统网络安全专家、工控网络安全专家组成，一直从事着工控安全方面的研究和工作，曾参加过多个行业的工控安全现场检测（如电力能源、石油石化、烟草、智能智造等），多个工控安全攻防仿真的建设，多个工控设备的漏洞挖掘。我们主要目的是通过我们的努力，提升工控网络安全水平 ...</p>
-                    <a class="readmore" href="../other/about.html">READ MORE</a>
+                <div class="entry-content">
+                    <div class="panel-body">
+﻿<footer class="article-meta">
+
+	<span class="item name">
+            <!-- <span class="label label-default">By</span> -->
+            <a href="../author/w3h.html"><i class="fa fa-user"></i> W3H</a>
+	</span>
+	
+	<span class="item time">
+	 <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-04-08T14:36:00+08:00"> 2017-04-09 07:20:25</time>
+    </span>  
+	</span>	
+
+
+	<span class="item tag">
+<!-- <span class="label label-default">Tags</span> -->
+<a href="../tag/le-suo-ruan-jian.html"><span class="label label-default"> 勒索软件 </span></a>
+	</span>
+	
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>                  
+            </header>
+
+            <div class="entry-content markdown-body">
+                <div class="panel-body">
+                    <h2>1、背景</h2>
+<p>今年2月份佐治亚理工学院电气和计算机工程学院的科学家们在有限的范围内模拟了一个概念勒索软件（LogicLocker），主要目的是使用勒索软件的攻击手法来攻击关键基础设施、SCADA和工业控制系统。（此研究前期跟踪过，<a href="http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html">链接</a>）
+这只是一个模拟测试，仅仅过了1个多月，针对可编程逻辑控制器（PLC）中梯形图逻辑图的勒索软件攻击已经成型，代号<strong>ClearEnergy</strong>。针对工控系统的勒索软件攻击发展之快，但防御措施的推进如此艰难和缓慢，真令人担忧啊。</p>
+<h2>2、介绍</h2>
+<p><strong>ClearEnergy</strong>，攻击主要对象是关键基础设施、SCADA和ICS系统，是勒索软件攻击的一种（勒索软件是一种恶意软件，它以强大的加密算法感染计算机并加密其内容，然后要求赎金来解密该数据。）。一旦在受害机器上执行ClearEnergy，它将搜索易受攻击的可编程逻辑控制器（PLC），以便从PLC抓取梯形图逻辑图，并尝试将其上传到远程服务器。最后，ClearEnergy将启动一个定时器，它将触发一个进程，在一小时后从所有PLC中擦除逻辑图，除非受害者为了取消定时器并停止攻击而支付赎金。</p>
+<p>勒索软件ClearEnergy影响响范围非常大，设备包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，还包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的攻击。影响的企业包括核电厂和设备厂，水和废物设施，运输基础设施等。</p>
+<p><img alt="ALT" src="/static/images/clearenergy/ClearEnergy-banner.jpg" /></p>
+<p>ClearEnergy攻击主要使用漏洞CVE-2017-6032（SVE-82003203）和CVE-2017-6034（SVE-82003204），该漏洞是施耐德电气公司的UMAS协议中的严重的安全漏洞。 UMAS协议由于协议会话密钥设计不良，仅一个字节长度（256种可能性），导致攻击者轻松猜测会话密钥，甚至可以嗅探。使用会话密钥，攻击者能够完全控制控制器，读取控制器的程序并用恶意代码重写。勒索软件ClearEnergy影响了世界上最大的SCADA和工业控制系统制造商的大量PLC型号。这包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，其他领先供应商的PLC型号包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的破坏。</p>
+<p>目前，施耐德电气已经证实，Modicon系列PLC产品容易受到CRITIFENCE提出的发现，并发布了重要的网络安全通知（SEVD-2017-065-01）。国土安全部（ICS-CERT）今天也发布了一项重要的通告。</p>
+<h2>3、验证</h2>
+<p>施耐德电气使用的UMAS协议格式如下图所示：</p>
+<p><img alt="ALT" src="/static/images/clearenergy/modbus_protocol.gif" /></p>
+<p>通过我们工控安全实验室的实际环境（Sichneider Quantum系列）截取的数据包如下图所示，可以获取通信的Seesion是0xb8：</p>
+<p><img alt="ALT" src="/static/images/clearenergy/ssession.gif" /></p>
+<p>利用获取的Session通过任意一台电脑可以发送控制CPU启停的命令以及程序上下载（POC见参考[4] <strong>（POC请勿在实际环境中测试，否则后果自负）</strong>），如下图所示：</p>
+<p><img alt="ALT" src="/static/images/clearenergy/session_stop_cpu.jpg" /></p>
+<p>使用Session发送Stop数据包后控制器Cpu进入Stop状态，如下图所示：</p>
+<p><img alt="ALT" src="/static/images/clearenergy/stop.jpeg" /></p>
+<h2>4、参考</h2>
+<p>[1] ClearEnergy Critical Infrastructure, SCADA and Industrial Control Systems ransomware analysis based on Modicon Modbus Protocol / UMAS - Session Key (0-Day Vulnerabilities)  <a href="http://www.critifence.com/blog/clear_energy/index.php?download_report">链接</a>
+[2] ClearEnergy ransomware aim to destroy process automation logics in critical infrastructure, SCADA and industrial control systems. <a href="http://securityaffairs.co/wordpress/57731/malware/clearenergy-ransomware-scada.html">链接</a>
+[3] Cybersecurity Notification – Modicon Family of PLCs <a href="http://download.schneider-electric.com/files?p_enDocType=Technical+leaflet&amp;p_File_Id=7046260565&amp;p_File_Name=SEVD-2017-065-01+Modicon+PLC+Family.pdf&amp;p_Reference=SEVD-2017-065-01">链接</a>
+[4] POC下载地址 <a href="https://github.com/w3h/icsmaster/master/exploit/MODBUS_REMOTE COMMAND_TOOL.py">链接</a></p>
                 </div>
-           </div>
-        </div>
-		</div>
-            </article>
+            </div>  
+  
+            <div class="panel-body">
+   <div class="ds-share" data-thread-key="此处请替换为当前文章的thread-key" data-title="此处请替换为分享时显示的标题" data-images="此处请替换为分享时显示的图片的链接地址" data-content="此处请替换为分享时显示的内容" data-url="此处请替换为分享时显示的链接地址">
+    <div class="ds-share-aside-left">
+      <div class="ds-share-aside-inner">
+      </div>
+      <div class="ds-share-aside-toggle">分享到</div>
+    </div>
+</div>
 
+    <div>
+        <br />
+        <hr />
+        <ul>
+            <li>
+                <a href="../tool/icstools.html">
+                    上一篇文章：工控安全工具集
+                </a>
+            </li>
+        </ul>
+    </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- /.entry-content -->
+            </div>
+        </div>    
+        </article>
+    </section>
+	</div>
         </div>
         <div class="col-sm-3" id="sidebar">
 <div class="sidebar_main">
@@ -103,6 +181,21 @@
                     <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
                 </div>
                     <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">
+                            <a href="../security/ClearEnergy.html">
+                                工业控制系统ClearEnergy勒索软件攻击
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="../tool/icstools.html">
+                                工控安全工具集
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="../news/Ransomware for Industrial Control Systems.html">
+                                失控：工业控制系统勒索软件
+                            </a>
+                        </li>
                         <li class="list-group-item">
                             <a href="../other/about.html">
                                 关于
@@ -186,7 +279,7 @@
 <footer class="myfooter">
    <div class="container">
       <div class="row">
-         <div class="col-xs-10">&copy; 2014 W3H
+         <div class="col-xs-10">&copy; 2017 W3H
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
          <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>

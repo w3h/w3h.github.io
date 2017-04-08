@@ -30,6 +30,8 @@
         <link href="../feed.xml" type="application/rss+xml" rel="alternate"
               title="工匠实验室 | 专注于工控安全 RSS Feed"/>
 
+    <link href="../theme/css/github-markdown.css" rel="stylesheet">
+
 </head>
 <body>
 
@@ -45,13 +47,13 @@
 
             <a href="../" class="navbar-brand">
 <img src="../logo.png" width="40" height="40"/>             </a>
-                <div class="brand" id="titlename">工匠实验室 - 专注工控安全研究</div>
+                <div class="brand" id="titlename">工匠实验室</div>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
                     <li><a href="http://icsmaster.com/index.html">首页</a></li>
-                    <li><a href="http://icsmaster.com/index.html">资讯</a></li>
-                    <li><a href="http://icsmaster.com/index.html">研究</a></li>
+                    <li><a href="http://icsmaster.com/news.html">资讯</a></li>
+                    <li><a href="http://icsmaster.com/security.html">研究</a></li>
                     <li><a href="http://icsmaster.com/index.html">资源</a></li>
                     <li><a href="http://icsmaster.com/nav.html">导航</a></li>
                     <li><a href="http://icsmaster.com/other/about.html">关于</a></li>
@@ -110,6 +112,18 @@
                     </div>
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-le-suo-ruan-jian">勒索软件 <span class="badge pull-right">1</span></a>
+                    </h4>
+                </div>
+                <div id="collapse-le-suo-ruan-jian" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p><span class="categories-timestamp"><time datetime="2017-04-08T14:36:00+08:00">2017-04-08 13:59:25</time></span> <a href="../security/ClearEnergy.html">工业控制系统ClearEnergy勒索软件攻击</a></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </section>
@@ -125,6 +139,11 @@
                     <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
                 </div>
                     <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">
+                            <a href="../security/ClearEnergy.html">
+                                工业控制系统ClearEnergy勒索软件攻击
+                            </a>
+                        </li>
                         <li class="list-group-item">
                             <a href="../tool/icstools.html">
                                 工控安全工具集
@@ -201,6 +220,11 @@
                 独自等待
             </a>
         </li>
+        <li class="list-group-item">
+            <a href="http://plcscan.org/blog/" target="_blank">
+                灯塔实验室
+            </a>
+        </li>
       </ul>
     </li>
     </section>            
@@ -236,7 +260,7 @@
 
 <!-- For the Tags Cloud -->
 <script type="text/javascript">
-if(document.body.scrollWidth < 700){
+if(document.body.scrollWidth < 1024){
       document.getElementById("titlename").innerHTML="工匠实验室";
 }
 </script>
@@ -262,21 +286,6 @@ if(document.body.scrollWidth < 700){
     </script>
     <script src="../theme/js/github.js" type="text/javascript"></script>
     <!-- End GitHub JS Code -->
-    <!-- Disqus -->
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'w3h'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var s = document.createElement('script');
-            s.async = true;
-            s.type = 'text/javascript';
-            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-        }());
-    </script>
-    <!-- End Disqus Code -->
 
 
 <script>

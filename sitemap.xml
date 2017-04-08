@@ -5,16 +5,23 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/index.html</loc>
-<lastmod>2017-03-04T13:08:09-00:00</lastmod>
+<lastmod>2017-04-09T07:28:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://icsmaster.com/archives.html</loc>
-<lastmod>2017-03-04T13:08:09-00:00</lastmod>
+<lastmod>2017-04-09T07:28:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/security/ClearEnergy.html</loc>
+<lastmod>2017-04-08T14:36:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.7</priority>
 </url>
 
 <url>
@@ -53,6 +60,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://icsmaster.com/category/security.html</loc>
+<lastmod>2017-04-08T14:36:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://icsmaster.com/category/tool.html</loc>
 <lastmod>2017-02-23T15:24:00+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -67,6 +81,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://icsmaster.com/tag/guan-yu.html</loc>
+<lastmod>2014-05-19T05:24:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://icsmaster.com/tag/gong-ju.html</loc>
 <lastmod>2017-02-23T15:24:00+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -74,8 +95,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://icsmaster.com/tag/guan-yu.html</loc>
-<lastmod>2014-05-19T05:24:00+08:06</lastmod>
+<loc>http://icsmaster.com/tag/le-suo-ruan-jian.html</loc>
+<lastmod>2017-04-08T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

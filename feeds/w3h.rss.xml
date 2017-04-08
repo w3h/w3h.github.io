@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/w3h.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 23 Feb 2017 15:24:00 +0800</lastBuildDate><item><title>工控安全工具集</title><link>http://icsmaster.com/tool/icstools.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/w3h.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 08 Apr 2017 14:36:00 +0800</lastBuildDate><item><title>工业控制系统ClearEnergy勒索软件攻击</title><link>http://icsmaster.com/security/ClearEnergy.html</link><description>&lt;h2&gt;1、背景&lt;/h2&gt;
+&lt;p&gt;今年2月份佐治亚理工学院电气和计算机工程学院的科学家们在有限的范围内模拟了一个概念勒索软件（LogicLocker），主要目的是使用勒索软件的攻击手法来攻击关键基础设施、SCADA和工业控制系统。（此研究前期跟踪过，&lt;a href="http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html"&gt;链接&lt;/a&gt;）
+这只是一个模拟测试，仅仅过了1个多月，针对可编程逻辑控制器（PLC）中梯形图逻辑图的勒索软件攻击已经成型，代号&lt;strong&gt;ClearEnergy&lt;/strong&gt;。针对工控系统的勒索软件攻击发展之快，但防御措施的推进如此艰难和缓慢，真令人担忧啊。&lt;/p&gt;
+&lt;h2&gt;2、介绍&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;ClearEnergy&lt;/strong&gt;，攻击主要对象是关键基础设施、SCADA和ICS系统，是勒索软件攻击的一种（勒索软件是一种恶意软件，它以强大的加密算法感染计算机并加密其内容，然后要求赎金来解密该数据。）。一旦在受害机器上执行ClearEnergy，它将搜索易受攻击的可编程逻辑控制器（PLC），以便从PLC抓取梯形图逻辑图，并尝试将其上传到远程服务器。最后，ClearEnergy将启动一个定时器，它将触发一个进程，在一小时后从所有PLC中擦除逻辑图，除非受害者为了取消定时器并停止攻击而支付赎金。&lt;/p&gt;
+&lt;p&gt;勒索软件ClearEnergy影响响范围非常大，设备包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，还包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的攻击。影响的企业包括核电厂和设备厂，水和废物设施，运输基础设施等。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/ClearEnergy-banner.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;ClearEnergy攻击主要使用漏洞CVE-2017-6032（SVE-82003203）和CVE-2017-6034（SVE-82003204），该漏洞是施耐德电气公司的UMAS协议中的严重的安全漏洞。 UMAS协议由于协议会话密钥设计不良，仅一个字节长度（256种可能性），导致攻击者轻松猜测会话密钥，甚至可以嗅探。使用会话密钥，攻击者能够完全控制控制器，读取控制器的程序并用恶意代码重写。勒索软件ClearEnergy影响了世界上最大的SCADA和工业控制系统制造商的大量PLC型号。这包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，其他领先供应商的PLC型号包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的破坏。&lt;/p&gt;
+&lt;p&gt;目前，施耐德电气已经证实，Modicon系列PLC产品容易受到CRITIFENCE提出的发现，并发布了重要的网络安全通知（SEVD-2017-065-01）。国土安全部（ICS-CERT）今天也发布了一项重要的通告。&lt;/p&gt;
+&lt;h2&gt;3、验证&lt;/h2&gt;
+&lt;p&gt;施耐德电气使用的UMAS协议格式如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/modbus_protocol.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;通过我们工控安全实验室的实际环境（Sichneider Quantum系列）截取的数据包如下图所示，可以获取通信的Seesion是0xb8：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/ssession.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;利用获取的Session通过任意一台电脑可以发送控制CPU启停的命令以及程序上下载（POC见参考[4] &lt;strong&gt;（POC请勿在实际环境中测试，否则后果自负）&lt;/strong&gt;），如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/session_stop_cpu.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;使用Session发送Stop数据包后控制器Cpu进入Stop状态，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/stop.jpeg" /&gt;&lt;/p&gt;
+&lt;h2&gt;4、参考&lt;/h2&gt;
+&lt;p&gt;[1] ClearEnergy Critical Infrastructure, SCADA and Industrial Control Systems ransomware analysis based on Modicon Modbus Protocol / UMAS - Session Key (0-Day Vulnerabilities)  &lt;a href="http://www.critifence.com/blog/clear_energy/index.php?download_report"&gt;链接&lt;/a&gt;
+[2] ClearEnergy ransomware aim to destroy process automation logics in critical infrastructure, SCADA and industrial control systems. &lt;a href="http://securityaffairs.co/wordpress/57731/malware/clearenergy-ransomware-scada.html"&gt;链接&lt;/a&gt;
+[3] Cybersecurity Notification – Modicon Family of PLCs &lt;a href="http://download.schneider-electric.com/files?p_enDocType=Technical+leaflet&amp;amp;p_File_Id=7046260565&amp;amp;p_File_Name=SEVD-2017-065-01+Modicon+PLC+Family.pdf&amp;amp;p_Reference=SEVD-2017-065-01"&gt;链接&lt;/a&gt;
+[4] POC下载地址 &lt;a href="https://github.com/w3h/icsmaster/master/exploit/MODBUS_REMOTE COMMAND_TOOL.py"&gt;链接&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Sat, 08 Apr 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-04-08:security/ClearEnergy.html</guid><category>勒索软件</category></item><item><title>工控安全工具集</title><link>http://icsmaster.com/tool/icstools.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
 &lt;/pre&gt;&lt;/div&gt;
 
 
