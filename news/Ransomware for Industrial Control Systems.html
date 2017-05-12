@@ -52,8 +52,8 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
                     <li><a href="http://icsmaster.com/index.html">首页</a></li>
-                    <li><a href="http://icsmaster.com/news.html">资讯</a></li>
-                    <li><a href="http://icsmaster.com/security.html">研究</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">研究</a></li>
                     <li><a href="http://icsmaster.com/index.html">资源</a></li>
                     <li><a href="http://icsmaster.com/nav.html">导航</a></li>
                     <li><a href="http://icsmaster.com/other/about.html">关于</a></li>
@@ -90,7 +90,10 @@
 
 	<span class="item name">
             <!-- <span class="label label-default">By</span> -->
-            <a href="../author/w3h.html"><i class="fa fa-user"></i> W3H</a>
+            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'W3H'>]</a> -->
+			
+			<a href="../author/w3h.html"><i class="fa fa-user"></i>  W3H </a>
+			
 	</span>
 	
 	<span class="item time">
@@ -273,6 +276,11 @@ var jiathis_config={
                     <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
                 </div>
                     <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">
+                            <a href="../security/plcblaster.html">
+                                针对西门子PLC蠕虫的实现
+                            </a>
+                        </li>
                         <li class="list-group-item">
                             <a href="../security/ClearEnergy.html">
                                 工业控制系统ClearEnergy勒索软件攻击

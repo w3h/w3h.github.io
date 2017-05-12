@@ -52,8 +52,8 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
                     <li><a href="http://icsmaster.com/index.html">首页</a></li>
-                    <li><a href="http://icsmaster.com/news.html">资讯</a></li>
-                    <li><a href="http://icsmaster.com/security.html">研究</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">研究</a></li>
                     <li><a href="http://icsmaster.com/index.html">资源</a></li>
                     <li><a href="http://icsmaster.com/nav.html">导航</a></li>
                     <li><a href="http://icsmaster.com/other/about.html">关于</a></li>
@@ -90,12 +90,15 @@
 
 	<span class="item name">
             <!-- <span class="label label-default">By</span> -->
-            <a href="../author/w3h.html"><i class="fa fa-user"></i> W3H</a>
+            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'W3H'>]</a> -->
+			
+			<a href="../author/w3h.html"><i class="fa fa-user"></i>  W3H </a>
+			
 	</span>
 	
 	<span class="item time">
 	 <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-04-08T14:36:00+08:00"> 2017-04-09 07:20:25</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-04-08T14:36:00+08:00"> 2017-04-12 12:57:05</time>
     </span>  
 	</span>	
 
@@ -134,7 +137,7 @@
 <p>[1] ClearEnergy Critical Infrastructure, SCADA and Industrial Control Systems ransomware analysis based on Modicon Modbus Protocol / UMAS - Session Key (0-Day Vulnerabilities)  <a href="http://www.critifence.com/blog/clear_energy/index.php?download_report">链接</a>
 [2] ClearEnergy ransomware aim to destroy process automation logics in critical infrastructure, SCADA and industrial control systems. <a href="http://securityaffairs.co/wordpress/57731/malware/clearenergy-ransomware-scada.html">链接</a>
 [3] Cybersecurity Notification – Modicon Family of PLCs <a href="http://download.schneider-electric.com/files?p_enDocType=Technical+leaflet&amp;p_File_Id=7046260565&amp;p_File_Name=SEVD-2017-065-01+Modicon+PLC+Family.pdf&amp;p_Reference=SEVD-2017-065-01">链接</a>
-[4] POC下载地址 <a href="https://github.com/w3h/icsmaster/master/exploit/MODBUS_REMOTE COMMAND_TOOL.py">链接</a></p>
+[4] POC下载地址 <a href="https://github.com/w3h/icsmaster/blob/master/exploit/MODBUS_REMOTE_COMMAND_TOOL.py">链接</a></p>
                 </div>
             </div>  
   
@@ -165,6 +168,11 @@ var jiathis_config={
                     上一篇文章：工控安全工具集
                 </a>
             </li>
+            <li>
+                <a href="../security/plcblaster.html">
+                    下一篇文章：针对西门子PLC蠕虫的实现
+                </a>
+            </li>
         </ul>
     </div>
             </div>
@@ -190,6 +198,11 @@ var jiathis_config={
                     <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
                 </div>
                     <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">
+                            <a href="../security/plcblaster.html">
+                                针对西门子PLC蠕虫的实现
+                            </a>
+                        </li>
                         <li class="list-group-item">
                             <a href="../security/ClearEnergy.html">
                                 工业控制系统ClearEnergy勒索软件攻击
