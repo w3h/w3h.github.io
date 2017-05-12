@@ -101,7 +101,7 @@
 	
 	<span class="item time">
 	 <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-05-11T14:36:00+08:00"> 2017-05-12 11:16:27</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-05-11T14:36:00+08:00"> 2017-05-12 15:02:55</time>
     </span>  
 	</span>	
 
@@ -196,7 +196,7 @@ I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基�
 </ul>
 <p>断开连接后则更改IP地址，准备连接下一台设备</p>
 <p><img alt="Alt text" src="/static/images/plcblaster/8.gif" /></p>
-<h3>2. 传播感染</h3>
+<h3>3. 传播感染</h3>
 <p>连接建立后，病毒调用数据传送命令TSEND和数据接收命令TRCV进行传播。见下图</p>
 <p><img alt="Alt text" src="/static/images/plcblaster/9.gif" /></p>
 <p>程序块TSEND和TRCV的参数说明</p>
@@ -213,15 +213,15 @@ I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基�
 <p><img alt="Alt text" src="/static/images/plcblaster/12.gif" /></p>
 <p>具体逻辑实现代码如下：</p>
 <p><img alt="Alt text" src="/static/images/plcblaster/13.gif" /></p>
-<h3>3. 激活</h3>
+<h3>4. 激活</h3>
 <p>PLC执行顺序是从OB1开始，按顺序执行到OB9999的。</p>
 <p>建立调用病毒程序的OB块OB9999，并将其存植入到目标PLC中，用以激病毒，并进行新的病毒传播感染。西门子PLC在运行时，会按照从OB1到OB9999的顺序进行调用。如下图所示。</p>
 <p><img alt="Alt text" src="/static/images/plcblaster/14.gif" /></p>
 <p>在其他病毒块下载完成后，用OB9999（也可以用其他非系统自带的OB块，未了避免病毒的OB块与PLC中正常的OB块重复，建议块的序号尽量大些）启动病毒程序。</p>
-<h3>4. 恶意功能的实现——连接C&amp;C服务器</h3>
+<h3>5. 恶意功能的实现——连接C&amp;C服务器</h3>
 <p>一旦PLC被感染病毒，会基于TCP主动去连接C&amp;C服务器。通过C&amp;C服务器，可以远程控制PLC，包括PLC的启停，输出值的改变等。当C&amp;C服务器向连接了C&amp;C服务器的PLC发送指令后，PLC会解析命令并执行。以点灯程序为例说明其危害性。下图为C&amp;C服务器点灯的解析部分：</p>
 <p><img alt="Alt text" src="/static/images/plcblaster/15.gif" /></p>
-<h3>5. 感染前后对比</h3>
+<h3>6. 感染前后对比</h3>
 <p>博途软件提供了PLC程序在线与离线差异的检测功能，如下图所示。程序块后面的绿色圆圈表示在线程序与离线程序一致，蓝色与橘黄色组成的圆形表示在线程序与离线程序不一致。块为虚样式，表示博途的程序中没有此块，而PLC有。</p>
 <p><img alt="Alt text" src="/static/images/plcblaster/16.gif" /></p>
 <p><img alt="Alt text" src="/static/images/plcblaster/17.gif" /></p>
