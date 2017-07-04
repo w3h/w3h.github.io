@@ -3,7 +3,7 @@
       xmlns:og="http://ogp.me/ns#"
       xmlns:fb="https://www.facebook.com/2008/fbml">
 <head>
-    <title>工业控制系统ClearEnergy勒索软件攻击 - 工匠安全实验室 | 专注于工控安全</title>
+    <title>isf - 工匠安全实验室 | 专注于工控安全</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -11,10 +11,10 @@
     
 
     <!-- Open Graph tags -->
-            <meta property="og:type" content="article"/>
-            <meta property="og:title" content="工业控制系统ClearEnergy勒索软件攻击"/>
-            <meta property="og:url" content="../security/ClearEnergy.html"/>
-            <meta property="og:description" content="1、背景 今年2月份佐治亚理工学院电气和计算机工程学院的科学家们在有限的范围内模拟了一个概念勒索软件（LogicLocker），主要目的是使用勒索软件的攻击手法来攻击关键基础设施、SCADA和工业控制系统。（此研究前期跟踪过，链接） 这只是一个模拟测试，仅仅过了1个多月，针对可编程逻辑控制器（PLC）中梯形图逻辑图的勒索软件攻击已经成型，代号ClearEnergy ..."/>
+            <meta property="og:type" content="website"/>
+            <meta property="og:title" content="工匠安全实验室 | 专注于工控安全"/>
+            <meta property="og:url" content=".."/>
+            <meta property="og:description" content="工匠安全实验室 | 专注于工控安全"/>
 
     <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
     <meta name="keywords" content="工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航" />
@@ -74,118 +74,23 @@
     <div class="row">
         <div class="col-sm-9">
 
-   <div class="article-content">
-    <section id="content">
-        <article>
-        <div class="panel panel-default">
-            <header class="page-header">
-                <h1 class="article-title">
-                        工业控制系统ClearEnergy勒索软件攻击
-                    </a>
-                </h1>
+            <article>
+	   <div class="article-list">	
+       <div class="panel panel-default">
+           <div class="panel-title"> 
+                <h2>&nbsp&nbsp<a href="../tool/isf.html">工控漏洞利用框架 - ISF(Industrial Security Framework)</a></h2>
+           </div>
 
-                <div class="entry-content">
-                    <div class="panel-body">
-﻿<footer class="article-meta">
-
-	<span class="item name">
-            <!-- <span class="label label-default">By</span> -->
-            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'W3H'>]</a> -->
-			
-			<a href="../author/w3h.html"><i class="fa fa-user"></i>  W3H </a>
-			
-	</span>
-	
-	<span class="item time">
-	 <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-04-08T14:36:00+08:00"> 2017-04-12 12:57:05</time>
-    </span>  
-	</span>	
-
-
-	<span class="item tag">
-<!-- <span class="label label-default">Tags</span> -->
-<a href="../tag/le-suo-ruan-jian.html"><span class="label label-default"> 勒索软件 </span></a>
-	</span>
-	
-    
-</footer><!-- /.post-info -->                    </div>
-                </div>                  
-            </header>
-
-            <div class="entry-content markdown-body">
-                <div class="panel-body">
-                    <h2>1、背景</h2>
-<p>今年2月份佐治亚理工学院电气和计算机工程学院的科学家们在有限的范围内模拟了一个概念勒索软件（LogicLocker），主要目的是使用勒索软件的攻击手法来攻击关键基础设施、SCADA和工业控制系统。（此研究前期跟踪过，<a href="http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html">链接</a>）
-这只是一个模拟测试，仅仅过了1个多月，针对可编程逻辑控制器（PLC）中梯形图逻辑图的勒索软件攻击已经成型，代号<strong>ClearEnergy</strong>。针对工控系统的勒索软件攻击发展之快，但防御措施的推进如此艰难和缓慢，真令人担忧啊。</p>
-<h2>2、介绍</h2>
-<p><strong>ClearEnergy</strong>，攻击主要对象是关键基础设施、SCADA和ICS系统，是勒索软件攻击的一种（勒索软件是一种恶意软件，它以强大的加密算法感染计算机并加密其内容，然后要求赎金来解密该数据。）。一旦在受害机器上执行ClearEnergy，它将搜索易受攻击的可编程逻辑控制器（PLC），以便从PLC抓取梯形图逻辑图，并尝试将其上传到远程服务器。最后，ClearEnergy将启动一个定时器，它将触发一个进程，在一小时后从所有PLC中擦除逻辑图，除非受害者为了取消定时器并停止攻击而支付赎金。</p>
-<p>勒索软件ClearEnergy影响响范围非常大，设备包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，还包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的攻击。影响的企业包括核电厂和设备厂，水和废物设施，运输基础设施等。</p>
-<p><img alt="ALT" src="/static/images/clearenergy/ClearEnergy-banner.jpg" /></p>
-<p>ClearEnergy攻击主要使用漏洞CVE-2017-6032（SVE-82003203）和CVE-2017-6034（SVE-82003204），该漏洞是施耐德电气公司的UMAS协议中的严重的安全漏洞。 UMAS协议由于协议会话密钥设计不良，仅一个字节长度（256种可能性），导致攻击者轻松猜测会话密钥，甚至可以嗅探。使用会话密钥，攻击者能够完全控制控制器，读取控制器的程序并用恶意代码重写。勒索软件ClearEnergy影响了世界上最大的SCADA和工业控制系统制造商的大量PLC型号。这包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，其他领先供应商的PLC型号包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的破坏。</p>
-<p>目前，施耐德电气已经证实，Modicon系列PLC产品容易受到CRITIFENCE提出的发现，并发布了重要的网络安全通知（SEVD-2017-065-01）。国土安全部（ICS-CERT）今天也发布了一项重要的通告。</p>
-<h2>3、验证</h2>
-<p>施耐德电气使用的UMAS协议格式如下图所示：</p>
-<p><img alt="ALT" src="/static/images/clearenergy/modbus_protocol.gif" /></p>
-<p>通过我们工控安全实验室的实际环境（Sichneider Quantum系列）截取的数据包如下图所示，可以获取通信的Seesion是0xb8：</p>
-<p><img alt="ALT" src="/static/images/clearenergy/ssession.gif" /></p>
-<p>利用获取的Session通过任意一台电脑可以发送控制CPU启停的命令以及程序上下载（POC见参考[4] <strong>（POC请勿在实际环境中测试，否则后果自负）</strong>），如下图所示：</p>
-<p><img alt="ALT" src="/static/images/clearenergy/session_stop_cpu.jpg" /></p>
-<p>使用Session发送Stop数据包后控制器Cpu进入Stop状态，如下图所示：</p>
-<p><img alt="ALT" src="/static/images/clearenergy/stop.jpeg" /></p>
-<h2>4、参考</h2>
-<p>[1] ClearEnergy Critical Infrastructure, SCADA and Industrial Control Systems ransomware analysis based on Modicon Modbus Protocol / UMAS - Session Key (0-Day Vulnerabilities)  <a href="http://www.critifence.com/blog/clear_energy/index.php?download_report">链接</a>
-[2] ClearEnergy ransomware aim to destroy process automation logics in critical infrastructure, SCADA and industrial control systems. <a href="http://securityaffairs.co/wordpress/57731/malware/clearenergy-ransomware-scada.html">链接</a>
-[3] Cybersecurity Notification – Modicon Family of PLCs <a href="http://download.schneider-electric.com/files?p_enDocType=Technical+leaflet&amp;p_File_Id=7046260565&amp;p_File_Name=SEVD-2017-065-01+Modicon+PLC+Family.pdf&amp;p_Reference=SEVD-2017-065-01">链接</a>
-[4] POC下载地址 <a href="https://github.com/w3h/icsmaster/blob/master/exploit/MODBUS_REMOTE_COMMAND_TOOL.py">链接</a></p>
+           <div class="panel-body">
+                <div class="summary"><h2>一、    框架介绍</h2>
+<p>本框架主要使用Python语言开发，通过集成ShadowBroker释放的NSA工具Fuzzbunch攻击框架，开发一款适合工控漏洞利用的框架。由于Fuzzbunch攻击框架仅适用于Python2.6，很多核心的功能都封装成了DLL，通过函数进行调用，不便于后期的移植和使用。但是，Fuzzbunch的命令行使用的确很方便，而且够傻瓜，所以就有集成一个适合工控漏洞利用的框架想法。新框架对主要的接口使用Python重新实现 ...</p>
+                    <a class="readmore" href="../tool/isf.html">READ MORE</a>
                 </div>
-            </div>  
-  
-            <div class="panel-body">
-
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript" >
-var jiathis_config={
-	data_track_clickback:true,
-	siteNum:5,
-	sm:"weixin,tqq,qzone,tsina,cqq",
-	summary:"",
-	showClose:true,
-	shortUrl:true,
-	hideMore:true
-}
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=2128692&type=left&btn=l5.gif&move=1" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-    <div>
-        <br />
-        <hr />
-        <ul>
-            <li>
-                <a href="../tool/icstools.html">
-                    上一篇文章：工控安全工具集
-                </a>
-            </li>
-            <li>
-                <a href="../security/plcblaster.html">
-                    下一篇文章：针对西门子PLC蠕虫的实现
-                </a>
-            </li>
-        </ul>
-    </div>
-            </div>
+           </div>
         </div>
+		</div>
+            </article>
 
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <!-- /.entry-content -->
-            </div>
-        </div>    
-        </article>
-    </section>
-	</div>
         </div>
         <div class="col-sm-3" id="sidebar">
 <div class="sidebar_main">
@@ -201,46 +106,6 @@ var jiathis_config={
                         <li class="list-group-item">
                             <a href="../tool/isf.html">
                                 工控漏洞利用框架 - ISF(Industrial Security Framework)
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../tool/wincc_env.html">
-                                基于WinCC多协议通信实验环境搭建
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../news/logicblob.html">
-                                工业控制系统中的梯形逻辑炸弹
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../security/wannacry.html">
-                                Wannacry(永恒之蓝)勒索蠕虫跟踪分析
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../security/plcblaster.html">
-                                针对西门子PLC蠕虫的实现
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../security/ClearEnergy.html">
-                                工业控制系统ClearEnergy勒索软件攻击
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../tool/icstools.html">
-                                工控安全工具集
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../news/Ransomware for Industrial Control Systems.html">
-                                失控：工业控制系统勒索软件
-                            </a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="../other/about.html">
-                                关于
                             </a>
                         </li>
                     </ul>

