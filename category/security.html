@@ -17,7 +17,7 @@
             <meta property="og:description" content="工匠安全实验室 | 专注于工控安全"/>
 
     <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
-    <meta name="keywords" content="工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航" />
+    <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="../theme/css/bootstrap.min.css" type="text/css"/>
@@ -52,11 +52,11 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
             <ul class="nav navbar-nav">
                     <li><a href="http://icsmaster.com/index.html">首页</a></li>
-                    <li><a href="http://icsmaster.com/category/news.html">资讯</a></li>
-                    <li><a href="http://icsmaster.com/category/security.html">研究</a></li>
-                    <li><a href="http://icsmaster.com/category/tool.html">资源</a></li>
-                    <li><a href="http://icsmaster.com/nav.html">导航</a></li>
-                    <li><a href="http://icsmaster.com/other/about.html">关于</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">最新资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">安全研究</a></li>
+                    <li><a href="http://icsmaster.com/category/tool.html">开源工具</a></li>
+                    <li><a href="http://icsmaster.com/nav.html">安全导航</a></li>
+                    <li><a href="http://icsmaster.com/other/about.html">关于我们</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <!--
@@ -74,6 +74,23 @@
     <div class="row">
         <div class="col-sm-9">
 
+            <article>
+	   <div class="article-list">	
+       <div class="panel panel-default">
+           <div class="panel-title"> 
+                <h2>&nbsp&nbsp<a href="../security/wincc_env.html">基于WinCC多协议通信实验环境搭建</a></h2>
+           </div>
+
+           <div class="panel-body">
+                <div class="summary"><h2>一、    概述</h2>
+<p>目前，随着自动化水平的提高和全厂自动化控制集成的要求，以及基于工业4.0和智能制造的工厂升级和新建工厂的需求。原来单点控制已经不能满足当前的要求。未来方便集成而采用同一家生产商的产品也不太可能。所以现场设备往往有很多设备厂商提供，也造成了不同设备之间通讯、设备和监控平台之间不能直接通讯，单独实现某些设备直接通讯往往也容易增加成本和现场故障点。
+当前，随着工业生产的不断发展，工业控制软件取得了长足的进步 ...</p>
+                    <a class="readmore" href="../security/wincc_env.html">READ MORE</a>
+                </div>
+           </div>
+        </div>
+		</div>
+            </article>
             <article>
 	   <div class="article-list">	
        <div class="panel panel-default">
@@ -135,19 +152,24 @@
                     <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
                 </div>
                     <ul class="list-group" id="recentposts">
-                        <li class="list-group-item">
+                        <li class="list-group-item">               
+                            <a href="../security/wincc_env.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 基于WinCC多协议通信实验环境搭建
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
                             <a href="../security/wannacry.html">
-                                Wannacry(永恒之蓝)勒索蠕虫跟踪分析
+                               <span class="glyphicon glyphicon-volume-down"></span> Wannacry(永恒之蓝)勒索蠕虫跟踪分析
                             </a>
                         </li>
-                        <li class="list-group-item">
+                        <li class="list-group-item">               
                             <a href="../security/plcblaster.html">
-                                针对西门子PLC蠕虫的实现
+                               <span class="glyphicon glyphicon-volume-down"></span> 针对西门子PLC蠕虫的实现
                             </a>
                         </li>
-                        <li class="list-group-item">
+                        <li class="list-group-item">               
                             <a href="../security/ClearEnergy.html">
-                                工业控制系统ClearEnergy勒索软件攻击
+                               <span class="glyphicon glyphicon-volume-down"></span> 工业控制系统ClearEnergy勒索软件攻击
                             </a>
                         </li>
                     </ul>
@@ -157,33 +179,17 @@
 </div> 
 </div> 
 
+<!--
 <div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
 <aside>
     <section>
 
-    <li class="list-group-item"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">最新评论</span></h4></a>
-    <!-- 多说最新评论 start -->
-	    <div class="ds-recent-comments" data-num-items="5" data-show-avatars="1" data-show-time="1" data-show-title="1" data-show-admin="1" data-excerpt-length="70"></div>
-        <!-- 多说最新评论 end -->
-        <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-        <script type="text/javascript">
-        var duoshuoQuery = {short_name:"webhhh"};
-	    (function() {
-	    	var ds = document.createElement('script');
-	    	ds.type = 'text/javascript';ds.async = true;
-	    	ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-	    	ds.charset = 'UTF-8';
-	    	(document.getElementsByTagName('head')[0] 
-	    	 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	    })();
-	    </script>
-    <!-- 多说公共JS代码 end -->
-    </li>
     </section>            
 </aside>
 </div> 
 </div> 
+-->
 
 <div class="sidebar_main">
 <div class="well well-sm" id="sidebar">
