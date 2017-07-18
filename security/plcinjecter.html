@@ -3,7 +3,7 @@
       xmlns:og="http://ogp.me/ns#"
       xmlns:fb="https://www.facebook.com/2008/fbml">
 <head>
-    <title>工控安全工具集 - 工匠安全实验室 | 专注于工控安全</title>
+    <title>利用Modbus PLC作为攻击载荷分发系统 - 工匠安全实验室 | 专注于工控安全</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -12,9 +12,9 @@
 
     <!-- Open Graph tags -->
             <meta property="og:type" content="article"/>
-            <meta property="og:title" content="工控安全工具集"/>
-            <meta property="og:url" content="../tool/icstools.html"/>
-            <meta property="og:description" content="本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。 1、S7 Client Demo 开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息 ..."/>
+            <meta property="og:title" content="利用Modbus PLC作为攻击载荷分发系统"/>
+            <meta property="og:url" content="../security/plcinjecter.html"/>
+            <meta property="og:description" content="一、 介绍 随着互联网+、工业4.0的推进，以前的网络边界被逐渐打破，工业控制系统的安全问题越来越突出，近期针对控制器的攻击层出不穷，如 PLC逻辑炸弹、PLC勒索软件，PLC蠕虫，相关的技术我们一直在跟踪分析。 本文主要介绍怎么利用Modbus PLC作为攻击载荷 ..."/>
 
     <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
     <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
@@ -80,7 +80,7 @@
         <div class="panel panel-default">
             <header class="page-header">
                 <h1 class="article-title">
-                        工控安全工具集
+                        利用Modbus PLC作为攻击载荷分发系统
                     </a>
                 </h1>
 
@@ -90,22 +90,24 @@
 
 	<span class="item name">
             <!-- <span class="label label-default">By</span> -->
-            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'W3H'>]</a> -->
+            <!-- <a href="../author/chansim.html"><i class="fa fa-user"></i> [<Author u'chansim'>]</a> -->
 			
-            <i class="fa fa-user"></i><a href="../author/w3h.html">  W3H </a> &nbsp;
+            <i class="fa fa-user"></i><a href="../author/chansim.html">  chansim </a> &nbsp;
 			
 	</span>
 	
 	<span class="item time">
 	 <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-02-23T15:24:00+08:00"> 2017-02-23 17:27:44</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-07-18T14:36:00+08:00"> 2017-07-18 17:29:07</time>
     </span>  
 	</span>	
 
 
 	<span class="item tag">
 <!-- <span class="label label-default">Tags</span> -->
-<a href="../tag/gong-ju.html"><span class="label label-default"> 工具 </span></a>
+<a href="../tag/gong-kong-ji-zhu.html"><span class="label label-default"> 工控技术 </span></a>
+        &nbsp; 
+<a href="../tag/plczhu-ru.html"><span class="label label-default"> PLC注入 </span></a>
 	</span>
 	
     
@@ -115,34 +117,129 @@
 
             <div class="entry-content markdown-body">
                 <div class="panel-body">
-                    <div class="highlight"><pre>本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+                    <h2>一、    介绍</h2>
+<p>随着互联网+、工业4.0的推进，以前的网络边界被逐渐打破，工业控制系统的安全问题越来越突出，近期针对控制器的攻击层出不穷，如 <a href="http://icsmaster.com/news/logicblob.html">PLC逻辑炸弹</a>、<a href="http://icsmaster.com/security/ClearEnergy.html">PLC勒索软件</a>，<a href="http://icsmaster.com/security/plcblaster.html">PLC蠕虫</a>，相关的技术我们一直在跟踪分析。</p>
+<p>本文主要介绍怎么利用Modbus PLC作为攻击载荷，将恶意代码隐藏在控制器(programmable logic controllers)中，从而躲避当前的主流的网络攻击检测，提高攻击的隐蔽性，使得网络攻击难发现以及难溯源。下文中主要使用是施耐德电气的控制器TM221，该设备使用的主要的通信协议是Modbus Tcp，被中小型制造工厂广泛使用，以实现制造工艺的自动化。由于Modbus Tcp协议存在多个安全问题，利用Modbus Tcp协议可以实现任意上传和下载内存数据，因此，可以将攻击载荷上传至PLC内存中，从而躲避常规的安全检测。</p>
+<h2>二、    利用modbus-cli操作plc寄存器</h2>
+<p>本文中我们使用的控制器，如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/2.png" /></p>
+<p>使用关键字“TM221ME16R”，在Shodan可以查询到当前暴露在互联网上的施耐德电气，如下图所示。<strong>注意：本文仅做技术研究，相关工具请务在真实工业环境中使用，否则后果自负。</strong> </p>
+<p><img alt="Alt text" src="/static/images/plcinjector/1.png" /></p>
+<p>Modbus-cli是一个命令行（cli）工具，使用此工具可以对PLC 寄存器进行读写操作，使用方法如下图所示：</p>
+<p>运行指令参数：modbus [OPTIONS] SUBCOMMAND [ARG]</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/3.png" /></p>
+<p>我们至少有两种方法获取寄存器地址里面的值，分别为：Schneider address和Modicon addess。 如下表所示，Modicon addess从地址前的％M开始。</p>
+<table>
+<thead>
+<tr>
+<th>Data type</th>
+<th>Data size</th>
+<th>Schneider address</th>
+<th>Modicon addess</th>
+<th>Parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Word</td>
+<td>16 bits</td>
+<td>%MW100</td>
+<td>400101</td>
+<td>--word</td>
+</tr>
+<tr>
+<td>Interger</td>
+<td>16 bits</td>
+<td>%MW100</td>
+<td>400101</td>
+<td>--int</td>
+</tr>
+<tr>
+<td>Floating point</td>
+<td>32 bits</td>
+<td>%MF100</td>
+<td>400101</td>
+<td>--float</td>
+</tr>
+<tr>
+<td>Double word</td>
+<td>32 bits</td>
+<td>%MD100</td>
+<td>400101</td>
+<td>--word</td>
+</tr>
+<tr>
+<td>Boolean(coils)</td>
+<td>1 bits</td>
+<td>%M100</td>
+<td>101</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p>modbus read <IP> %MW100 10，意思是读取以%MW100开头的十个值；我们可以通过modbus-cli从plc中读取指定的寄存器中的值，执行如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/4.png" /></p>
+<p>为了达到相同的效果，也可以换种形式来获取，如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/5.png" /></p>
+<p>读取线圈（coils）的值，命令如下</p>
+<div class="highlight"><pre>modbus read 192.168.1.31 %M100 10
 </pre></div>
 
 
-<h2>1、S7 Client Demo</h2>
-<p>开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息（如固件版本，块信息等），还可以直接操作控制器的CPU的启停。<a href="https://github.com/w3h/icsmaster/tree/master/tool/s7clientdemo.rar">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/1.gif" title="=100*100" /></p>
-<h2>2、PLCSCAN</h2>
-<p>通过探测设备，获取关于设备的供应商类型、模块信息等，目前仅支持S7协议与MODBUS协议。<a href="https://github.com/w3h/icsmaster/tree/master/tool/plcscan.rar">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/2.gif" title="=100*100" /></p>
-<h2>3、QTester104</h2>
-<p>使用QT和C++实现IEC104通讯规约，可以连接IEC104的设备。<a href="https://github.com/w3h/icsmaster/tree/master/tool/qtester104-v1.18.zip">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/3.gif" /></p>
-<h2>4、S7-Brute-Offline</h2>
-<p>S7密码离线暴力破解工具。<a href="https://github.com/w3h/icsmaster/tree/master/tool/s7-brute-offline.py">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/4.gif" /></p>
-<h2>5、SCADA_Metasploit_Modules</h2>
-<p>列举了MSF上所有的针对工业控制系统的漏洞脚本。<a href="https://github.com/w3h/icsmaster/tree/master/SCADA_Metasploit_Modules.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/5.gif" /></p>
-<h2>6、Scada_Password</h2>
-<p>列举了工业控制系统中的常见的用户和密码。<a href="https://github.com/w3h/icsmaster/tree/master/Scada_Password.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/6.gif" /></p>
-<h2>7、Scada_Dorks</h2>
-<p>收集针对工业控制系统中常见的DORK。<a href="https://github.com/w3h/icsmaster/tree/master/Scada_Dorks.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/7.gif" /></p>
-<h2>8、Scapy</h2>
-<p>Scapy的是一个强大的交互式数据包处理程序（使用python编写）。它能够伪造或者解码大量的网络协议数据包，能够发送、捕捉、匹配请求和回复包等等。它可以很容易地处理一些典型操作，比如端口扫描，tracerouting，探测，单元测试，攻击或网络发现（可替代hping，NMAP，arpspoof，ARP-SK，arping，tcpdump，tethereal，P0F等）。最重要的他还有很多更优秀的特性——发送无效数据帧、注入修改的802.11数据帧、在WEP上解码加密通道（VOIP）、ARP缓存攻击（VLAN）等，这也是其他工具无法处理完成的。
-该工具主要用于工控协议解析，常用协议攻击（如tcp_land、arp fload等），工控协议FUZZ测试和漏洞利用脚本的编写。<a href="https://github.com/secdev/scapy.git">下载地址</a></p>
+<p>可以看出线圈全都处于关闭状态，如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/6.png" /></p>
+<p>modbus-cli不仅可以读取plc寄存器数据还可以更改，如若被不法份子利用直接可以更改里面的状态值，命令如下：</p>
+<div class="highlight"><pre>modbus write 192.168.1.31 %M100 1 1 1 1 1 1 1 1 1 1
+</pre></div>
+
+
+<p>执行结果如下图所示</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/7.png" /></p>
+<p>修改PLC寄存器的值时，可能会导致上位机和终端设备的异常运行，下图所示是执行前后</p>
+<p>正常运行状态如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/8.png" /></p>
+<p>修改寄存器后组态界面出现异常</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/9.gif" /></p>
+<h2>三、    利用ISF攻击框架进行PLC注入</h2>
+<p>利用plc存储payload/shellcode优势：
+由于payload存放在PLC的内存中，所以加大了取证分析的难度。此外，一旦payload被取出，其内容直接被写入内存，这样也加大了取证难度。
+此外，我认为Modbus Stager在某些ICS环境中也是非常有用的，因为这些环境下Modbus之外的协议会引起人们的警觉，并且WinHTTP / WinInet stager也不是最适用的。所以，在这种情况下，只需要一个和modbus处理器（stager），读取plc里面的数据并执行。
+攻击流程如下：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/10.png" /></p>
+<ol>
+<li>attacker将payload/shellcode上传至modbus plc，如果没设定上传得初始地址，那么就从x00开始，在这里其实也可以使用其他工具或者交互脚本，如实验一里面的modbus-cli。攻击者一般会选择第三方的plc，因为第三方的plc具有良好的匿名性质，跟踪难度较大，无须将payload上传至服务器。</li>
+<li>attacker 利用其他方式漏洞或钓鱼等将stager传入工控环境的windows机器并触发运行。</li>
+<li>stager运行之后会与modbus plc数据交互，读取plc保持寄存器里面的payload/shellcode并执行。stager是由汇编编译主要功能是和modbus plc建立socket通信接收payload并在内存执行，总共大小只有1KB，难以被沙软检测，更何况是安全相对薄弱的工控环境。</li>
+</ol>
+<p>Payload 生成：
+Payload是“Functional Keylogger to File Null-Free Shellcode” 长度为0x0259，在生成的时候前四个字节代表shellcode的长度，如图2-2-2所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/11.png" /></p>
+<p>为了将payload上传至plc中，plcInjectPayload会根据加载的控制策略不同，对plc的可用内存大小的要求也有所变化，因此该脚本首先检查它们是否有足够的内存空间来存放相应的payload。为了检测内存的大小，可以发送操作功能代码为03（读取保持寄存器）的Modbus请求，尝试从某个地址读取特定记录（每个记录长度为16比特）。如果收到一个0x83异常，那么说明这个PLC对于我们来说是无法使用的。</p>
+<p>Modbus 协议的功能代码如下图所示</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/11.png" /></p>
+<p>使用ISF下载控制器寄存器，执行操作如下</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/12.gif" /></p>
+<p>读取到的内容如下图所示</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/14.png" /></p>
+<p>上传payload至plc，在本次实验没有指定地址，就从0x00开始上传。上传之后的结果如图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/15.png" /></p>
+<p>执行stager 获取plc保持寄存器里面payload加载至内存，并执行：</p>
+<p>Stager入口点：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/16.png" /></p>
+<p>Socket连接，对应的连接数据如下
+  0x1F01A8C0 -&gt; 192.168.1.31 
+  0xF6010002 -&gt; port :502</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/17.png" /></p>
+<p>接收0x259个字节：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/18.png" /></p>
+<p>该stager分三次接收数据：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/19.png" /></p>
+<p>接收的payload写入内存并执行：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/20.png" /></p>
+<h2>四、参考</h2>
+<p>[1] Modbus Stager: Using PLCs as a payload/shellcode distribution system  <a href="http://www.shelliscoming.com/2016/12/modbus-stager-using-plcs-as.html">链接</a>
+[2] Functional Keylogger <a href="https://www.exploit-db.com/exploits/39794/">链接</a>
+[4] ISF攻击框架 <a href="https://github.com/w3h/isf">链接</a></p>
                 </div>
             </div>  
   
@@ -169,13 +266,8 @@ var jiathis_config={
         <hr />
         <ul>
             <li>
-                <a href="../news/Ransomware for Industrial Control Systems.html">
-                    上一篇文章：失控：工业控制系统勒索软件
-                </a>
-            </li>
-            <li>
-                <a href="../security/ClearEnergy.html">
-                    下一篇文章：工业控制系统ClearEnergy勒索软件攻击
+                <a href="../tool/isf.html">
+                    上一篇文章：工控漏洞利用框架 - ISF(Industrial Security Framework)
                 </a>
             </li>
         </ul>

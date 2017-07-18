@@ -5,15 +5,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/index.html</loc>
-<lastmod>2017-07-11T11:33:58-00:00</lastmod>
+<lastmod>2017-07-18T18:26:13-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://icsmaster.com/archives.html</loc>
-<lastmod>2017-07-11T11:33:58-00:00</lastmod>
+<lastmod>2017-07-18T18:26:13-00:00</lastmod>
 <changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/security/plcinjecter.html</loc>
+<lastmod>2017-07-18T14:36:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -96,7 +103,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/category/security.html</loc>
-<lastmod>2017-05-31T14:36:00+08:06</lastmod>
+<lastmod>2017-07-18T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -111,6 +118,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://icsmaster.com/tag/gong-kong-an-quan.html</loc>
 <lastmod>2017-05-22T11:36:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/tag/isf.html</loc>
+<lastmod>2017-07-04T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -131,7 +145,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/tag/gong-kong-ji-zhu.html</loc>
-<lastmod>2017-05-31T14:36:00+08:06</lastmod>
+<lastmod>2017-07-18T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -151,8 +165,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://icsmaster.com/tag/isf.html</loc>
-<lastmod>2017-07-04T14:36:00+08:06</lastmod>
+<loc>http://icsmaster.com/tag/plczhu-ru.html</loc>
+<lastmod>2017-07-18T14:36:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/author/chansim.html</loc>
+<lastmod>2017-07-18T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

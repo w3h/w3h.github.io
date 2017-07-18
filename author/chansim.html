@@ -3,7 +3,7 @@
       xmlns:og="http://ogp.me/ns#"
       xmlns:fb="https://www.facebook.com/2008/fbml">
 <head>
-    <title>工控安全工具集 - 工匠安全实验室 | 专注于工控安全</title>
+    <title>Articles by chansim - 工匠安全实验室 | 专注于工控安全</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -11,10 +11,10 @@
     
 
     <!-- Open Graph tags -->
-            <meta property="og:type" content="article"/>
-            <meta property="og:title" content="工控安全工具集"/>
-            <meta property="og:url" content="../tool/icstools.html"/>
-            <meta property="og:description" content="本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。 1、S7 Client Demo 开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息 ..."/>
+            <meta property="og:type" content="website"/>
+            <meta property="og:title" content="工匠安全实验室 | 专注于工控安全"/>
+            <meta property="og:url" content=".."/>
+            <meta property="og:description" content="工匠安全实验室 | 专注于工控安全"/>
 
     <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
     <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
@@ -74,127 +74,24 @@
     <div class="row">
         <div class="col-sm-9">
 
-   <div class="article-content">
-    <section id="content">
-        <article>
-        <div class="panel panel-default">
-            <header class="page-header">
-                <h1 class="article-title">
-                        工控安全工具集
-                    </a>
-                </h1>
+            <article>
+	   <div class="article-list">	
+       <div class="panel panel-default">
+           <div class="panel-title"> 
+                <h2>&nbsp&nbsp<a href="../security/plcinjecter.html">利用Modbus PLC作为攻击载荷分发系统</a></h2>
+           </div>
 
-                <div class="entry-content">
-                    <div class="panel-body">
-﻿<footer class="article-meta">
-
-	<span class="item name">
-            <!-- <span class="label label-default">By</span> -->
-            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'W3H'>]</a> -->
-			
-            <i class="fa fa-user"></i><a href="../author/w3h.html">  W3H </a> &nbsp;
-			
-	</span>
-	
-	<span class="item time">
-	 <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-02-23T15:24:00+08:00"> 2017-02-23 17:27:44</time>
-    </span>  
-	</span>	
-
-
-	<span class="item tag">
-<!-- <span class="label label-default">Tags</span> -->
-<a href="../tag/gong-ju.html"><span class="label label-default"> 工具 </span></a>
-	</span>
-	
-    
-</footer><!-- /.post-info -->                    </div>
-                </div>                  
-            </header>
-
-            <div class="entry-content markdown-body">
-                <div class="panel-body">
-                    <div class="highlight"><pre>本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
-</pre></div>
-
-
-<h2>1、S7 Client Demo</h2>
-<p>开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息（如固件版本，块信息等），还可以直接操作控制器的CPU的启停。<a href="https://github.com/w3h/icsmaster/tree/master/tool/s7clientdemo.rar">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/1.gif" title="=100*100" /></p>
-<h2>2、PLCSCAN</h2>
-<p>通过探测设备，获取关于设备的供应商类型、模块信息等，目前仅支持S7协议与MODBUS协议。<a href="https://github.com/w3h/icsmaster/tree/master/tool/plcscan.rar">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/2.gif" title="=100*100" /></p>
-<h2>3、QTester104</h2>
-<p>使用QT和C++实现IEC104通讯规约，可以连接IEC104的设备。<a href="https://github.com/w3h/icsmaster/tree/master/tool/qtester104-v1.18.zip">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/3.gif" /></p>
-<h2>4、S7-Brute-Offline</h2>
-<p>S7密码离线暴力破解工具。<a href="https://github.com/w3h/icsmaster/tree/master/tool/s7-brute-offline.py">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/4.gif" /></p>
-<h2>5、SCADA_Metasploit_Modules</h2>
-<p>列举了MSF上所有的针对工业控制系统的漏洞脚本。<a href="https://github.com/w3h/icsmaster/tree/master/SCADA_Metasploit_Modules.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/5.gif" /></p>
-<h2>6、Scada_Password</h2>
-<p>列举了工业控制系统中的常见的用户和密码。<a href="https://github.com/w3h/icsmaster/tree/master/Scada_Password.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/6.gif" /></p>
-<h2>7、Scada_Dorks</h2>
-<p>收集针对工业控制系统中常见的DORK。<a href="https://github.com/w3h/icsmaster/tree/master/Scada_Dorks.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/7.gif" /></p>
-<h2>8、Scapy</h2>
-<p>Scapy的是一个强大的交互式数据包处理程序（使用python编写）。它能够伪造或者解码大量的网络协议数据包，能够发送、捕捉、匹配请求和回复包等等。它可以很容易地处理一些典型操作，比如端口扫描，tracerouting，探测，单元测试，攻击或网络发现（可替代hping，NMAP，arpspoof，ARP-SK，arping，tcpdump，tethereal，P0F等）。最重要的他还有很多更优秀的特性——发送无效数据帧、注入修改的802.11数据帧、在WEP上解码加密通道（VOIP）、ARP缓存攻击（VLAN）等，这也是其他工具无法处理完成的。
-该工具主要用于工控协议解析，常用协议攻击（如tcp_land、arp fload等），工控协议FUZZ测试和漏洞利用脚本的编写。<a href="https://github.com/secdev/scapy.git">下载地址</a></p>
+           <div class="panel-body">
+                <div class="summary"><h2>一、    介绍</h2>
+<p>随着互联网+、工业4.0的推进，以前的网络边界被逐渐打破，工业控制系统的安全问题越来越突出，近期针对控制器的攻击层出不穷，如 <a href="http://icsmaster.com/news/logicblob.html">PLC逻辑炸弹</a>、<a href="http://icsmaster.com/security/ClearEnergy.html">PLC勒索软件</a>，<a href="http://icsmaster.com/security/plcblaster.html">PLC蠕虫</a>，相关的技术我们一直在跟踪分析。</p>
+<p>本文主要介绍怎么利用Modbus PLC作为攻击载荷 ...</p>
+                    <a class="readmore" href="../security/plcinjecter.html">READ MORE</a>
                 </div>
-            </div>  
-  
-            <div class="panel-body">
-
-<!-- JiaThis Button BEGIN -->
-<script type="text/javascript" >
-var jiathis_config={
-	data_track_clickback:true,
-	siteNum:5,
-	sm:"weixin,tqq,qzone,tsina,cqq",
-	summary:"",
-	showClose:true,
-	shortUrl:true,
-	hideMore:true
-}
-</script>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=2128692&type=left&btn=l5.gif&move=1" charset="utf-8"></script>
-<!-- JiaThis Button END -->
-
-
-    <div>
-        <br />
-        <hr />
-        <ul>
-            <li>
-                <a href="../news/Ransomware for Industrial Control Systems.html">
-                    上一篇文章：失控：工业控制系统勒索软件
-                </a>
-            </li>
-            <li>
-                <a href="../security/ClearEnergy.html">
-                    下一篇文章：工业控制系统ClearEnergy勒索软件攻击
-                </a>
-            </li>
-        </ul>
-    </div>
-            </div>
+           </div>
         </div>
+		</div>
+            </article>
 
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <!-- /.entry-content -->
-<!-- UY BEGIN -->
-<div id="uyan_frame"></div>
-<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2138476"></script>
-<!-- UY END -->
-            </div>
-        </div>    
-        </article>
-    </section>
-	</div>
         </div>
         <div class="col-sm-3" id="sidebar">
 <div class="sidebar_main">
@@ -210,51 +107,6 @@ var jiathis_config={
                         <li class="list-group-item">               
                             <a href="../security/plcinjecter.html">
                                <span class="glyphicon glyphicon-volume-down"></span> 利用Modbus PLC作为攻击载荷分发系统
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../tool/isf.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 工控漏洞利用框架 - ISF(Industrial Security Framework)
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../security/wincc_env.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 基于WinCC多协议通信实验环境搭建
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../news/logicblob.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 工业控制系统中的梯形逻辑炸弹
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../security/wannacry.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> Wannacry(永恒之蓝)勒索蠕虫跟踪分析
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../security/plcblaster.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 针对西门子PLC蠕虫的实现
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../security/ClearEnergy.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 工业控制系统ClearEnergy勒索软件攻击
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../tool/icstools.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全工具集
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../news/Ransomware for Industrial Control Systems.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 失控：工业控制系统勒索软件
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="../other/about.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 关于我们
                             </a>
                         </li>
                     </ul>
