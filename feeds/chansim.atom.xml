@@ -98,7 +98,7 @@ Payload是“Functional Keylogger to File Null-Free Shellcode” 长度为0x0259
 &lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/11.png" /&gt;&lt;/p&gt;
 &lt;p&gt;为了将payload上传至plc中，plcInjectPayload会根据加载的控制策略不同，对plc的可用内存大小的要求也有所变化，因此该脚本首先检查它们是否有足够的内存空间来存放相应的payload。为了检测内存的大小，可以发送操作功能代码为03（读取保持寄存器）的Modbus请求，尝试从某个地址读取特定记录（每个记录长度为16比特）。如果收到一个0x83异常，那么说明这个PLC对于我们来说是无法使用的。&lt;/p&gt;
 &lt;p&gt;Modbus 协议的功能代码如下图所示&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/13.png" /&gt;&lt;/p&gt;
 &lt;p&gt;使用ISF下载控制器寄存器，执行操作如下&lt;/p&gt;
 &lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/12.gif" /&gt;&lt;/p&gt;
 &lt;p&gt;读取到的内容如下图所示&lt;/p&gt;
