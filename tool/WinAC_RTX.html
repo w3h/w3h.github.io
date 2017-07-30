@@ -3,7 +3,7 @@
       xmlns:og="http://ogp.me/ns#"
       xmlns:fb="https://www.facebook.com/2008/fbml">
 <head>
-    <title>工控安全工具集 - 工匠安全实验室 | 专注于工控安全</title>
+    <title>构建虚拟工控环境系列 - 西门子虚拟PLC - 工匠安全实验室 | 专注于工控安全</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -12,9 +12,9 @@
 
     <!-- Open Graph tags -->
             <meta property="og:type" content="article"/>
-            <meta property="og:title" content="工控安全工具集"/>
-            <meta property="og:url" content="../tool/icstools.html"/>
-            <meta property="og:description" content="本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。 1、S7 Client Demo 开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息 ..."/>
+            <meta property="og:title" content="构建虚拟工控环境系列 - 西门子虚拟PLC"/>
+            <meta property="og:url" content="../tool/WinAC_RTX.html"/>
+            <meta property="og:description" content="一、 概述 跟随着工控安全一路走来，工控安全市场今年明显有相当大的改善，无论从政策还是客户需求，都在逐步扩大中。但是，搞工控安全研究的人员却寥寥无几。一方面工控安全是个跨学课的技术，需要了解多方面的知识，有比较高的技术上的门槛；另一方面，没有可以研究和学习的便利的环境。一般，搞这方面研究的公司或者个人 ..."/>
 
     <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
     <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
@@ -80,7 +80,7 @@
         <div class="panel panel-default">
             <header class="page-header">
                 <h1 class="article-title">
-                        工控安全工具集
+                        构建虚拟工控环境系列 - 西门子虚拟PLC
                     </a>
                 </h1>
 
@@ -90,22 +90,24 @@
 
 	<span class="item name">
             <!-- <span class="label label-default">By</span> -->
-            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'W3H'>]</a> -->
+            <!-- <a href="../author/feilt.html"><i class="fa fa-user"></i> [<Author u'feilt'>]</a> -->
 			
-            <i class="fa fa-user"></i><a href="../author/w3h.html">  W3H </a> &nbsp;
+            <i class="fa fa-user"></i><a href="../author/feilt.html">  feilt </a> &nbsp;
 			
 	</span>
 	
 	<span class="item time">
 	 <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-02-23T15:24:00+08:00"> 2017-02-23 17:27:44</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-07-30T14:36:00+08:00"> 2017-07-30 14:39:53</time>
     </span>  
 	</span>	
 
 
 	<span class="item tag">
 <!-- <span class="label label-default">Tags</span> -->
-<a href="../tag/gong-ju.html"><span class="label label-default"> 工具 </span></a>
+<a href="../tag/xu-ni-plc.html"><span class="label label-default"> 虚拟PLC </span></a>
+        &nbsp; 
+<a href="../tag/ruan-plc.html"><span class="label label-default"> 软PLC </span></a>
 	</span>
 	
     
@@ -115,34 +117,73 @@
 
             <div class="entry-content markdown-body">
                 <div class="panel-body">
-                    <div class="highlight"><pre>本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+                    <h2>一、    概述</h2>
+<p>跟随着工控安全一路走来，工控安全市场今年明显有相当大的改善，无论从政策还是客户需求，都在逐步扩大中。但是，搞工控安全研究的人员却寥寥无几。一方面工控安全是个跨学课的技术，需要了解多方面的知识，有比较高的技术上的门槛；另一方面，没有可以研究和学习的便利的环境。一般，搞这方面研究的公司或者个人，都会先购买一些硬件设备，搭建一个模拟环境，再做相应的安全研究，成本实在是太高。为了解决这个问题，我们做了一系列的相关的技术研究，通过构建一套虚拟的工业控制环境，从而降低了解和学习工控安全的门槛，推动相关人才的培养。</p>
+<p>本篇主要介绍西门子虚拟PLC，使用的操作系统为Windows7 x86 Ultimate，虚拟化软件为 VMware Workstation 12 Pro，（SIEMENS）WinAC RTX 2010。</p>
+<h2>二、    控制器虚拟化技术介绍</h2>
+<p>可编程控制器，即PLC。PLC的实现分为硬PLC和软PLC。 所谓硬PLC从严格意义上来说是由硬件或者一块专用的ASIC芯片来实现PLC指令的执行．而软PLC是用一些通用的CPU或者MCU来实现PLC指令的解释或者编译持行。</p>
+<p>软件PLC（SoftPLC，也称为软逻辑SoftLogic）是一种基于基于PC机开发结构的控制系统，它具有硬PLC在功能、可靠性、速度、故障查找等方面的特点，利用软件技术可以将标准的工业PC转换成全功能的PLC过程控制器。软件PLC综合了计算机和PLC的开关量控制、模拟量控制、数学运算、数值处理、网络通信、PID调节等功能，通过一个多任务控制内核，提供强大的指令集、快速而准确的扫描周期、可靠的操作和可连接各种I/O系统的及网络的开放式结构。所以，软件PLC 提供了与硬PLC同样的功能，同时又提供了PC环境的各种优点。</p>
+<p>虚拟机技术是虚拟化技术的一种，所谓虚拟化技术就是将事物从一种形式转变成另一种形式，最常用的虚拟化技术有操作系统中内存的虚拟化，实际运行时用户需要的内存空间可能远远大于物理机器的内存大小，利用内存的虚拟化技术，用户可以将一部分硬盘虚拟化为内存，而这对用户是透明的。又如，可以利用虚拟专用网技术（VPN）在公共网络中虚拟化一条安全，稳定的“隧道”，用户感觉像是使用私有网络一样。</p>
+<p>如果将软PLC安装在虚拟机下，在软PLC出现故障时，用备份的虚拟机代替当前的虚拟机，即可快速恢复系统运行；此外，开发人员不必在现场，即可开发调试项目，在调试完成后，将包含软PLC的虚拟机直接放在现场的工控计算机上就直接可以完全运行。但是软PLC目前只能在物理PC上安装运行，在虚拟机下可以安装，但不能运行，这是由于软PLC需要直接驱动硬件，而虚拟机中的硬件都是虚拟造成的。</p>
+<h2>三、西门子虚拟化WinAC产品分类</h2>
+<p>SIMATIC WinAC是西门子公司开发的基于PC控制的核心组件，它的出现扩展了SIMATIC S7的控制范围。WinAC是一个名副其实的控制中心，它将PLC控制、数据处理、通讯、可视化及工艺集成于一台PC机上。 SIMATIC WinAC产品包括软件型和插槽型两大类，包括如下5种产品： </p>
+<ul>
+<li>
+<p>1、WinAC Basis (WinAC 基本型) 
+WinAC Basis 是低成本解决方案，用于对控制无精确时间要求，有大量、快速的数据处理与控制任务(控制任务指PLC的控制功能)相结合或其它PC任务的控制场合。</p>
+</li>
+<li>
+<p>2、WinAC PN 
+第一个支持PROFInet通讯标准的SIMATIC CPU，性能与WinAC Basis相似。WinAC PN支持基于组件的自动化(CBA)和PROFInet通讯标准。基于组件的自动化和PROFInet提供了一个开放的标准，用于在复杂任务中机械和系统单元之间的数据交换。数据交换通过SIMATIC iMap工具来进行配置。WinAC PN适应于以下任务：
+整个复杂系统的机械和车间区域之间的协调和连接 来自系统单元或机械可被集成到一个全范围的复杂系统控制WinAC Basis 4.1有一个选件WinAC PN，带有WinAC PN选件的WinAC Basis 4.1支持PROFInet和CBA。</p>
+</li>
+<li>
+<p>3、WinAC RTX(WinAC 实时型) 
+WinAC RTX 提供了Windows 2000/XP的实时子系统，具有“硬实时”和“抗死机”特性。适应于具有高速和精确时间要求的控制任务的场合，如运动控制、闭环控制等。 </p>
+</li>
+<li>
+<p>4、WinAC MP 
+WinAC MP基于WinCE操作系统和SIMATIC MP370(一种多功能面板)硬件平台。MP370为无硬盘、无风扇设计，WinCE具有实时特性，可实现严格的确定性动作。WinAC MP用在恶劣工业环境和有大量数据要处理的场合。 </p>
+</li>
+<li>
+<p>5、WinAC Slot 412/416 
+以板卡的形式插入在PC中，在板卡上已经集成了用于控制任务的CPU、存储器等元件。它可独立于PC进行控制操作。板卡上集成一个MPI/DP接口和一个DP口。WinAC Slot适用于对安全性和稳定性要求较高的场合。WinAC Slot 412/416在性能上与S7-412/416相近。</p>
+</li>
+</ul>
+<h2>四、虚拟控制器WinAC RTX搭建</h2>
+<p>1、打开虚拟机系统的安装目录，找到后缀名是“.vmx”的文件，然后用记事本打开。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/1.png" /></p>
+<p>2、添加虚拟网卡设备，添加如下配置。如果配置文件中已存在，则不添加“ethernet0.virtualDev = "e1000e"”，直接将等号后面的值改为"e1000e"。</p>
+<div class="highlight"><pre>ethernet0.virtualDev = &quot;e1000e&quot;
+bios440.filename=&quot;FUJITSU211_314.ROM&quot;
 </pre></div>
 
 
-<h2>1、S7 Client Demo</h2>
-<p>开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息（如固件版本，块信息等），还可以直接操作控制器的CPU的启停。<a href="https://github.com/w3h/icsmaster/tree/master/tool/s7clientdemo.rar">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/1.gif" title="=100*100" /></p>
-<h2>2、PLCSCAN</h2>
-<p>通过探测设备，获取关于设备的供应商类型、模块信息等，目前仅支持S7协议与MODBUS协议。<a href="https://github.com/w3h/icsmaster/tree/master/tool/plcscan.rar">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/2.gif" title="=100*100" /></p>
-<h2>3、QTester104</h2>
-<p>使用QT和C++实现IEC104通讯规约，可以连接IEC104的设备。<a href="https://github.com/w3h/icsmaster/tree/master/tool/qtester104-v1.18.zip">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/3.gif" /></p>
-<h2>4、S7-Brute-Offline</h2>
-<p>S7密码离线暴力破解工具。<a href="https://github.com/w3h/icsmaster/tree/master/tool/s7-brute-offline.py">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/4.gif" /></p>
-<h2>5、SCADA_Metasploit_Modules</h2>
-<p>列举了MSF上所有的针对工业控制系统的漏洞脚本。<a href="https://github.com/w3h/icsmaster/tree/master/SCADA_Metasploit_Modules.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/5.gif" /></p>
-<h2>6、Scada_Password</h2>
-<p>列举了工业控制系统中的常见的用户和密码。<a href="https://github.com/w3h/icsmaster/tree/master/Scada_Password.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/6.gif" /></p>
-<h2>7、Scada_Dorks</h2>
-<p>收集针对工业控制系统中常见的DORK。<a href="https://github.com/w3h/icsmaster/tree/master/Scada_Dorks.csv">下载地址</a>
-<img alt="Alt text" src="/static/images/icstools/7.gif" /></p>
-<h2>8、Scapy</h2>
-<p>Scapy的是一个强大的交互式数据包处理程序（使用python编写）。它能够伪造或者解码大量的网络协议数据包，能够发送、捕捉、匹配请求和回复包等等。它可以很容易地处理一些典型操作，比如端口扫描，tracerouting，探测，单元测试，攻击或网络发现（可替代hping，NMAP，arpspoof，ARP-SK，arping，tcpdump，tethereal，P0F等）。最重要的他还有很多更优秀的特性——发送无效数据帧、注入修改的802.11数据帧、在WEP上解码加密通道（VOIP）、ARP缓存攻击（VLAN）等，这也是其他工具无法处理完成的。
-该工具主要用于工控协议解析，常用协议攻击（如tcp_land、arp fload等），工控协议FUZZ测试和漏洞利用脚本的编写。<a href="https://github.com/secdev/scapy.git">下载地址</a></p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/2.png" /></p>
+<p>3、在西门子技术支持的官网（<a href="https://support.industry.siemens.com">https://support.industry.siemens.com</a>）下载文件“FUJITSU211_314.ROM”，并将在虚拟机安装目录下。此文件是将虚拟机硬件映像成FUJITSU PRIMERGR服务器。如下图所示。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/3.png" /></p>
+<p>4、打开运行虚拟机，配置当前主机的IP地址。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/6.png" /></p>
+<p>5、使用虚拟光驱安装WinAC RTX 2010。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/4.png" /></p>
+<p>6、安装完后启动station Configurator。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/5.png" /></p>
+<p>7、打开的窗口中添加WinLC RTX，添加通讯网卡“IE 通用”</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/7.png" /></p>
+<p>8、此时会发现桌面上多出一个图标，此图标就是虚拟PLC的图标，双击打开即可。至此，就完成了在虚拟机中安装PLC。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/8.png" /></p>
+<h2>五、虚拟控制器组态</h2>
+<p>1、打开step7软件，创建工程，并进行组态配置，配置方法如下图所示。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/9.png" /></p>
+<p>2、编写一个小的测试程序。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/10.png" /></p>
+<p>3、编译并下载组态程序。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/11.png" /></p>
+<p>4、监控运行，如果一切正常，即显示为“RUN”状态。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/12.png" /></p>
+<p>5、可以使用step7软件控制虚拟PLC的启停。</p>
+<p><img alt="Alt text" src="/static/images/WinAC_RTX/13.png" /></p>
+<p>至此，就完成了虚拟PLC的搭建。</p>
                 </div>
             </div>  
   
@@ -169,13 +210,8 @@ var jiathis_config={
         <hr />
         <ul>
             <li>
-                <a href="../news/Ransomware for Industrial Control Systems.html">
-                    上一篇文章：失控：工业控制系统勒索软件
-                </a>
-            </li>
-            <li>
-                <a href="../security/ClearEnergy.html">
-                    下一篇文章：工业控制系统ClearEnergy勒索软件攻击
+                <a href="../security/plcinjecter.html">
+                    上一篇文章：利用Modbus PLC作为攻击载荷分发系统
                 </a>
             </li>
         </ul>
