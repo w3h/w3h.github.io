@@ -5,15 +5,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/index.html</loc>
-<lastmod>2017-07-18T20:01:49-00:00</lastmod>
+<lastmod>2017-07-30T14:54:40-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://icsmaster.com/archives.html</loc>
-<lastmod>2017-07-18T20:01:49-00:00</lastmod>
+<lastmod>2017-07-30T14:54:40-00:00</lastmod>
 <changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/tool/WinAC_RTX.html</loc>
+<lastmod>2017-07-30T14:36:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -110,7 +117,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/category/tool.html</loc>
-<lastmod>2017-07-04T14:36:00+08:06</lastmod>
+<lastmod>2017-07-30T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -123,8 +130,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://icsmaster.com/tag/isf.html</loc>
-<lastmod>2017-07-04T14:36:00+08:06</lastmod>
+<loc>http://icsmaster.com/tag/xu-ni-plc.html</loc>
+<lastmod>2017-07-30T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -137,8 +144,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://icsmaster.com/tag/le-suo-ruan-jian.html</loc>
-<lastmod>2017-04-08T14:36:00+08:06</lastmod>
+<loc>http://icsmaster.com/tag/isf.html</loc>
+<lastmod>2017-07-04T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -160,6 +167,20 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://icsmaster.com/tag/guan-yu-wo-men.html</loc>
 <lastmod>2014-05-19T05:24:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/tag/ruan-plc.html</loc>
+<lastmod>2017-07-30T14:36:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/tag/le-suo-ruan-jian.html</loc>
+<lastmod>2017-04-08T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -187,7 +208,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/author/feilt.html</loc>
-<lastmod>2017-05-31T14:36:00+08:06</lastmod>
+<lastmod>2017-07-30T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
