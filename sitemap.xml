@@ -5,15 +5,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/index.html</loc>
-<lastmod>2017-07-30T14:54:40-00:00</lastmod>
+<lastmod>2017-09-11T17:21:23-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://icsmaster.com/archives.html</loc>
-<lastmod>2017-07-30T14:54:40-00:00</lastmod>
+<lastmod>2017-09-11T17:21:23-00:00</lastmod>
 <changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/tool/AB_VPLC.html</loc>
+<lastmod>2017-09-11T14:36:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -117,7 +124,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/category/tool.html</loc>
-<lastmod>2017-07-30T14:36:00+08:06</lastmod>
+<lastmod>2017-09-11T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -131,7 +138,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/tag/xu-ni-plc.html</loc>
-<lastmod>2017-07-30T14:36:00+08:06</lastmod>
+<lastmod>2017-09-11T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -173,7 +180,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/tag/ruan-plc.html</loc>
-<lastmod>2017-07-30T14:36:00+08:06</lastmod>
+<lastmod>2017-09-11T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -208,7 +215,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/author/feilt.html</loc>
-<lastmod>2017-07-30T14:36:00+08:06</lastmod>
+<lastmod>2017-09-11T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
