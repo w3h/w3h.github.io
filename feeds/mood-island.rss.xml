@@ -1,5 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/mood-island.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 11 May 2017 14:36:00 +0800</lastBuildDate><item><title>针对西门子PLC蠕虫的实现</title><link>http://icsmaster.com/security/plcblaster.html</link><description>&lt;h2&gt;研究背景&lt;/h2&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/mood-island.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 10 Nov 2017 10:24:00 +0800</lastBuildDate><item><title>工业系统虚拟化测试平台搭建</title><link>http://icsmaster.com/security/virtual_platform.html</link><description>&lt;h2&gt;一、系统概述&lt;/h2&gt;
+&lt;p&gt;基于虚拟化技术搭建的工业自动化测试平台。多个品牌多套控制系统有机融合在一个虚拟化环境里。对最终的客户或学院屏蔽底层细节。模拟真实的Engineer和Operation 工作站环境。从以太网端口镜像可以截取真实的报文。&lt;/p&gt;
+&lt;h2&gt;二、工业自动化虚拟测试平台&lt;/h2&gt;
+&lt;h3&gt;1. 目前暂时未完全实现虚拟化的系统&lt;/h3&gt;
+&lt;h4&gt;施耐德-福克斯波罗  I/A  DCS和Evo DCS系统&lt;/h4&gt;
+&lt;p&gt;Foxboro（福克斯波罗）的DCS系统采用专用的MESH网络，该网络基于以太网原理但又不同于以太网。计算机工作站里需要插入专用的MESH网卡。目前暂时未完成虚拟化的主要问题是该MESH网卡暂时未提供“经过VMware 或Citrxi、KVM等验证测试过的驱动程序”。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/1.jpg" /&gt;&lt;/p&gt;
+&lt;h4&gt;横河 Centum VP  DCS系统；&lt;/h4&gt;
+&lt;p&gt;Yokogawa（横河公司）的DCS系统此前采用VNet专用控制网，后升级为VNet/IP控制网。底层基于 TCP/IP协议，网络模型基本上符合以太网原理，但又和以太网有着较大的不同。计算机工作站里需要插入专用的VNet/IP网卡（VI702网卡）。目前暂时未完成虚拟化的主要问题是该VNet/IP网卡暂时未提供“经过VMware 或Citrxi、KVM等验证测试过的驱动程序”。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/2.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 已经测试并大规模应用于实际工业现场的系统&lt;/h3&gt;
+&lt;h4&gt;Siemens公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Siemens  PCS7 DCS系统英文版。
+国内应用业绩较少。主要原因是中文版本PCS7 DCS系统使用了USB 硬加密锁，该加密锁在映射至虚拟机时，有一定程度的兼容性问题。
+而英文版本PCS7 不采用USB硬加密锁。所以英文版PCS7 在欧洲和美洲有大量项目实例运行在虚拟化环境内。
+目前中文版和英文版没有功能差异，主要的差异就是在于“界面”是英文语言还是中文语言。&lt;/li&gt;
+&lt;li&gt;Siemens  Step7 + WinCC  PLC系统
+目前测试应用实例很多。&lt;/li&gt;
+&lt;li&gt;Siemens  TIA Portal  Step7 + WinCC  PLC系统
+目前博图平台软件在新版本中已经考虑了虚拟化环境运行问题。
+但是中文版本的博图WinCC 依然有USB硬加密锁的问题存在。
+而同样的，英文版不存在该问题。&lt;/li&gt;
+&lt;li&gt;Siemens SPPA-T3000  DCS 系统
+T3000  DCS系统大约从2007年开始大面积部署在虚拟化环境里。
+西门子公司发布的环境为Citrix公司的Xen Server。
+经测试，其系统充分考虑了虚拟化环境下的运行问题，在VMware vSphere和KVM系统上搭建测试环境，也没有问题。
+T3000 DCS系统主要用于大型火电厂，燃气发电，核电站常规岛控制部分。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/3.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Rockwell-AB 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;AB公司的编程软件Studio 5000 
+经测试AB公司Studio 5000 PLC编程软件V20以上版本完全兼容各个虚拟化环境。并且从V19版本开始，AB公司在诸多大项目中开始实际应用虚拟化环境的解决方案。&lt;/li&gt;
+&lt;li&gt;AB公司的人机界面监控软件FT View
+目前新版本的FT View软件统一了AB公司老版本的，RSView SE、RSView32和RSView ME。 并且以后只有FT View一个整合的版本。新版本的FT View除了功能更加强大外，还支持虚拟化环境。
+除了欧美一些项目外，在中国国内也已经有多个超大项目使用了虚拟化环境，也有多个中等项目运行在虚拟化环境里。&lt;/li&gt;
+&lt;li&gt;AB公司的其他软件
+目前资产管理软件FT Asset Center、实时数据库软件FT Histrion、 Web Server门户软件FT View Point 均可运行在虚拟化环境下。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/4.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;GE 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;PAC8000 系统&lt;/li&gt;
+&lt;li&gt;iFix监控软件
+iFix监控软件在中国十分流行，甚至其流行和普及程度远远超过iFix在北美的流行程度。目前新版本的iFix可以运行在虚拟化环境内。
+iFix软件保护版权采用的是USB硬加密锁方式。目前可以使用USB Over EtherNet 转换设备将USB硬加密锁转换至以太网链路，可以使得虚拟机内的软件识别到。兼容性还不错。&lt;/li&gt;
+&lt;li&gt;Cimplicity 监控软件
+Cimplicity软件可运行在虚拟化环境内。USB硬加密锁解决方法同iFix。&lt;/li&gt;
+&lt;li&gt;Proficy  ME编程软件
+Proficy ME从2006年开始起就对虚拟化环境没有任何的“限制”，即在没有宣布正式支持虚拟化环境的时候，Proficy ME软件已经可以正常的稳定的在虚拟化环境内运行，时间达十来年之久。&lt;/li&gt;
+&lt;li&gt;GE-Xinhua OC6000E  DCS系统
+GE新华的DCS系统。也可稳定运行在VMware虚拟化环境和Citirx环境中。KVM和Hyper-V环境据反馈尚有一些Bug。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/5.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;ABB 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;AC500  PLC系统&lt;/li&gt;
+&lt;li&gt;Freelance  DCS系统&lt;/li&gt;
+&lt;li&gt;800xA  DCS系统
+因为800xA DCS系统安装恢复等过程十分复杂，ABB公司推荐采用虚拟化分发部署的方式来实施项目。除了确保兼容性稳定性外，还可以大大提升项目实施的效率。&lt;/li&gt;
+&lt;li&gt;Symphony Plus系统
+Symphony Plus系统也充分考虑了虚拟化环境运行问题。关于授权加密锁也要丰富的解决方案。
+而传统的老版本的Symphony系统则目前无法运行在虚拟化环境内。
+主要原因在于其使用了专用的Scsi 接口卡。该接口卡运行在虚拟化环境内有很大的兼容性问题。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/6.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Emerson公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Ovation DCS系统
+目前在火电厂项目实际应用中运行在虚拟化环境的业绩尚不多。反而是最近几年核电厂新项目中Ovation系统开始广泛采用虚拟化技术。
+Emerson公司内部的所有测试环境均为虚拟化环境。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DeltaV  DCS系统
+DeltaV 自V10.3.1版本起，运行在虚拟化环境内没有任何问题。
+官方推荐虚拟化环境为VMware。 但是测试Citrix也无问题。
+DeltaV采用USB硬加密锁。需要USB Over Ethernet解决方案。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/7.jpg" /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Honeywell公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Honeywell  PKS DCS系统
+PKS DCS系统从R410版本开始可运行在虚拟化环境内；从R430版本开始官方推荐运行在虚拟化环境内而不是实体机环境内。
+R311版本我们也因为一些特殊的项目需要，进行了充分的系统测试。除了对网卡，显卡有一些限制条件外。也可以稳定运行在虚拟化环境内。
+Honeywell公司在新功能的拓展上，表现的态度为“积极甚至激进”。很多新功能往往是业界第一个支持，第一个推出。
+Honeywell更老版本的DCS系统，如TPS等，目前不可以运行在虚拟化环境中。不过这些老系统虽然在工业现场还有大面积的应用，但是Honeywell公司已经将其停产超过10年了。&lt;/li&gt;
+&lt;li&gt;Honeywell HS Scada软件
+HS Scada软件可运行在虚拟化环境内。
+USB硬加密锁解决方案也采用USB Over Ethernet。&lt;/li&gt;
+&lt;li&gt;Honeywell SM  SIS系统
+&lt;img alt="Alt text" src="/static/images/virtual_platform/8.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;浙大中控、和利时、新华、国电智深、科远&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;浙大中控Supcon
+Supcon目前JX-300XP、ECS-100、ECS-700 均可运行在虚拟环境中。
+AdvantTrol Pro 和Super Visual软件也没有问题。
+USB硬加密锁解决方案同上所述。&lt;/li&gt;
+&lt;li&gt;和利时
+和利时KM系统，MACS V6.X软件可运行在虚拟环境内。
+MACS V4.X软件目前暂不能运行在虚拟环境内。
+MACS V5.X软件官方未做充分测试。因为目前也不再主推V5软件。所以其稳定性不好验证。&lt;/li&gt;
+&lt;li&gt;新华
+新华OnXDC 系统可以运行在虚拟化环境内。&lt;/li&gt;
+&lt;li&gt;国电智深
+国电智深EDPF-NT+ 也支持虚拟化环境。&lt;/li&gt;
+&lt;li&gt;科远
+科远公司宣传支持虚拟化环境。但是未获得其软件进行测试验证。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Schneider（施耐德）公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;施耐德Unity Pro  PLC编程软件支持&lt;/li&gt;
+&lt;li&gt;施耐德Citect Scada监控软件新版本支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Clear Scada监控软件支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Intouch 监控软件新版本支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Intouch-WAS 企业版监控软件支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德-福克斯波罗 Evo Scada软件支持虚拟化环境，并推荐虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德-泰尔文特 OASys DNA Scada软件支持虚拟化环境。
+可多平台并存，如Server采用Windows或Linux，数据库采用SUN Solaris，操作站采用Windows。 为减少系统兼容性，降低实施难度，泰尔文特公司也推荐虚拟化部署。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;施耐德公司目前旗下拥有最多的HMI/Scada软件产品。小中大型均有。
+主流、非主流也有。Windows平台和非Windows平台也都有。&lt;/p&gt;
+&lt;h4&gt;Omron、Mitsubishi、Beckoff等&lt;/h4&gt;
+&lt;p&gt;因为工作原因，对Omron和Mitsubishi相关产品近十年内未再关注和测试。
+暂不清楚具体情况。
+倍福公司（Beckoff）倒是宣称完美支持虚拟化环境。并且有相关业绩证明。&lt;/p&gt;
+&lt;h3&gt;3. 虚拟化测试平台的搭建&lt;/h3&gt;
+&lt;h4&gt;虚拟化平台的选择。&lt;/h4&gt;
+&lt;p&gt;拟采用VMware vSpher或者Citrix XenServer。如果是单一平台时，倾向于VMware。
+或者不排除考虑，2种平台均搭建。
+目前绝大部分自动化行业领导者均优先支持VMware的系统。
+拟用版本vSphere v6.0u3. 暂不考虑使用最新版本v6.5 。已降低系统Bug造成的潜在风险。&lt;/p&gt;
+&lt;h4&gt;系统搭建步骤&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;搭建服务器硬件资源池。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;A方案，采用10台低配置的HP MicroServer Gen8 或者类似机器。
+每台服务器内正常时只运行1-2个VMs（虚拟机实例）。
+数量多，但是每台单价低。此时因为虚拟机不集中运行在少数量机器中。风险也较低。同时MicroServer  Gen8这类机器体积小巧。
+搬迁、拆卸、维护也方便，占用空间并不比三四台大型服务器多，甚至占用空间更小。
+
+B方案，采用2-4台（根据项目的实际需求）DELL R920或者HP ML350P Gen9这类大型服务器。
+每台服务器运行4-6个VMs。服务器数量控制在2-4台。一般的实验室，2台即差不多可满足要求。
+因为多个VMs运行在同一台硬件上，因此建议必须采用冗余的热插拔电源，冗余的热插拔阵列硬盘。
+服务器内也须插多个网卡。最好每个VMs都有自己独立的网卡。
+
+C方案，可采用今年来流行的四子星、八子星等硬件，如DELL C6320或HP SL230S 等刀片式服务器。
+一般每个刀箱可容纳4个或8个刀片服务器。
+刀片配置可高可低。
+也可以一开始就配置较高配置的刀箱，但是刀片数量初期保持为3-4个，后期可以慢慢再根据实际需求，经费预算进行扩展。
+刀片式一般均为冗余热插拔电源。
+
+D方案，采用美国容错（Stratus）、日本NEC、中国海得等容错服务器硬件平台。
+系统运行在硬容错平台的虚拟化环境内。
+系统安全性大大提升。
+但容错平台相对较昂贵。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;搭建VMware  vSphere平台
+按照硬件厂家推荐的vSphere版本，严格遵照部署手册，部署vSphere平台。
+应充分考虑到兼容性、可扩展性、容错性。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;搭建虚拟化环境内的自动化软件环境
+须严格按照各个自控系统厂家推荐的方式来部署虚拟化环境。
+对于要求网卡直通的软件必须设置网卡直通。
+对于不要求网卡直通的软件推荐采用网卡直通。
+为降低兼容性风险，应尽量采用较新的自动化软件版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;搭建自动化控制网络
+有的PLC系统网络可以合并在一套交换机上。
+而有的DCS系统网络必须是单独的一套或者两套交换机。
+当系统厂家众多时，网络会显得十分凌乱，需要丰富的经验进行梳理。
+对于能合并的尽量进行合并。
+对于不能合并的系统，应尽量将其单独隔离开来。并尽量将网络比较复杂的DCS系统部署在一套服务器上。 将网络比较简单的PLC系统部署在一套服务器上。
+为便于侦听报文，交换机应选择兼容性好，性能强，带有端口镜像功能的高级管理型交换机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;建设灾备和恢复系统
+系统搭建完成后，必须构建灾备系统。
+以防止意外故障，或者攻防时导致系统瘫痪时，可将系统环境快速的复原。不致影响正常运行。
+除灾备软件、杀毒软件和防火墙等外，还应部署独立的存储服务器。推荐群晖公司的产品。&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">mood-island</dc:creator><pubDate>Fri, 10 Nov 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-10:security/virtual_platform.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>针对西门子PLC蠕虫的实现</title><link>http://icsmaster.com/security/plcblaster.html</link><description>&lt;h2&gt;研究背景&lt;/h2&gt;
 &lt;p&gt;随着“互联网+”、“中国智能制造2025“、“工业4.0”等概念的提出，为了提高生产率，独立、隔离的传统工控领域将迎来了新的互联网时代，越来越多的工控设备（如控制器、机器人、数控机床）将被暴露在互联网上或者与企业内网相连。随着互联网时代的来临，安全问题会越来越突出。然而，工业控制系统的安全不同于传统信息网络的安全，一旦出现网络攻击，后果不堪设想。关于工控病毒相关关键事件如下：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;2010年伊朗核设施遭受“震网”超级病毒攻击，病毒的复杂程度超出人们的想象，该事件也被称为世界上首个“网络超级武器”事件。由于工业病毒攻击可以直接导致物理设备的故障，并进一步造成生产瘫痪甚至爆炸的灾难性后果。&lt;/li&gt;
