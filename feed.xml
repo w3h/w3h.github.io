@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feed.xml" rel="self"></atom:link><lastBuildDate>Fri, 15 Dec 2017 10:43:00 +0800</lastBuildDate><item><title>工控安全半月报第四期（2017-12 上）</title><link>http://icsmaster.com/news/monthly_report_12_1.html</link><description>&lt;blockquote&gt;
-&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2&gt;行业动态&lt;/h2&gt;
 &lt;ul&gt;
@@ -81,7 +81,7 @@
 &lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-332-01"&gt;Siemens SCALANCE W1750D, M800, and S615&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Fri, 15 Dec 2017 10:43:00 +0800</pubDate><guid>tag:icsmaster.com,2017-12-15:news/monthly_report_12_1.html</guid><category>news</category></item><item><title>工控安全半月报第三期（2017-11 下）</title><link>http://icsmaster.com/news/monthly_report_11_2.html</link><description>&lt;blockquote&gt;
-&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2&gt;行业动态&lt;/h2&gt;
 &lt;ul&gt;
@@ -170,7 +170,7 @@
 &lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-34035"&gt;Philips IntelliSpace Cardiovascular System and Xcelera System明文存储漏洞&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Thu, 30 Nov 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-30:news/monthly_report_11_2.html</guid><category>news</category></item><item><title>工控安全半月报第二期（2017-11 上）</title><link>http://icsmaster.com/news/monthly_report_11_1.html</link><description>&lt;blockquote&gt;
-&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2&gt;行业动态&lt;/h2&gt;
 &lt;ul&gt;
@@ -487,7 +487,7 @@ D方案，采用美国容错（Stratus）、日本NEC、中国海得等容错服
 以防止意外故障，或者攻防时导致系统瘫痪时，可将系统环境快速的复原。不致影响正常运行。
 除灾备软件、杀毒软件和防火墙等外，还应部署独立的存储服务器。推荐群晖公司的产品。&lt;/li&gt;
 &lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">mood-island</dc:creator><pubDate>Fri, 10 Nov 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-10:security/virtual_platform.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>工控安全半月报第一期（2017-10）</title><link>http://icsmaster.com/news/monthly_report_10_2.html</link><description>&lt;blockquote&gt;
-&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2&gt;行业动态&lt;/h2&gt;
 &lt;ul&gt;
