@@ -78,6 +78,22 @@
 	   <div class="article-list">	
        <div class="panel panel-default">
            <div class="panel-title"> 
+                <h2>&nbsp&nbsp<a href="./tool/isf.html">工控漏洞利用框架 - ISF(Industrial Security Framework)</a></h2>
+           </div>
+
+           <div class="panel-body">
+                <div class="summary"><h2>一、    框架介绍</h2>
+<p>本框架主要使用Python语言开发，通过集成ShadowBroker释放的NSA工具Fuzzbunch攻击框架，开发一款适合工控漏洞利用的框架。由于Fuzzbunch攻击框架仅适用于Python2.6，很多核心的功能都封装成了DLL，通过函数进行调用，不便于后期的移植和使用。但是，Fuzzbunch的命令行使用的确很方便，而且够傻瓜，所以就有集成一个适合工控漏洞利用的框架想法。新框架对主要的接口使用Python重新实现 ...</p>
+                    <a class="readmore" href="./tool/isf.html">READ MORE</a>
+                </div>
+           </div>
+        </div>
+		</div>
+            </article>
+            <article>
+	   <div class="article-list">	
+       <div class="panel panel-default">
+           <div class="panel-title"> 
                 <h2>&nbsp&nbsp<a href="./security/wincc_env.html">基于WinCC多协议通信实验环境搭建</a></h2>
            </div>
 
@@ -194,22 +210,6 @@
         </div>
 		</div>
             </article>
-            <article>
-	   <div class="article-list">	
-       <div class="panel panel-default">
-           <div class="panel-title"> 
-                <h2>&nbsp&nbsp<a href="./other/about.html">关于我们</a></h2>
-           </div>
-
-           <div class="panel-body">
-                <div class="summary"><h2><strong>相关介绍</strong></h2>
-<p><strong>“工匠安全实验室”</strong>，由国内多名资深的工控行业专家、传统网络安全专家、工控网络安全专家组成，一直从事着工控安全方面的研究和工作，曾参加过多个行业的工控安全现场检测（如电力能源、石油石化、烟草、智能智造等），多个工控安全攻防仿真环境的建设，多个工控设备的漏洞挖掘。我们主要目的是通过我们的努力，提升工控网络安全水平 ...</p>
-                    <a class="readmore" href="./other/about.html">READ MORE</a>
-                </div>
-           </div>
-        </div>
-		</div>
-            </article>
 
     <ul class="pagination">
                 <li class="prev"><a href="./index.html">&laquo;</a>
@@ -218,7 +218,10 @@
                             href="./index.html">1</a></li>
                     <li class="active"><a
                             href="./index2.html">2</a></li>
-                <li class="next disabled"><a href="#">&raquo;</a></li>
+                    <li class=""><a
+                            href="./index3.html">3</a></li>
+                <li class="next"><a
+                        href="./index3.html">&raquo;</a></li>
         </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -232,6 +235,11 @@
                     <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
                 </div>
                     <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">               
+                            <a href="./news/monthly_report_12_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第四期（2017-12 上）
+                            </a>
+                        </li>
                         <li class="list-group-item">               
                             <a href="./news/monthly_report_11_2.html">
                                <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第三期（2017-11 下）
@@ -275,11 +283,6 @@
                         <li class="list-group-item">               
                             <a href="./security/wincc_env.html">
                                <span class="glyphicon glyphicon-volume-down"></span> 基于WinCC多协议通信实验环境搭建
-                            </a>
-                        </li>
-                        <li class="list-group-item">               
-                            <a href="./news/logicblob.html">
-                               <span class="glyphicon glyphicon-volume-down"></span> 工业控制系统中的梯形逻辑炸弹
                             </a>
                         </li>
                     </ul>
