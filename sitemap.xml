@@ -5,15 +5,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/index.html</loc>
-<lastmod>2017-12-18T18:14:21-00:00</lastmod>
+<lastmod>2017-12-19T19:06:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://icsmaster.com/archives.html</loc>
-<lastmod>2017-12-18T18:14:21-00:00</lastmod>
+<lastmod>2017-12-19T19:06:31-00:00</lastmod>
 <changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://icsmaster.com/news/hk_conference.html</loc>
+<lastmod>2017-12-19T10:24:00+08:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -138,7 +145,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/category/news.html</loc>
-<lastmod>2017-12-15T10:43:00+08:06</lastmod>
+<lastmod>2017-12-19T10:24:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -179,6 +186,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://icsmaster.com/tag/guo-ji-hui-yi.html</loc>
+<lastmod>2017-12-19T10:24:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://icsmaster.com/tag/fan-yi.html</loc>
 <lastmod>2017-02-22T19:24:00+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -214,6 +228,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://icsmaster.com/tag/xiang-gang-da-xue.html</loc>
+<lastmod>2017-12-19T10:24:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://icsmaster.com/tag/news.html</loc>
 <lastmod>2017-12-15T10:43:00+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -235,6 +256,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://icsmaster.com/tag/gong-kong-plcruan-chong.html</loc>
+<lastmod>2017-12-19T10:24:00+08:06</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://icsmaster.com/tag/plczhu-ru.html</loc>
 <lastmod>2017-07-18T14:36:00+08:06</lastmod>
 <changefreq>daily</changefreq>
@@ -250,7 +278,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://icsmaster.com/author/dark_alex.html</loc>
-<lastmod>2017-05-22T11:36:00+08:06</lastmod>
+<lastmod>2017-12-19T10:24:00+08:06</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
