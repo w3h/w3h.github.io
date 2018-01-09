@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feed.xml" rel="self"></atom:link><lastBuildDate>Mon, 08 Jan 2018 14:36:00 +0800</lastBuildDate><item><title>Triton核心源代码分析</title><link>http://icsmaster.com/security/Triton_src_analysis.html</link><description>&lt;h2&gt;事件概述&lt;/h2&gt;
 &lt;p&gt;FireEye麦迪安调查部门的安全研究人员发现一款针对工控系统（ICS）的恶意软件——“TRITON”，该软件瞄准施耐德电气公司Triconex安全仪表控制系统（Safety Instrumented System，SIS）控制器，造成中东一家能源工厂停运。此次攻击事件导致TRITON恶意软件浮出水面。TRITON旨在破坏关键基础设施中广泛使用的 Triconex 安全控制器，通过扫描和映射工业控制系统环境，以便直接向 Triconex安全控制器提供侦察和发布命令。相关专家推测，鉴于经济动机和攻击的复杂程度，可能有国家资助的相关群体参与其中。
-下面我们对TRITON恶意软件核心的几个模块的源代码的分析。基于Trilog.exe是恶意软件的主程序，TsLow.py、TsHi.py、TsBase.py是提供控制器核心通信功能。 &lt;/p&gt;
+下面我们对TRITON恶意软件核心的几个模块的源代码的分析。Trilog.exe是恶意软件的主程序，TsLow.py、TsHi.py、TsBase.py是提供控制器核心通信功能。 &lt;/p&gt;
 &lt;h2&gt;Trilog.exe分析&lt;/h2&gt;
 &lt;p&gt;经过分析trilog.exe文件是使用py2exe打包的python程序，可以使用&lt;a href="https://github.com/matiasb/unpy2exe"&gt;unpy2exe&lt;/a&gt;工具进行反编译。解出的的文件是pyc格式的script_test.py.pyc，再通过&lt;a href="http://icsmaster.org/download/pyc_uncompile/"&gt;unpyc工具&lt;/a&gt;将pyc还原成py的源代码。
 &lt;img alt="Alt text" src="/static/images/triton/1.png" /&gt;&lt;/p&gt;
