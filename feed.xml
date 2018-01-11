@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feed.xml" rel="self"></atom:link><lastBuildDate>Mon, 08 Jan 2018 14:36:00 +0800</lastBuildDate><item><title>Triton核心源代码分析</title><link>http://icsmaster.com/security/Triton_src_analysis.html</link><description>&lt;h2&gt;事件概述&lt;/h2&gt;
 &lt;p&gt;FireEye麦迪安调查部门的安全研究人员发现一款针对工控系统（ICS）的恶意软件——“TRITON”，该软件瞄准施耐德电气公司Triconex安全仪表控制系统（Safety Instrumented System，SIS）控制器，造成中东一家能源工厂停运。此次攻击事件导致TRITON恶意软件浮出水面。TRITON旨在破坏关键基础设施中广泛使用的 Triconex 安全控制器，通过扫描和映射工业控制系统环境，以便直接向 Triconex安全控制器提供侦察和发布命令。相关专家推测，鉴于经济动机和攻击的复杂程度，可能有国家资助的相关群体参与其中。
-下面我们对TRITON恶意软件核心的几个模块的源代码的分析。基于Trilog.exe是恶意软件的主程序，TsLow.py、TsHi.py、TsBase.py是提供控制器核心通信功能。 &lt;/p&gt;
+下面我们对TRITON恶意软件核心的几个模块的源代码的分析。Trilog.exe是恶意软件的主程序，TsLow.py、TsHi.py、TsBase.py是提供控制器核心通信功能。 &lt;/p&gt;
 &lt;h2&gt;Trilog.exe分析&lt;/h2&gt;
 &lt;p&gt;经过分析trilog.exe文件是使用py2exe打包的python程序，可以使用&lt;a href="https://github.com/matiasb/unpy2exe"&gt;unpy2exe&lt;/a&gt;工具进行反编译。解出的的文件是pyc格式的script_test.py.pyc，再通过&lt;a href="http://icsmaster.org/download/pyc_uncompile/"&gt;unpyc工具&lt;/a&gt;将pyc还原成py的源代码。
 &lt;img alt="Alt text" src="/static/images/triton/1.png" /&gt;&lt;/p&gt;
@@ -55,7 +55,70 @@
 &lt;p&gt;此函数属于TsBase的函数，使用的功能码是19，返回控制器状态数据包，如下图所示：
 &lt;img alt="Alt text" src="/static/images/triton/16.png" /&gt;&lt;/p&gt;
 &lt;h2&gt;总结&lt;/h2&gt;
-&lt;p&gt;攻击者对控制器的通信协议非常了解，核心的功能如设备探测、控制器启停等，特别是对程序增量下载的流程非常熟悉，通过增量下载修改控制器的逻辑，一旦成功，隐蔽性非常高，而且目前的安全防御体系根本无法发现，非正常的取证溯源的手段根本无效。但幸庆的是，此攻击过程中一些SIS控制器进入失效的安全状态，自动关闭工业控制流程，导致事件的暴露，TRITION攻击框架从而浮出水面。这是一次典型的针对控制器进行有效攻击的案例，我们也研究过相关的利用手段，一旦恶意攻击者可以控制控制器的程序下载，可以实现很多的功能，比如控制器蠕虫、控制器代理、控制器逻辑炸弹等，攻击的危害是相当大，同时也意味着未来针对控制器的攻击会越来越成熟，我们应该尽快做好相应的安全防范措施，不然攻击来临时我们就会触手无措。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Mon, 08 Jan 2018 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-08:security/Triton_src_analysis.html</guid><category>ICS</category><category>Triton</category><category>恶意软件</category><category>施耐德</category></item><item><title>工控安全半月报第五期（2017-12 下）</title><link>http://icsmaster.com/news/monthly_report_12_2.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;攻击者对控制器的通信协议非常了解，核心的功能如设备探测、控制器启停等，特别是对程序增量下载的流程非常熟悉，通过增量下载修改控制器的逻辑，一旦成功，隐蔽性非常高，而且目前的安全防御体系根本无法发现，非正常的取证溯源的手段根本无效。但幸庆的是，此攻击过程中一些SIS控制器进入失效的安全状态，自动关闭工业控制流程，导致事件的暴露，TRITION攻击框架从而浮出水面。这是一次典型的针对控制器进行有效攻击的案例，我们也研究过相关的利用手段，一旦恶意攻击者可以控制控制器的程序下载，可以实现很多的功能，比如控制器蠕虫、控制器代理、控制器逻辑炸弹等，攻击的危害是相当大，同时也意味着未来针对控制器的攻击会越来越成熟，我们应该尽快做好相应的安全防范措施，不然攻击来临时我们就会触手无措。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Mon, 08 Jan 2018 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-08:security/Triton_src_analysis.html</guid><category>ICS</category><category>Triton</category><category>恶意软件</category><category>施耐德</category></item><item><title>S7-300/1200TRCV变长度接收</title><link>http://icsmaster.com/security/s7_300_1212C_1215C%20TRCV_compare.html</link><description>&lt;h2&gt;1、系统概述&lt;/h2&gt;
+&lt;h3&gt;1.1 概述&lt;/h3&gt;
+&lt;p&gt;S7-1200 CPU和部分S7-300CPU集成PROFINET通讯接口，支持以太网和基于TCP/IP的通信标准，使用这个通信口可以实现CPU与编程设备、与HMI或触摸屏、以及与其他CPU之间的通信。这个PROFINET是支持10/100Mb/s的RJ45接口，支持电缆交叉自适应，因此标准的或交叉的以太网线都可以使用这个接口。&lt;/p&gt;
+&lt;h3&gt;1.2 通信协议&lt;/h3&gt;
+&lt;p&gt;S7-1200/300 CPU的PROFINET通讯接口支持一下通信协议及服务：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TCP&lt;/li&gt;
+&lt;li&gt;ISO on TCP（RCF1006）&lt;/li&gt;
+&lt;li&gt;S7通信（服务器端）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;1.3 物理网络连接&lt;/h3&gt;
+&lt;p&gt;直接连接：CPU直接与CPU、HMI或PLC直接连接通信。也就是说两个通信设备直接连接通信，不需要经过交换机。
+&lt;img alt="Alt text" src="/static/images/s7_300_trcv/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;网络连接：多个设备通过交换机相互连接。
+&lt;img alt="Alt text" src="/static/images/s7_300_trcv/2.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;1.4 TCP通信流程&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/3.png" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PLC通过TCON建立连接&lt;/li&gt;
+&lt;li&gt;连接建立后，通过TSEND向目标对象发送数据，通过TRCV接收目标发送的数据。发送和接收可以同时进行。&lt;/li&gt;
+&lt;li&gt;如果断开连接，则不再执行发送命令。也不再执行接收命令。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;2. TRCV指令参数&lt;/h2&gt;
+&lt;h3&gt;2.1 TCP不同型号PLC TRCV指令比较&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/4.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2.2 TRCV管脚参数&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/5.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2.3 TRCV操作&lt;/h3&gt;
+&lt;p&gt;TRCV 指令将收到的数据写入到通过以下两个变量指定的接收区：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;指向区域起始位置的指针&lt;/li&gt;
+&lt;li&gt;如果不为 0 则为区域长度或 LEN 上提供的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;说明：
+LEN 参数的默认设置 (LEN = 0) 使用 DATA 参数来确定要传送的数据的长度。 确保TSEND 指令传送的 DATA 的大小与 TRCV 指令的 DATA 参数的大小相同。
+接收所有作业数据后，TRCV 会立即将其传送到接收区并将 NDR 设置为 1。&lt;/p&gt;
+&lt;h3&gt;2.4 TRCV数据输入接收区&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/6.png" /&gt;
+说明：
+&lt;strong&gt;特殊模式&lt;/strong&gt;
+使用 TCP 或 ISO on TCP 协议时可以存在“特殊模式”。 要针对特殊模式组态 TRCV指令，请置位 ADHOC 指令输入参数。 接收区与 DATA构成的区域相同。已接收数据的长度将输出到参数 RCVD_LEN 中。
+接收数据块后，TRCV 会立即将数据写入接收区并将 NDR 设置为 1。
+如果将数据存储在“优化”DB（仅符号访问）中，则只能接收数据类型为Byte、Char、USInt 和 SInt 的数组中的数据。&lt;/p&gt;
+&lt;h2&gt;3. 变长度接收实例&lt;/h2&gt;
+&lt;h3&gt;3.1 S7-315-2PN/DP&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/7.png" /&gt;
+说明：
+在LEN管脚为0的情况下，测得可以变长度接收65528（16382×4）字节。&lt;/p&gt;
+&lt;h3&gt;3.2 s7-1212C&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/8.png" /&gt;&lt;/p&gt;
+&lt;p&gt;说明：
+①图中DATA管脚定义的是接收缓存区的长度，目前测得是8192字节，如果超过8192字节，程序不会报错，但程序不会执行。
+②LEN写入65536表示变长度接收。&lt;/p&gt;
+&lt;h3&gt;3.3 s7-1215C&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/9.png" /&gt;
+说明：
+①图中DATA管脚定义的是接收缓存区的长度，目前测得是65530字节，如果超过65530字节，程序不会报错，但程序不会执行。
+②LEN管脚写入接收的数据长度，不能超过8192，超过后程序编译不报错，但不执行。
+③ADHOC管脚表示变长度接收，为TRUE有效。如果LEN分配参数（值不超过8192），则接收的长度最大为LEN的长度；如果LEN不分配参数，变长度接收，数值不超过8192字节。&lt;/p&gt;
+&lt;h2&gt;4. 总结&lt;/h2&gt;
+&lt;p&gt;这儿只列出了TRCV在3款不同PLC下的不同，实际应用过程PLC型号相似的可以参考上面的参数设置，比如1212C-CD/CD/DC和1212C-DC/DC/Rly，包括不同版本的PLC。由于目前只测试了上面的3款，其他型号PLC可能和上面的不同，比如1214C，s7-1500系列（没有测试）。由于手中没有其他型号的PLC，所以没有测试，如果以后有机会再测。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;参考资料：《SIMATIC S7 S7-1200 可编程控制器系统手册》&lt;/em&gt;&lt;/strong&gt;
+&lt;strong&gt;&lt;em&gt;使用软件：TIA Portal Step7 Professional V14&lt;/em&gt;&lt;/strong&gt;
+&lt;strong&gt;&lt;em&gt;使用硬件：s7-315-2PN/DP v3.2，s7-1212C v3.0，s7-1215C v4.1。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Mon, 08 Jan 2018 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-08:security/s7_300_1212C_1215C TRCV_compare.html</guid><category>工控技术</category></item><item><title>工控安全半月报第五期（2017-12 下）</title><link>http://icsmaster.com/news/monthly_report_12_2.html</link><description>&lt;blockquote&gt;
 &lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2&gt;行业动态&lt;/h2&gt;
@@ -2018,38 +2081,4 @@ ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，�
 [14] R. Spenneberg, M. Brggemann, and H. Schwartke. Plc-blaster: A worm living solely in the plc, 2016.
 [15] H. Taylor. Ransomware: Lucrative, fast growing, hard to stop. http://www.cnbc.com/2016/04/11/ransomware-lucrative-fast-growing-hard-to-stop.html.
 [16] E. Vadala. Downtime costs auto industry $22k/minute- survey. http://news.thomasnet.com/companystory/downtime-costs-auto-industry-22k-minute-survey-481017.
-[17] T. J. Williams. The purdue enterprise reference architecture: a technical guide for cim planning and implementation. 1992.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Wed, 22 Feb 2017 19:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-22:news/Ransomware for Industrial Control Systems.html</guid><category>翻译</category></item><item><title>关于我们</title><link>http://icsmaster.com/other/about.html</link><description>&lt;h2&gt;&lt;strong&gt;相关介绍&lt;/strong&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;“工匠安全实验室”&lt;/strong&gt;，由国内多名资深的工控行业专家、传统网络安全专家、工控网络安全专家组成，一直从事着工控安全方面的研究和工作，曾参加过多个行业的工控安全现场检测（如电力能源、石油石化、烟草、智能智造等），多个工控安全攻防仿真环境的建设，多个工控设备的漏洞挖掘。我们主要目的是通过我们的努力，提升工控网络安全水平。本站提供最新的工控安全咨询、资源、工具和研究成果，我们还可提供如下工控安全服务，欢迎垂询。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;工控培训、工控安全培训、传统网络安全培训&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;工控攻防仿真环境建设&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;工控设备挖掘&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;工控现场安全检测&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;工控安全解决方案&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;h2&gt;&lt;strong&gt;联系方式&lt;/strong&gt;&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;QQ：170956679&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;E-Mail：icsmaster@126.com&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;GitHub：&lt;a href="https://github.com/w3h"&gt;icsmaster&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Mon, 19 May 2014 05:24:00 +0800</pubDate><guid>tag:icsmaster.com,2014-05-19:other/about.html</guid><category>关于我们</category></item></channel></rss>
+[17] T. J. Williams. The purdue enterprise reference architecture: a technical guide for cim planning and implementation. 1992.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Wed, 22 Feb 2017 19:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-22:news/Ransomware for Industrial Control Systems.html</guid><category>翻译</category></item></channel></rss>
