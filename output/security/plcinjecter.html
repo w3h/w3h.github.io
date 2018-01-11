@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>利用Modbus PLC作为攻击载荷分发系统 - 工匠安全实验室 | 专注于工控安全</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <!-- Open Graph tags -->
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="利用Modbus PLC作为攻击载荷分发系统"/>
+            <meta property="og:url" content="../security/plcinjecter.html"/>
+            <meta property="og:description" content="一、 介绍 随着互联网+、工业4.0的推进，以前的网络边界被逐渐打破，工业控制系统的安全问题越来越突出，近期针对控制器的攻击层出不穷，如 PLC逻辑炸弹、PLC勒索软件，PLC蠕虫，相关的技术我们一直在跟踪分析。 本文主要介绍怎么利用Modbus PLC作为攻击载荷 ..."/>
+
+    <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
+    <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="../theme/css/bootstrap.min.css" type="text/css"/>
+    <!-- <link href="http://cdn.bootcss.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>   -->
+    <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="../theme/css/pygments/emacs.css" rel="stylesheet">
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
+
+        <link href="../feed.xml" type="application/rss+xml" rel="alternate"
+              title="工匠安全实验室 | 专注于工控安全 RSS Feed"/>
+
+    <link href="../theme/css/github-markdown.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top myheader" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="../" class="navbar-brand">
+<img src="../logo.png" width="40" height="40"/>             </a>
+                <div class="brand" id="titlename">工匠安全实验室</div>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://icsmaster.com/index.html">首页</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">最新资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">安全研究</a></li>
+                    <li><a href="http://icsmaster.com/category/tool.html">开源工具</a></li>
+                    <li><a href="http://icsmaster.com/nav.html">工控安全导航</a></li>
+                    <li><a href="http://icsmaster.com/other/about.html">关于我们</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <!--
+<li class="banner">
+    <a title="网速较慢的话请耐心等待~" href='javascript:(function(){function c(){var e=document.createElement("link");e.setAttribute("type","text/css");e.setAttribute("rel","stylesheet");e.setAttribute("href",f);e.setAttribute("class",l);document.body.appendChild(e)}function h(){var e=document.getElementsByClassName(l);for(var t=0;t<e.length;t++){document.body.removeChild(e[t])}}function p(){var e=document.createElement("div");e.setAttribute("class",a);document.body.appendChild(e);setTimeout(function(){document.body.removeChild(e)},100)}function d(e){return{height:e.offsetHeight,width:e.offsetWidth}}function v(i){var s=d(i);return s.height>e&&s.height<n&&s.width>t&&s.width<r}function m(e){var t=e;var n=0;while(!!t){n+=t.offsetTop;t=t.offsetParent}return n}function g(){var e=document.documentElement;if(!!window.innerWidth){return window.innerHeight}else if(e&&!isNaN(e.clientHeight)){return e.clientHeight}return 0}function y(){if(window.pageYOffset){return window.pageYOffset}return Math.max(document.documentElement.scrollTop,document.body.scrollTop)}function E(e){var t=m(e);return t>=w&&t<=b+w}function S(){var e=document.createElement("audio");e.setAttribute("class",l);e.src=i;e.loop=false;e.addEventListener("canplay",function(){setTimeout(function(){x(k)},500);setTimeout(function(){N();p();for(var e=0;e<O.length;e++){T(O[e])}},15500)},true);e.addEventListener("ended",function(){N();h()},true);e.innerHTML=" <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";document.body.appendChild(e);e.play()}function x(e){e.className+=" "+s+" "+o}function T(e){e.className+=" "+s+" "+u[Math.floor(Math.random()*u.length)]}function N(){var e=document.getElementsByClassName(s);var t=new RegExp("\\b"+s+"\\b");for(var n=0;n<e.length;){e[n].className=e[n].className.replace(t,"")}}var e=30;var t=30;var n=350;var r=350;var i="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";var s="mw-harlem_shake_me";var o="im_first";var u=["im_drunk","im_baked","im_trippin","im_blown"];var a="mw-strobe_light";var f="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";var l="mw_added_css";var b=g();var w=y();var C=document.getElementsByTagName("*");var k=null;for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){if(E(A)){k=A;break}}}if(A===null){console.warn("Could not find a node of the right size. Please try a different page.");return}c();S();var O=[];for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){O.push(A)}}})()'>High一下!</a>
+</li>                -->
+                <li><a href="../archives.html"><i class="fa fa-th-list"></i><span class="icon-label">归档</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+   <div class="article-content">
+    <section id="content">
+        <article>
+        <div class="panel panel-default">
+            <header class="page-header">
+                <h1 class="article-title">
+                        利用Modbus PLC作为攻击载荷分发系统
+                    </a>
+                </h1>
+
+                <div class="entry-content">
+                    <div class="panel-body">
+﻿<footer class="article-meta">
+
+	<span class="item name">
+            <!-- <span class="label label-default">By</span> -->
+            <!-- <a href="../author/chansim.html"><i class="fa fa-user"></i> [<Author u'chansim'>]</a> -->
+			
+            <i class="fa fa-user"></i><a href="../author/chansim.html">  chansim </a> &nbsp;
+			
+	</span>
+	
+	<span class="item time">
+	 <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-07-18T14:36:00+08:00"> 2017-10-31 15:03:35</time>
+    </span>  
+	</span>	
+
+
+	<span class="item tag">
+<!-- <span class="label label-default">Tags</span> -->
+<a href="../tag/gong-kong-ji-zhu.html"><span class="label label-default"> 工控技术 </span></a>
+        &nbsp; 
+<a href="../tag/plczhu-ru.html"><span class="label label-default"> PLC注入 </span></a>
+	</span>
+	
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>                  
+            </header>
+
+            <div class="entry-content markdown-body">
+                <div class="panel-body">
+                    <h2>一、    介绍</h2>
+<p>随着互联网+、工业4.0的推进，以前的网络边界被逐渐打破，工业控制系统的安全问题越来越突出，近期针对控制器的攻击层出不穷，如 <a href="http://icsmaster.com/news/logicblob.html">PLC逻辑炸弹</a>、<a href="http://icsmaster.com/security/ClearEnergy.html">PLC勒索软件</a>，<a href="http://icsmaster.com/security/plcblaster.html">PLC蠕虫</a>，相关的技术我们一直在跟踪分析。</p>
+<p>本文主要介绍怎么利用Modbus PLC作为攻击载荷，将恶意代码隐藏在控制器(programmable logic controllers)中，从而躲避当前的主流的网络攻击检测，提高攻击的隐蔽性，使得网络攻击难发现以及难溯源。下文中主要使用是施耐德电气的控制器TM221，该设备使用的主要的通信协议是Modbus Tcp，被中小型制造工厂广泛使用，以实现制造工艺的自动化。由于Modbus Tcp协议存在多个安全问题，利用Modbus Tcp协议可以实现任意上传和下载内存数据，因此，可以将攻击载荷上传至PLC内存中，从而躲避常规的安全检测。</p>
+<h2>二、    利用modbus-cli操作plc寄存器</h2>
+<p>本文中我们使用的控制器，如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/2.png" /></p>
+<p>使用关键字“TM221ME16R”，在Shodan可以查询到当前暴露在互联网上的施耐德电气，如下图所示。<strong>注意：本文仅做技术研究，相关工具请务在真实工业环境中使用，否则后果自负。</strong> </p>
+<p><img alt="Alt text" src="/static/images/plcinjector/1.png" /></p>
+<p>Modbus-cli是一个命令行（cli）工具，使用此工具可以对PLC 寄存器进行读写操作，使用方法如下图所示：</p>
+<p>运行指令参数：modbus [OPTIONS] SUBCOMMAND [ARG]</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/3.png" /></p>
+<p>我们至少有两种方法获取寄存器地址里面的值，分别为：Schneider address和Modicon addess。 如下表所示，Modicon addess从地址前的％M开始。</p>
+<table>
+<thead>
+<tr>
+<th>Data type</th>
+<th>Data size</th>
+<th>Schneider address</th>
+<th>Modicon addess</th>
+<th>Parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Word</td>
+<td>16 bits</td>
+<td>%MW100</td>
+<td>400101</td>
+<td>--word</td>
+</tr>
+<tr>
+<td>Interger</td>
+<td>16 bits</td>
+<td>%MW100</td>
+<td>400101</td>
+<td>--int</td>
+</tr>
+<tr>
+<td>Floating point</td>
+<td>32 bits</td>
+<td>%MF100</td>
+<td>400101</td>
+<td>--float</td>
+</tr>
+<tr>
+<td>Double word</td>
+<td>32 bits</td>
+<td>%MD100</td>
+<td>400101</td>
+<td>--word</td>
+</tr>
+<tr>
+<td>Boolean(coils)</td>
+<td>1 bits</td>
+<td>%M100</td>
+<td>101</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p>modbus read <IP> %MW100 10，意思是读取以%MW100开头的十个值；我们可以通过modbus-cli从plc中读取指定的寄存器中的值，执行如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/4.png" /></p>
+<p>为了达到相同的效果，也可以换种形式来获取，如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/5.png" /></p>
+<p>读取线圈（coils）的值，命令如下</p>
+<div class="highlight"><pre>modbus read 192.168.1.31 %M100 10
+</pre></div>
+
+
+<p>可以看出线圈全都处于关闭状态，如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/6.png" /></p>
+<p>modbus-cli不仅可以读取plc寄存器数据还可以更改，如若被不法份子利用直接可以更改里面的状态值，命令如下：</p>
+<div class="highlight"><pre>modbus write 192.168.1.31 %M100 1 1 1 1 1 1 1 1 1 1
+</pre></div>
+
+
+<p>执行结果如下图所示</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/7.png" /></p>
+<p>修改PLC寄存器的值时，可能会导致上位机和终端设备的异常运行，下图所示是执行前后</p>
+<p>正常运行状态如下图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/8.png" /></p>
+<p>修改寄存器后组态界面出现异常</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/9.gif" /></p>
+<h2>三、    利用ISF攻击框架进行PLC注入</h2>
+<p>利用plc存储payload/shellcode优势：
+由于payload存放在PLC的内存中，所以加大了取证分析的难度。此外，一旦payload被取出，其内容直接被写入内存，这样也加大了取证难度。
+此外，我认为Modbus Stager在某些ICS环境中也是非常有用的，因为这些环境下Modbus之外的协议会引起人们的警觉，并且WinHTTP / WinInet stager也不是最适用的。所以，在这种情况下，只需要一个和modbus处理器（stager），读取plc里面的数据并执行。
+攻击流程如下：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/10.png" /></p>
+<ol>
+<li>attacker将payload/shellcode上传至modbus plc，如果没设定上传得初始地址，那么就从x00开始，在这里其实也可以使用其他工具或者交互脚本，如实验一里面的modbus-cli。攻击者一般会选择第三方的plc，因为第三方的plc具有良好的匿名性质，跟踪难度较大，无须将payload上传至服务器。</li>
+<li>attacker 利用其他方式漏洞或钓鱼等将stager传入工控环境的windows机器并触发运行。</li>
+<li>stager运行之后会与modbus plc数据交互，读取plc保持寄存器里面的payload/shellcode并执行。stager是由汇编编译主要功能是和modbus plc建立socket通信接收payload并在内存执行，总共大小只有1KB，难以被沙软检测，更何况是安全相对薄弱的工控环境。</li>
+</ol>
+<p>Payload 生成：
+Payload是“Functional Keylogger to File Null-Free Shellcode” 长度为0x0259，在生成的时候前四个字节代表shellcode的长度，如图2-2-2所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/11.png" /></p>
+<p>为了将payload上传至plc中，plcInjectPayload会根据加载的控制策略不同，对plc的可用内存大小的要求也有所变化，因此该脚本首先检查它们是否有足够的内存空间来存放相应的payload。为了检测内存的大小，可以发送操作功能代码为03（读取保持寄存器）的Modbus请求，尝试从某个地址读取特定记录（每个记录长度为16比特）。如果收到一个0x83异常，那么说明这个PLC对于我们来说是无法使用的。</p>
+<p>Modbus 协议的功能代码如下图所示</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/13.png" /></p>
+<p>使用ISF下载控制器寄存器，执行操作如下</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/12.gif" /></p>
+<p>读取到的内容如下图所示</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/14.png" /></p>
+<p>上传payload至plc，在本次实验没有指定地址，就从0x00开始上传。上传之后的结果如图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/15.png" /></p>
+<p>执行stager 获取plc保持寄存器里面payload加载至内存，并执行：</p>
+<p>Stager入口点：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/16.png" /></p>
+<p>Socket连接，对应的连接数据如下
+  0x1F01A8C0 -&gt; 192.168.1.31 
+  0xF6010002 -&gt; port :502</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/17.png" /></p>
+<p>接收0x259个字节：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/18.png" /></p>
+<p>该stager分三次接收数据：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/19.png" /></p>
+<p>接收的payload写入内存并执行：</p>
+<p><img alt="Alt text" src="/static/images/plcinjector/20.png" /></p>
+<h2>四、参考</h2>
+<p>[1] Modbus Stager: Using PLCs as a payload/shellcode distribution system  <a href="http://www.shelliscoming.com/2016/12/modbus-stager-using-plcs-as.html">链接</a>
+[2] Functional Keylogger <a href="https://www.exploit-db.com/exploits/39794/">链接</a>
+[4] ISF攻击框架 <a href="https://github.com/w3h/isf">链接</a></p>
+                </div>
+            </div>  
+  
+            <div class="panel-body">
+
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" >
+var jiathis_config={
+	data_track_clickback:true,
+	siteNum:5,
+	sm:"weixin,tqq,qzone,tsina,cqq",
+	summary:"",
+	showClose:true,
+	shortUrl:true,
+	hideMore:true
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=2128692&type=left&btn=l5.gif&move=1" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+    <div>
+        <br />
+        <hr />
+        <ul>
+            <li>
+                <a href="../tool/isf.html">
+                    上一篇文章：工控漏洞利用框架 - ISF(Industrial Security Framework)
+                </a>
+            </li>
+            <li>
+                <a href="../tool/WinAC_RTX.html">
+                    下一篇文章：构建虚拟工控环境系列 - 西门子虚拟PLC
+                </a>
+            </li>
+        </ul>
+    </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- /.entry-content -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2138476"></script>
+<!-- UY END -->
+            </div>
+        </div>    
+        </article>
+    </section>
+	</div>
+        </div>
+        <div class="col-sm-3" id="sidebar">
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                <div>
+                    <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
+                </div>
+                    <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">               
+                            <a href="../security/Triton_src_analysis.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> Triton核心源代码分析
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/s7_300_1212C_1215C TRCV_compare.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> S7-300/1200TRCV变长度接收
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第五期（2017-12 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/hk_conference.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工匠安全实验室受邀赴港参加DragonCon2017会议
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第四期（2017-12 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第三期（2017-11 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第二期（2017-11 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/virtual_platform.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工业系统虚拟化测试平台搭建
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_10_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第一期（2017-10）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../tool/AB_VPLC.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 构建虚拟工控环境系列 - 罗克韦尔虚拟PLC
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">最新评论</span></h4></a>
+    <!-- UYAN NEW COMMENT BEGIN -->
+    <div id="uyan_newcmt_unit"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128692"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+    <!-- UYAN NEW COMMENT END -->
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-github fa-lg"></i><span class="icon-label">GitHub</span></h4>
+        <div id="gh_repos">
+            <p class="list-group-item">Status updating...</p>
+        </div>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">友情链接</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://dragoncon.hk/" target="_blank">
+                DRAGONCON
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.waitalone.cn/" target="_blank">
+                独自等待
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://plcscan.org/blog/" target="_blank">
+                灯塔实验室
+            </a>
+        </li>
+      </ul>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div>    
+        </div>
+    </div>
+</div>
+<footer class="myfooter">
+   <div class="container">
+      <div class="row">
+         <div class="col-xs-10">&copy; 2018 W3H
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
+<script src="http://code.jquery.com/jquery.js"></script>
+<!-- <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>  -->
+<script src="../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../theme/js/respond.min.js"></script>
+
+<!-- For the Tags Cloud -->
+<script type="text/javascript">
+if(document.body.scrollWidth < 1024){
+      document.getElementById("titlename").innerHTML="工匠安全实验室";
+}
+</script>
+
+    <!-- GitHub JS -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (!window.jXHR) {
+                var jxhr = document.createElement('script');
+                jxhr.type = 'text/javascript';
+                jxhr.src = '../theme/js/jXHR.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(jxhr, s);
+            }
+
+            github.showRepos({
+                user: 'w3h',
+                count: 5,
+                skip_forks: false,
+                target: '#gh_repos'
+            });
+        });
+    </script>
+    <script src="../theme/js/github.js" type="text/javascript"></script>
+    <!-- End GitHub JS Code -->
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8dd91be64f13d3df23dfc64664c3101b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>

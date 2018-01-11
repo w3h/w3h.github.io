@@ -1,0 +1,36 @@
+﻿<footer class="article-meta">
+
+    {% if SHOW_ARTICLE_AUTHOR %}
+	<span class="item name">
+        {% if article.authors %}
+            <!-- <span class="label label-default">By</span> -->
+            <!-- <a href="{{ SITEURL }}/{{ article.author.url }}"><i class="fa fa-user"></i> {{ article.authors }}</a> -->
+			
+			{% for at in article.authors %}
+            {% set cc_name = at|lower %}
+            <i class="fa fa-user"></i><a href="{{ SITEURL }}/author/{{cc_name}}.html">  {{ at }} </a> &nbsp;
+			{% endfor %}
+			
+        {% endif %}
+	</span>
+    {% endif %}
+	
+	<span class="item time">
+	 <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="{{ article.date.isoformat() }}"> {{ article.locale_date }}</time>
+    </span>  
+	</span>	
+
+    {% if PDF_PROCESSOR %}
+        <span class="label label-default">
+            <a href="{{ SITEURL }}/pdf/{{ article.slug }}.pdf">PDF</a>
+        </span>
+    {% endif %}
+
+	<span class="item tag">
+    {% include 'includes/taglist.html' %}
+	</span>
+	
+    {% import 'includes/translations.html' as translations with context %}
+    {{ translations.translations_for(article) }}
+</footer><!-- /.post-info -->

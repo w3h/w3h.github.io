@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>{% block title %}{{ SITENAME }}{% endblock %}</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {% if FAVICON %}
+    <link href="{{ SITEURL }}/{{ FAVICON }}" rel="icon">
+    {% endif %}
+
+    {# Open Graph tags #}
+    {% if USE_OPEN_GRAPH is not defined %}
+        {% set USE_OPEN_GRAPH = True %}
+    {% endif %}
+    {% if USE_OPEN_GRAPH %}
+    <!-- Open Graph tags -->
+        {% if OPEN_GRAPH_FB_APP_ID %}
+            <meta property="fb:app_id" content="{{ OPEN_GRAPH_FB_APP_ID }}"/>
+        {% endif %}
+        {% if article %}
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="{{ article.title|striptags }}"/>
+            <meta property="og:url" content="{{ SITEURL }}/{{ article.url }}"/>
+            <meta property="og:description" content="{{ article.summary|striptags }}"/>
+        {% elif page %}
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="{{ page.title }}"/>
+            <meta property="og:url" content="{{ SITEURL }}/{{ page.url }}"/>
+        {% else %}
+            <meta property="og:type" content="website"/>
+            <meta property="og:title" content="{{ SITENAME }}"/>
+            <meta property="og:url" content="{{ SITEURL }}"/>
+            <meta property="og:description" content="{{ SITENAME }}"/>
+            {% if OPEN_GRAPH_IMAGE %}
+            <meta property="og:image"
+                  content="{{ SITEURL }}/static/{{ OPEN_GRAPH_IMAGE }}"/>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
+    <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
+    <!-- <link href="http://cdn.bootcss.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>   -->
+    <link href="{{ SITEURL }}/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="{{ SITEURL }}/theme/css/pygments/{{ PYGMENTS_STYLE|default('native') }}.css" rel="stylesheet">
+    {% if DOCUTIL_CSS %}
+        <link href="{{ SITEURL }}/theme/css/html4css1.css" rel="stylesheet">
+    {% endif %}
+    {% if TYPOGRIFY %}
+        <link href="{{ SITEURL }}/theme/css/typogrify.css" rel="stylesheet">
+    {% endif %}
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/style.css" type="text/css"/>
+    {% if CUSTOM_CSS %}
+        <link href="{{ SITEURL }}/{{ CUSTOM_CSS }}" rel="stylesheet">
+    {% endif %}
+
+    {% if FEED_ALL_ATOM %}
+        <link href="{{ SITEURL }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate"
+              title="{{ SITENAME }} ATOM Feed"/>
+    {% endif %}
+    {% if FEED_ALL_RSS %}
+        <link href="{{ SITEURL }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate"
+              title="{{ SITENAME }} RSS Feed"/>
+    {% endif %}
+
+    <link href="{{ SITEURL }}/theme/css/github-markdown.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="navbar {% if BOOTSTRAP_NAVBAR_INVERSE %}navbar-inverse{% else %}navbar-default{% endif %} navbar-fixed-top myheader" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="{{ SITEURL }}/" class="navbar-brand">
+                {% if SITELOGO %}<img src="{{ SITEURL }}/{{ SITELOGO }}" width="{{ SITELOGO_SIZE_W }}" height="{{ SITELOGO_SIZE_H }}"/> {% endif %}
+                {% if not HIDE_SITENAME %} ICSMASTER  {% endif %}
+            </a>
+                <div class="brand" id="titlename">工匠安全实验室</div>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+            <ul class="nav navbar-nav">
+                {% for title, link in MENUITEMS %}
+                    <li><a href="{{ link }}">{{ title }}</a></li>
+                {% endfor %}
+                {% if DISPLAY_CATEGORIES_ON_MENU %}
+                    {% for cat, null in categories %}
+                        <li {% if cat == category %}class="active"{% endif %}>
+                            <a href="{{ SITEURL }}/{{ cat.url }}">{{ cat | capitalize }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+                {% if DISPLAY_PAGES_ON_MENU %}
+                    {% for p in PAGES %}
+                         <li{% if p == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ p.url }}">
+                             {{ p.title }}
+                          </a></li>
+                      {% endfor %}
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if DISPLAY_RANDOM %}
+                    <li><a href="{{ SITEURL }}/{{ RANDOM }}"><span class="icon-label">试试手气</span></a></li>
+                {% endif %}
+                <!--
+                {% if DISPLAY_HIGH %}
+                    {% include 'includes/high.html' %}
+                {% endif %}
+                -->
+                <li><a href="{{ SITEURL }}/{{ ARCHIVES_URL | default('archives.html') }}"><i class="fa fa-th-list"></i><span class="icon-label">归档</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        {% if not HIDE_SIDEBAR %}
+        <div class="col-sm-9">
+        {% else %}
+        <div class="col-lg-12">
+        {% endif %}
+        {% block breadcrumbs %}
+        {% endblock %}
+
+        {% block content %}
+        {% endblock %}
+        </div>
+	{% if not HIDE_SIDEBAR %}
+        <div class="col-sm-3" id="sidebar">
+        {% include 'includes/sidebar.html' %}   
+        </div>
+	{% endif %}
+    </div>
+</div>
+{% include 'includes/footer.html' %}
+
+<script src="http://code.jquery.com/jquery.js"></script>
+<!-- <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>  -->
+<script src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="{{ SITEURL }}/theme/js/respond.min.js"></script>
+
+<!-- For the Tags Cloud -->
+{% block additional_js_file %}
+{% endblock additional_js_file -%}
+
+<script type="text/javascript">
+{% block js_on_body_ready %}
+if(document.body.scrollWidth < 1024){
+      document.getElementById("titlename").innerHTML="工匠安全实验室";
+}
+{% endblock js_on_body_ready %}
+</script>
+
+{% include 'includes/github-js.html' %}
+{% include 'includes/disqus_script.html' %}
+{% include 'includes/ga.html' %}
+{% include 'includes/piwik.html' %}
+</body>
+</html>

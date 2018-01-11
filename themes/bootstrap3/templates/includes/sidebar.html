@@ -1,0 +1,58 @@
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+            {% if DISPLAY_RECENT_POSTS_ON_SIDEBAR %}
+                {% if RECENT_POST_COUNT is not defined %}
+                    {% set RECENT_POST_COUNT = 5 %}
+                {% endif %}
+                <li class="list-group-item">
+                <div>
+                    <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
+                </div>
+                    <ul class="list-group" id="recentposts">
+                    {% for article in articles[:RECENT_POST_COUNT] %}
+                        <li class="list-group-item">               
+                            <a href="{{ SITEURL }}/{{ article.url }}">
+                               <span class="glyphicon glyphicon-volume-down"></span> {{ article.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+            {% endif %}
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+            {% include 'includes/duoshuo.html' %}
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+            {% include 'includes/github.html' %}
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+            {% include 'includes/links.html' %}
+    </section>            
+</aside>
+</div> 
+</div> 

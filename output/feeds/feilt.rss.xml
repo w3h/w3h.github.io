@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/feilt.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 08 Jan 2018 14:36:00 +0800</lastBuildDate><item><title>S7-300/1200TRCV变长度接收</title><link>http://icsmaster.com/security/s7_300_1212C_1215C%20TRCV_compare.html</link><description>&lt;h2&gt;1、系统概述&lt;/h2&gt;
+&lt;h3&gt;1.1 概述&lt;/h3&gt;
+&lt;p&gt;S7-1200 CPU和部分S7-300CPU集成PROFINET通讯接口，支持以太网和基于TCP/IP的通信标准，使用这个通信口可以实现CPU与编程设备、与HMI或触摸屏、以及与其他CPU之间的通信。这个PROFINET是支持10/100Mb/s的RJ45接口，支持电缆交叉自适应，因此标准的或交叉的以太网线都可以使用这个接口。&lt;/p&gt;
+&lt;h3&gt;1.2 通信协议&lt;/h3&gt;
+&lt;p&gt;S7-1200/300 CPU的PROFINET通讯接口支持一下通信协议及服务：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TCP&lt;/li&gt;
+&lt;li&gt;ISO on TCP（RCF1006）&lt;/li&gt;
+&lt;li&gt;S7通信（服务器端）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;1.3 物理网络连接&lt;/h3&gt;
+&lt;p&gt;直接连接：CPU直接与CPU、HMI或PLC直接连接通信。也就是说两个通信设备直接连接通信，不需要经过交换机。
+&lt;img alt="Alt text" src="/static/images/s7_300_trcv/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;网络连接：多个设备通过交换机相互连接。
+&lt;img alt="Alt text" src="/static/images/s7_300_trcv/2.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;1.4 TCP通信流程&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/3.png" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PLC通过TCON建立连接&lt;/li&gt;
+&lt;li&gt;连接建立后，通过TSEND向目标对象发送数据，通过TRCV接收目标发送的数据。发送和接收可以同时进行。&lt;/li&gt;
+&lt;li&gt;如果断开连接，则不再执行发送命令。也不再执行接收命令。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;2. TRCV指令参数&lt;/h2&gt;
+&lt;h3&gt;2.1 TCP不同型号PLC TRCV指令比较&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/4.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2.2 TRCV管脚参数&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/5.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2.3 TRCV操作&lt;/h3&gt;
+&lt;p&gt;TRCV 指令将收到的数据写入到通过以下两个变量指定的接收区：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;指向区域起始位置的指针&lt;/li&gt;
+&lt;li&gt;如果不为 0 则为区域长度或 LEN 上提供的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;说明：
+LEN 参数的默认设置 (LEN = 0) 使用 DATA 参数来确定要传送的数据的长度。 确保TSEND 指令传送的 DATA 的大小与 TRCV 指令的 DATA 参数的大小相同。
+接收所有作业数据后，TRCV 会立即将其传送到接收区并将 NDR 设置为 1。&lt;/p&gt;
+&lt;h3&gt;2.4 TRCV数据输入接收区&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/6.png" /&gt;
+说明：
+&lt;strong&gt;特殊模式&lt;/strong&gt;
+使用 TCP 或 ISO on TCP 协议时可以存在“特殊模式”。 要针对特殊模式组态 TRCV指令，请置位 ADHOC 指令输入参数。 接收区与 DATA构成的区域相同。已接收数据的长度将输出到参数 RCVD_LEN 中。
+接收数据块后，TRCV 会立即将数据写入接收区并将 NDR 设置为 1。
+如果将数据存储在“优化”DB（仅符号访问）中，则只能接收数据类型为Byte、Char、USInt 和 SInt 的数组中的数据。&lt;/p&gt;
+&lt;h2&gt;3. 变长度接收实例&lt;/h2&gt;
+&lt;h3&gt;3.1 S7-315-2PN/DP&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/7.png" /&gt;
+说明：
+在LEN管脚为0的情况下，测得可以变长度接收65528（16382×4）字节。&lt;/p&gt;
+&lt;h3&gt;3.2 s7-1212C&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/8.png" /&gt;&lt;/p&gt;
+&lt;p&gt;说明：
+①图中DATA管脚定义的是接收缓存区的长度，目前测得是8192字节，如果超过8192字节，程序不会报错，但程序不会执行。
+②LEN写入65536表示变长度接收。&lt;/p&gt;
+&lt;h3&gt;3.3 s7-1215C&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/s7_300_trcv/9.png" /&gt;
+说明：
+①图中DATA管脚定义的是接收缓存区的长度，目前测得是65530字节，如果超过65530字节，程序不会报错，但程序不会执行。
+②LEN管脚写入接收的数据长度，不能超过8192，超过后程序编译不报错，但不执行。
+③ADHOC管脚表示变长度接收，为TRUE有效。如果LEN分配参数（值不超过8192），则接收的长度最大为LEN的长度；如果LEN不分配参数，变长度接收，数值不超过8192字节。&lt;/p&gt;
+&lt;h2&gt;4. 总结&lt;/h2&gt;
+&lt;p&gt;这儿只列出了TRCV在3款不同PLC下的不同，实际应用过程PLC型号相似的可以参考上面的参数设置，比如1212C-CD/CD/DC和1212C-DC/DC/Rly，包括不同版本的PLC。由于目前只测试了上面的3款，其他型号PLC可能和上面的不同，比如1214C，s7-1500系列（没有测试）。由于手中没有其他型号的PLC，所以没有测试，如果以后有机会再测。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;参考资料：《SIMATIC S7 S7-1200 可编程控制器系统手册》&lt;/em&gt;&lt;/strong&gt;
+&lt;strong&gt;&lt;em&gt;使用软件：TIA Portal Step7 Professional V14&lt;/em&gt;&lt;/strong&gt;
+&lt;strong&gt;&lt;em&gt;使用硬件：s7-315-2PN/DP v3.2，s7-1212C v3.0，s7-1215C v4.1。&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Mon, 08 Jan 2018 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-08:security/s7_300_1212C_1215C TRCV_compare.html</guid><category>工控技术</category></item><item><title>构建虚拟工控环境系列 - 罗克韦尔虚拟PLC</title><link>http://icsmaster.com/tool/AB_VPLC.html</link><description>&lt;h2&gt;一、    概述&lt;/h2&gt;
+&lt;p&gt;本篇主要介绍罗克韦尔虚拟PLC的搭建，使用的操作系统为Windows7 x86 Ultimate（DEEP_GHOST_WIN7_SP1_X86_V2015_06.iso），虚拟化软件为 VVMware Workstation 12 Pro，（AB）SoftLogix5800 21.00.00。&lt;/p&gt;
+&lt;p&gt;为了研究罗克韦尔（AB）的软PLC，前后花了一周半的时间，遇到过AB的软件版本太高，破解不掉，改用低版本，虚拟化不支持；遇到过软件都支持虚拟化，但是版本直接兼容性不好；遇到过虚拟机下软件可以正常运行，但是联网后，用RSLinx扫描不到；试过Windows XP SP3 professional、Windows 7 SP1 x86 Ultimate、Windows 7 SP1 x64 Ultimate；遇到过物理机下可以用RSLinx扫描到，但虚拟机下扫描不到……&lt;/p&gt;
+&lt;p&gt;建议用深度的Ghost镜像“DEEP_GHOST_WIN7_SP1_X86_V2015_06.iso”。&lt;/p&gt;
+&lt;h2&gt;二、SoftLogix5800版本&lt;/h2&gt;
+&lt;p&gt;经测试AB公司Studio 5000 PLC编程软件V20以上版本完全兼容各个虚拟化环境。并且从V19版本开始，AB公司在诸多大项目中开始实际应用虚拟化环境的解决方案。
+本文测试的软件版本如下：
+Studio 5000 Logix Designer Professional Edition：V21.00.00（CPR9 SR 5.1）
+RSLinx Classic Lite：3.51.01 （CPR9 SR 5.1）
+SoftLogix Classic Monitor   ：V21.00.00（CPR9 SR 5.1）&lt;/p&gt;
+&lt;h2&gt;三、安装Ghost Win7虚拟机&lt;/h2&gt;
+&lt;p&gt;1、运行虚拟机VMware Workstation，创建一个新的虚拟机。
+2、选中我们创建好的windows7虚拟机，“编辑虚拟机设置”，选用“使用ISO映像文件”。然后在“高级”中选择“IDE”模式。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、完成后运行虚拟机，然后，按6选择“PQ8.05 – 图形分区工具”&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、硬盘分区，根据个人需要和实际情况填写，完成后“确定”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、接着按同样的步骤建立“逻辑分割磁区”。建立完成后选定主分区，“设定为作用”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、然后点击“执行”。完成后点击“结束”，然后关闭虚拟机。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;7、进入BIOS，按“Shift”和“+”将从CD-ROM Drive调整为第一启动项。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;8、然后选择从“安装系统到硬盘第一分区”。如果启动不正常，请关闭虚拟机，查看第2步中的磁盘模式是否是“IDE”模式。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;9、系统自动安装。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/8.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;四、安装Rockwell Studio 5000&lt;/h2&gt;
+&lt;p&gt;1、将安装软件解压后，打开RSLogix5000的文件夹，双击“Setup.exe”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/9.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、“序列号”输入“2022007039”。其他可以根据自己需要填写。然后“下一步”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/10.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、出现下面的界面直接点击“安装”，也可以根据自己的需要，取消一些选项，如“在联机丛书”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、然后点击“同意所有”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/12.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、静静的等待安装，期间弹出窗口或选项，直接“确认”或“下一步”。安装完成后点击“完成”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/13.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、安装完成后，在开始菜单中可以找到如下图标。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/14.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、安装SoftLogix5800&lt;/h2&gt;
+&lt;p&gt;1、解压软件后，打开文件夹，双击“Install.exe”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/15.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、点击“SoftLogix 5800 V21.00”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/16.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、期间出现界面，则点击“Next”，出现下面的画面，则点击“Yes”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/17.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、“User Name”、“Company Name”和“Serial Number”与安装Studio5000中的相同。然后点击“Next”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/18.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、出现下面的对话框，表示是否创建“SoftLogix”的桌面快捷方式。根据个人爱好选择。本文选择“是”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/19.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、完成后，点击“Finish”，然后点击“EXIT”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/20.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、软件破解&lt;/h2&gt;
+&lt;p&gt;要点：因为软件在运行，部分文件不让修改，建议在重启虚拟机，启动时按F8，进入“安全模式”，将文件复制到物理计算机后修改，然后用修改后的文件替换原来的文件。&lt;/p&gt;
+&lt;p&gt;1、在C:\Program Files\Common Files\Rockwell目录下找到“FTACommon.dll”文件。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/21.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、复制到物理机，用“UltraEdit”或其他相似的软件打开。在位置40FB9处，用“30 90”替换“34 02”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、替换完成后，保存，然后将修改后的文件，复制到虚拟机原来的目录下，替换原文件。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/23.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、同样的方法修改替换以下文件。
+（1）、C:\Program Files\Rockwell Software\FactoryTalk Activation\flexsvr.exe，位置E4D0，用“33 C0 40 89 45 FC 48 C3”替换“55 8B EC 83 E4 F8 81 EC”。
+（2）、C:\Program Files\Rockwell Software\Studio 5000\Launcher\ActivationInterop.dll，位置5C86，用“E9 2C 00 00 00 90”替换“0F 85 46 03 00 00”。
+（3）、C:\Program Files\Rockwell Software\Studio 5000\Launcher\ftastub.dll，位置FCD，用“09 00”替换“40 03”。
+（4）、C:\Program Files\Rockwell Software\Studio 5000\Logix Designer\CHS\v21\Bin\LogixDesigner.exe，位置1DFB36，用“E9 2C 00 00 00 90”替换“0F 85 46 03 00 00”。
+（5）、C:\Program Files\Rockwell Software\Studio 5000\Logix Designer\CHS\v21\Bin\ftastub.dll，位置FCD，用“09 00”替换“40 03”。
+（6）、C:\Program Files\Rockwell Software\RSLinx\RSLINX.EXE，位置D9092，用“E9 2C 00 00 00 90”替换“0F 85 44 03 00 00”。
+（7）、C:\Program Files\Rockwell Software\RSLinx\ftastub.dll，位置FCD，用“09 00”替换“40 03”。&lt;/p&gt;
+&lt;p&gt;5、破解完成后，重启计算机。进入系统后，会发现SoftLogix 5800自动启动。并出现下面的窗口，这是因为不是正版的原因。点击确定即可，不影响正常使用。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/24.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、连接演示&lt;/h2&gt;
+&lt;p&gt;以下测试用了2台电脑，运行SoftLogix5800的计算机叫A，编程的计算机叫B。
+1、配置计算机IP&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/26.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、启动SoftLogix的RSLinx。右键单击0槽，在弹出的菜单中单击“Start RSLinx”。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/27.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、添加CPU模块。右键单击1槽，然后单击“Create”。选择“1789……”，然后一直“Next”，直至完成。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/28.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、同样的方法，添加以太网模块。注意，选择刚才配置的那个IP地址。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/29.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、同样的方法，添加2个信号模块。
+6、完成后如下&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/30.png" /&gt;&lt;/p&gt;
+&lt;p&gt;7、打开电脑B的RSLinx，添加以太网驱动。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/31.png" /&gt;&lt;/p&gt;
+&lt;p&gt;8、完成后，RSLinx自动扫描，一段时间后可以扫描到SoftLogix5800.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/32.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/33.png" /&gt;&lt;/p&gt;
+&lt;p&gt;9、studio5000中连接SoftLogix。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/35.png" /&gt;&lt;/p&gt;
+&lt;p&gt;10、编程下载&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/36.png" /&gt;&lt;/p&gt;
+&lt;p&gt;11、连接演示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/AB_VPLC/37.png" /&gt;&lt;/p&gt;
+&lt;p&gt;至此虚拟机下安装使用软PLC Softlogix5800已经完成。如果想了解更多信息请参考《1789-IN001K-EN-P》和《1789UM002J-EN-P》。&lt;/p&gt;
+&lt;h2&gt;六、结束语&lt;/h2&gt;
+&lt;p&gt;（1）软件破解方法来自网络，破解方法版权归发帖人所有。想了解更多信息请参考：http://bbs.e10000.cn/a/a.asp?B=305&amp;amp;ID=1352006。
+（2）本文仅用于研究学习，使用过程中出现任何问题，盖不负责。如用于商业用途，请购买正版软件。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Mon, 11 Sep 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-09-11:tool/AB_VPLC.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>构建虚拟工控环境系列 - 西门子虚拟PLC</title><link>http://icsmaster.com/tool/WinAC_RTX.html</link><description>&lt;h2&gt;一、    概述&lt;/h2&gt;
+&lt;p&gt;跟随着工控安全一路走来，工控安全市场今年明显有相当大的改善，无论从政策还是客户需求，都在逐步扩大中。但是，搞工控安全研究的人员却寥寥无几。一方面工控安全是个跨学课的技术，需要了解多方面的知识，有比较高的技术上的门槛；另一方面，没有可以研究和学习的便利的环境。一般，搞这方面研究的公司或者个人，都会先购买一些硬件设备，搭建一个模拟环境，再做相应的安全研究，成本实在是太高。为了解决这个问题，我们做了一系列的相关的技术研究，通过构建一套虚拟的工业控制环境，从而降低了解和学习工控安全的门槛，推动相关人才的培养。&lt;/p&gt;
+&lt;p&gt;本篇主要介绍西门子虚拟PLC，使用的操作系统为Windows7 x86 Ultimate，虚拟化软件为 VMware Workstation 12 Pro，（SIEMENS）WinAC RTX 2010。&lt;/p&gt;
+&lt;h2&gt;二、    控制器虚拟化技术介绍&lt;/h2&gt;
+&lt;p&gt;可编程控制器，即PLC。PLC的实现分为硬PLC和软PLC。 所谓硬PLC从严格意义上来说是由硬件或者一块专用的ASIC芯片来实现PLC指令的执行．而软PLC是用一些通用的CPU或者MCU来实现PLC指令的解释或者编译持行。&lt;/p&gt;
+&lt;p&gt;软件PLC（SoftPLC，也称为软逻辑SoftLogic）是一种基于基于PC机开发结构的控制系统，它具有硬PLC在功能、可靠性、速度、故障查找等方面的特点，利用软件技术可以将标准的工业PC转换成全功能的PLC过程控制器。软件PLC综合了计算机和PLC的开关量控制、模拟量控制、数学运算、数值处理、网络通信、PID调节等功能，通过一个多任务控制内核，提供强大的指令集、快速而准确的扫描周期、可靠的操作和可连接各种I/O系统的及网络的开放式结构。所以，软件PLC 提供了与硬PLC同样的功能，同时又提供了PC环境的各种优点。&lt;/p&gt;
+&lt;p&gt;虚拟机技术是虚拟化技术的一种，所谓虚拟化技术就是将事物从一种形式转变成另一种形式，最常用的虚拟化技术有操作系统中内存的虚拟化，实际运行时用户需要的内存空间可能远远大于物理机器的内存大小，利用内存的虚拟化技术，用户可以将一部分硬盘虚拟化为内存，而这对用户是透明的。又如，可以利用虚拟专用网技术（VPN）在公共网络中虚拟化一条安全，稳定的“隧道”，用户感觉像是使用私有网络一样。&lt;/p&gt;
+&lt;p&gt;如果将软PLC安装在虚拟机下，在软PLC出现故障时，用备份的虚拟机代替当前的虚拟机，即可快速恢复系统运行；此外，开发人员不必在现场，即可开发调试项目，在调试完成后，将包含软PLC的虚拟机直接放在现场的工控计算机上就直接可以完全运行。但是软PLC目前只能在物理PC上安装运行，在虚拟机下可以安装，但不能运行，这是由于软PLC需要直接驱动硬件，而虚拟机中的硬件都是虚拟造成的。&lt;/p&gt;
+&lt;h2&gt;三、西门子虚拟化WinAC产品分类&lt;/h2&gt;
+&lt;p&gt;SIMATIC WinAC是西门子公司开发的基于PC控制的核心组件，它的出现扩展了SIMATIC S7的控制范围。WinAC是一个名副其实的控制中心，它将PLC控制、数据处理、通讯、可视化及工艺集成于一台PC机上。 SIMATIC WinAC产品包括软件型和插槽型两大类，包括如下5种产品： &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;1、WinAC Basis (WinAC 基本型) 
+WinAC Basis 是低成本解决方案，用于对控制无精确时间要求，有大量、快速的数据处理与控制任务(控制任务指PLC的控制功能)相结合或其它PC任务的控制场合。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;2、WinAC PN 
+第一个支持PROFInet通讯标准的SIMATIC CPU，性能与WinAC Basis相似。WinAC PN支持基于组件的自动化(CBA)和PROFInet通讯标准。基于组件的自动化和PROFInet提供了一个开放的标准，用于在复杂任务中机械和系统单元之间的数据交换。数据交换通过SIMATIC iMap工具来进行配置。WinAC PN适应于以下任务：
+整个复杂系统的机械和车间区域之间的协调和连接 来自系统单元或机械可被集成到一个全范围的复杂系统控制WinAC Basis 4.1有一个选件WinAC PN，带有WinAC PN选件的WinAC Basis 4.1支持PROFInet和CBA。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;3、WinAC RTX(WinAC 实时型) 
+WinAC RTX 提供了Windows 2000/XP的实时子系统，具有“硬实时”和“抗死机”特性。适应于具有高速和精确时间要求的控制任务的场合，如运动控制、闭环控制等。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;4、WinAC MP 
+WinAC MP基于WinCE操作系统和SIMATIC MP370(一种多功能面板)硬件平台。MP370为无硬盘、无风扇设计，WinCE具有实时特性，可实现严格的确定性动作。WinAC MP用在恶劣工业环境和有大量数据要处理的场合。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;5、WinAC Slot 412/416 
+以板卡的形式插入在PC中，在板卡上已经集成了用于控制任务的CPU、存储器等元件。它可独立于PC进行控制操作。板卡上集成一个MPI/DP接口和一个DP口。WinAC Slot适用于对安全性和稳定性要求较高的场合。WinAC Slot 412/416在性能上与S7-412/416相近。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;四、虚拟控制器WinAC RTX搭建&lt;/h2&gt;
+&lt;p&gt;1、打开虚拟机系统的安装目录，找到后缀名是“.vmx”的文件，然后用记事本打开。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/1.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、添加虚拟网卡设备，添加如下配置。如果配置文件中已存在，则不添加“ethernet0.virtualDev = "e1000e"”，直接将等号后面的值改为"e1000e"。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;ethernet0.virtualDev = &amp;quot;e1000e&amp;quot;
+bios440.filename=&amp;quot;FUJITSU211_314.ROM&amp;quot;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、在西门子技术支持的官网（&lt;a href="https://support.industry.siemens.com"&gt;https://support.industry.siemens.com&lt;/a&gt;）下载文件“FUJITSU211_314.ROM”，并将在虚拟机安装目录下。此文件是将虚拟机硬件映像成FUJITSU PRIMERGR服务器。如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、打开运行虚拟机，配置当前主机的IP地址。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、使用虚拟光驱安装WinAC RTX 2010。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;6、安装完后启动station Configurator。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/5.png" /&gt;&lt;/p&gt;
+&lt;p&gt;7、打开的窗口中添加WinLC RTX，添加通讯网卡“IE 通用”&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;8、此时会发现桌面上多出一个图标，此图标就是虚拟PLC的图标，双击打开即可。至此，就完成了在虚拟机中安装PLC。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/8.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、虚拟控制器组态&lt;/h2&gt;
+&lt;p&gt;1、打开step7软件，创建工程，并进行组态配置，配置方法如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/9.png" /&gt;&lt;/p&gt;
+&lt;p&gt;2、编写一个小的测试程序。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/10.png" /&gt;&lt;/p&gt;
+&lt;p&gt;3、编译并下载组态程序。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/11.png" /&gt;&lt;/p&gt;
+&lt;p&gt;4、监控运行，如果一切正常，即显示为“RUN”状态。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/12.png" /&gt;&lt;/p&gt;
+&lt;p&gt;5、可以使用step7软件控制虚拟PLC的启停。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/WinAC_RTX/13.png" /&gt;&lt;/p&gt;
+&lt;p&gt;至此，就完成了虚拟PLC的搭建。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Sun, 30 Jul 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-07-30:tool/WinAC_RTX.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>基于WinCC多协议通信实验环境搭建</title><link>http://icsmaster.com/security/wincc_env.html</link><description>&lt;h2&gt;一、    概述&lt;/h2&gt;
+&lt;p&gt;目前，随着自动化水平的提高和全厂自动化控制集成的要求，以及基于工业4.0和智能制造的工厂升级和新建工厂的需求。原来单点控制已经不能满足当前的要求。未来方便集成而采用同一家生产商的产品也不太可能。所以现场设备往往有很多设备厂商提供，也造成了不同设备之间通讯、设备和监控平台之间不能直接通讯，单独实现某些设备直接通讯往往也容易增加成本和现场故障点。
+当前，随着工业生产的不断发展，工业控制软件取得了长足的进步。然而，由于生产规模的扩大和过程复杂程度的提高，工业控制软件设计面临着巨大的挑战，那就是要集成数量和种类不断增多的现场信息。在传统的控制系统中，智能设备之间及智能设备与控制系统软件之间的信息共享是通过驱动程序来实现的，不同厂家的设备又使用不同的驱动程序，迫使工业控制软件中包含了越来越多的底层通信模块。
+当前，比较好的解决方案是使用OPC（OLE for Process Control）来实现不同设备和监控平台的通讯，然后实现设备之间的通讯。为此，本文将讲述一种基于WinCC 7.0和IGS（Industry Gateway OPC Server）的解决方案。&lt;/p&gt;
+&lt;h2&gt;二、    OPC&lt;/h2&gt;
+&lt;p&gt;OPC是Object Linking and Embedding（OLE）for Process Control的缩写，它是微软公司的对象链接和嵌入技术在过程控制方面的应用。OPC以OLE/COM/DCOM技术为基础，采用客户/服务器模式，为工业自动化软件面向对象的开发提供了统一的标准，&lt;/p&gt;
+&lt;p&gt;这个标准定义了应用Microsoft操作系统在基于PC的客户机之间交换自动化实时数据的方法。采用这项标准后，硬件开发商将取代软件开发商为自己的硬件产品开发统一的OPC接口程序，而软件开发者可免除开发驱动程序的工作，充分发挥自己的特长，把更多的精力投入到其核心产品的开发上。这样不但可避免开发的重复性，也提高了系统的开放性和可互操作性。&lt;/p&gt;
+&lt;h2&gt;三、    WinCC&lt;/h2&gt;
+&lt;p&gt;西门子视窗控制中心SIMATIC WinCC（Windows Control Center）是HMI／SCADA软件中的后起之秀，1996年进入世界工控组态软件市场，当年就被美国Control Engnieering杂志评为最佳HMI软件，以最短的时间发展成第三个在世界范围内成功的SCADA系统；而在欧洲，它无可争议地成为第一。 
+在设计思想上，SIMATIC WinCC秉承西门子公司博大精深的企业文化理念，性能最全 面、技术最先进、系统最开放的HMI/SCADA软件是WinCC开发者的追求。Wincc是按世 界范围内使用的系统进行设计的，因此从一开始就适合于世界上各主要制造商生产的控制系 统，如A-B，Modicon，GE等，并且通讯驱动程序的种类还在不断地增加。通过OPC的方 式，WinCC还可以与更多的第三方控制器进行通讯。&lt;/p&gt;
+&lt;h2&gt;四、    结构介绍&lt;/h2&gt;
+&lt;p&gt;WinCC7.0本身已提供A-B PLC的驱动，Modicon的驱动和s7的驱动等，为了更好理解WinCC自带驱动，我们使用SIMATIC S7 PROTOCOL SUITE.chn和s7-300的PLC通讯；为了更好理解OPC，我们不使用Allen Bradley - Ethernet IP.chn和Modbus TCPIP.chn驱动，而是使用OPC.chn。由于A-B PLC和Modbus（本使用Schneider Qunantum PLC）和OPC需要协议转换，自己编写比较麻烦，并且后期维护上级也是不小的工作量，所以，在此我们还需要第三方的OPC server实现不同协议的转换。
+以下是系统的结构图。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/1.gif" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.1 s7协议，建立与s7-300的PLC通讯。&lt;/h4&gt;
+&lt;p&gt;（1）通过step7将wincc和PLC集成到一起（本文为了方便，用户也可也采用分立的方式）。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/2.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/3.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/4.png" /&gt;&lt;/p&gt;
+&lt;p&gt;（2）将WinCC集成到Step7后编译，即为下图，需要的点自动导入到了WinCC中。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/5.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.2 OPC协议，建立1769 PLC 、qunantum PLC和WinCC直接的通讯。&lt;/h4&gt;
+&lt;p&gt;（1）qunantum PLC的数据点。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/6.png" /&gt;&lt;/p&gt;
+&lt;p&gt;（2）A-B PLC数据点。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/7.png" /&gt;&lt;/p&gt;
+&lt;p&gt;（3）IGS 建立PLC的数据点&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/8.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.3 WinCC建立数据点&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/9.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/10.png" /&gt;&lt;/p&gt;
+&lt;h4&gt;4.4 WinCC建立画面和连点&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/11.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;五、    运行画面&lt;/h2&gt;
+&lt;p&gt;最终运行的界面如下图所示，实现了三种协议在一个实验环境中运行。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/wincc/12.jpg" /&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">feilt</dc:creator><pubDate>Wed, 31 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-31:security/wincc_env.html</guid><category>工控技术</category></item><item><title>针对西门子PLC蠕虫的实现</title><link>http://icsmaster.com/security/plcblaster.html</link><description>&lt;h2&gt;研究背景&lt;/h2&gt;
+&lt;p&gt;随着“互联网+”、“中国智能制造2025“、“工业4.0”等概念的提出，为了提高生产率，独立、隔离的传统工控领域将迎来了新的互联网时代，越来越多的工控设备（如控制器、机器人、数控机床）将被暴露在互联网上或者与企业内网相连。随着互联网时代的来临，安全问题会越来越突出。然而，工业控制系统的安全不同于传统信息网络的安全，一旦出现网络攻击，后果不堪设想。关于工控病毒相关关键事件如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;2010年伊朗核设施遭受“震网”超级病毒攻击，病毒的复杂程度超出人们的想象，该事件也被称为世界上首个“网络超级武器”事件。由于工业病毒攻击可以直接导致物理设备的故障，并进一步造成生产瘫痪甚至爆炸的灾难性后果。&lt;/li&gt;
+&lt;li&gt;Black Hat 2011报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/Exploiting%20Siemens%20Simatic%20S7%20PLCs.pdf"&gt;《Exploiting Siemens Simatic S7 PLCs》&lt;/a&gt;，演示了通过西门子S7Comm协议的权限缺失漏洞来远程操作PLC，对PLC进行启停控制、内存的读写。&lt;/li&gt;
+&lt;li&gt;Black Hat 2015报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/us-15-Klick-Internet-Facing-PLCs-A-New-Back-Orifice-wp.pdf"&gt;《Internet-facing PLCs – A New Back Orifice》&lt;/a&gt;，演示了如何通过PLC实现通信代理，通过PLC突破网络边界，来发现内网中更多的PLC设备。&lt;/li&gt;
+&lt;li&gt;Black Hat 2016报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/asia-16-Spenneberg-PLC-Blaster-A-Worm-Living-Solely-In-The-PLC-wp.pdf"&gt;《PLC-Blaster: A Worm Living Solely in the PLC 》&lt;/a&gt;，提出了PLC蠕虫病毒的概念,提出了西门子1200 V3版本协议认证的缺陷，但没有具体的实现细节。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;近日，工匠实验室工控安全专家针对PLC进行深入研究，通过梯形图和SCL相结合的方式，利用PLC自身通信功能, 复现了这个病毒，实现了病毒在PLC与PLC之间进行传播。同时，针对这一病毒，我们已经开发了相应的检测工具，这标志着华创网安在工控安全领域掌握了这方面的核心技术，也体现了工控领域的研发实力。&lt;/p&gt;
+&lt;h2&gt;PLC基本结构&lt;/h2&gt;
+&lt;p&gt;PLC 实质是一种专用于工业控制的计算机，其硬件结构基本上与微型计算机相同，如图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/1.gif" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;中央处理单元（CPU）
+中央处理单元（CPU）是PLC 的控制中枢。它按照PLC 系统程序赋予的功能接收并存储从编程器键入的用户程序和数据：检查电源、存储器、I/O 以及警戒定时器的状态，并能诊断用户程序中的语法错误，当PLC 投入运行时，首先它以扫描的方式接收现场各输入装置的状态和数据，并分别存入I/O 映象区，然后从用户程序存储器中逐条读取用户程序，经过命令解释后按指令的规定执行逻辑或算数运算的结果送入I/O 映象区或数据寄存器内。等所有的用户程序执行完毕之后，最后将I/O映象区的各输出状态或输出寄存器内的数据传送到相应的输出装置，如此循环运行，直到停止运行。
+为了进一步提高PLC 的可靠性，近年来对大型PLC 还采用双CPU 构成冗余系统，或采用三CPU 的表决式系统。这样，即使某个CPU 出现故障，整个系统仍能正常运行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存储器
+存放系统软件的存储器称为系统程序存储器。存放应用软件的存储器称为用户程序存储器。虽然各种PLC的CPU的最大寻址空间各不相同，但是根据PLC的工作原理其存储空间一般包括以下三个区域：系统程序存储区、系统RAM 存储区（包括I/O 映象区和系统软设备等）、用户程序存储区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;电源
+PLC 的电源在整个系统中起着十分重要得作用。如果没有一个良好的、可靠得电源系统是无法正常工作的，因此PLC 的制造商对电源的设计和制造也十分重视。一般交流电压波动在±10%（±15%）范围内，可以不采取其它措施而将PLC 直接连接到交流电网上去。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输入/输出电路
+I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基本单元（即主机）连接在一起。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;蠕虫介绍&lt;/h2&gt;
+&lt;p&gt;蠕虫病毒是一种常见的计算机病毒。它是利用网络进行复制和传播，传染途径是通过网络和电子邮件。最初的蠕虫病毒定义是因为在DOS环境下，病毒发作时会在屏幕上出现一条类似虫子的东西，胡乱吞吃屏幕上的字母并将其改形。蠕虫病毒是自包含的程序（或是一套程序），它能传播自身功能的拷贝或自身的某些部分到其他的计算机系统中（通常是经过网络连接）。&lt;/p&gt;
+&lt;p&gt;工控蠕虫主要的针对的对象是工业控制设备，通过控制器之间进行病毒传播，这与传统计算机蠕虫是存在很大差别，传统蠕虫寄生对象都是计算机（Window或者Linux），工控蠕虫寄生对象是控制器逻辑代码中。由于病毒可以混淆于正常的控制逻辑代码中，传统防御方式都不适合于工控蠕虫的防护，检测与查杀的方式更强困难。
+虽然工控蠕虫与计算机蠕虫存在很多的不同点，但所有的蠕虫的基本架构都是相同的。所有的蠕虫攻击都可以归为一下几个阶段：搜索目标，感染目标，在目标上执行，添加恶意功能。由于PLC控制器提供网络通信能力，在PLC上蠕虫也同样支持这些功能。这篇文章将展示每个必须组件的实现方法。&lt;/p&gt;
+&lt;h2&gt;蠕虫实现&lt;/h2&gt;
+&lt;p&gt;蠕虫实现的主要的编程软件为西门子的TIA Portal(博途)，在TIA Portal(博途)编程软件中，用户通过编写程序来完成工业现场的控制以及工艺流程的实现。博途中分为以下几类块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;OB(Organization Block )：组织块，为程序的入口块，被系统直接调用（其他块不可以被系统直接调用，必须包含在OB中才可以执行）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FB(Function Block)：功能块，既可以是博途中已包含的功能块，也可以是用户自己编写的块，编程中需要带背景数据块（又叫实例数据块，Instance Data Block）使用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FC(Function)：功能，既可以是博途中已包含的功能块，也可以是户自己编写，不可以带背景数据块。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DB(Data Block)：数据块，分为背景数据块和共享数据块，其中背景数据块为私有块。编程时，户可以定义共享数据块的数据存储结构，不可以定义背景数据块的数据存储结构，必须由FB定义。数据块中的数据掉电不丢失。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFB(System Function Block)：系统功能块，系统内部功能块，用户不可自己编写，不可更改，使用同FB。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFC(System Function)：系统功能，系统内部功能，用户不可自己编写，不可更改，使用同FC。
+博途软件支持的编程语言有： LD(梯形图)，FBD(功能块图)、SCL(结构化控制语言)、STL(语句列表)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;S7-1200只支持LAD、FBD和SCL三种编程语言，并且在下载过程中会先停止运行，然后下载程序，下载完成后重新启动。&lt;/p&gt;
+&lt;h3&gt;1. 实现流程&lt;/h3&gt;
+&lt;p&gt;病毒首先选择IP通过西门子通信端口102尝试建立连接，如果连接建立成功，则检查目标PLC是否已被感染。如连接未建立成功，或目标PLC已被感染，则选择新IP重新尝试建立连接。如目标PLC未被感染，则停止目标PLC，下装病毒程序，最后重新启动目标PLC。流程如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/3.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 寻找目标&lt;/h3&gt;
+&lt;p&gt;西门子PLC通过102端口进行TCP通信，因此可以尝试通过102端口与设备建立TCP通信来寻找目标。博途开发平台提供了两个FB块——通讯连接块TCON和断开通讯连接块TDISCON，如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/4.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TCON和TDISCON的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/5.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用TCON和DISTCON块尝试建立和断开连接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果TCON建立了连接则判断设备型号或者下载程序。由于TCON只需触发一次连接命令，就会一直尝试与目标建立连接，直到连接成功。因此，如果1s内没有建立连接则改变IP地址，尝试连接下一台PLC；如果建立了连接，则通过发送指令判断设备信号或者下载病毒程序，完成后改变IP地址，并尝试连接下一台设备。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/6.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/7.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更改IP&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;断开连接后则更改IP地址，准备连接下一台设备&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/8.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;3. 传播感染&lt;/h3&gt;
+&lt;p&gt;连接建立后，病毒调用数据传送命令TSEND和数据接收命令TRCV进行传播。见下图&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/9.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TSEND和TRCV的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/10.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;判断是否已感染&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;病毒在传播感染之前需要判断当前对象是否已经被感染，避免重复感染。判断是否被感染，如果感染，则跳过感染，如果未感染，则执行程序传送，感染对象。具体实现如下图：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/11.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;建立连接认证&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在程序的发送过程中，需要满足S7协议的相关通信时序以及报文格式。下图为S7建立连接的过程。首先是TCP的三次握手，接下来建立COTP连接，建立完成后进行S7协议的连接建立。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/12.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;具体逻辑实现代码如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/13.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;4. 激活&lt;/h3&gt;
+&lt;p&gt;PLC执行顺序是从OB1开始，按顺序执行到OB9999的。&lt;/p&gt;
+&lt;p&gt;建立调用病毒程序的OB块OB9999，并将其存植入到目标PLC中，用以激病毒，并进行新的病毒传播感染。西门子PLC在运行时，会按照从OB1到OB9999的顺序进行调用。如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/14.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;在其他病毒块下载完成后，用OB9999（也可以用其他非系统自带的OB块，未了避免病毒的OB块与PLC中正常的OB块重复，建议块的序号尽量大些）启动病毒程序。&lt;/p&gt;
+&lt;h3&gt;5. 恶意功能的实现——连接C&amp;amp;C服务器&lt;/h3&gt;
+&lt;p&gt;一旦PLC被感染病毒，会基于TCP主动去连接C&amp;amp;C服务器。通过C&amp;amp;C服务器，可以远程控制PLC，包括PLC的启停，输出值的改变等。当C&amp;amp;C服务器向连接了C&amp;amp;C服务器的PLC发送指令后，PLC会解析命令并执行。以点灯程序为例说明其危害性。下图为C&amp;amp;C服务器点灯的解析部分：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/15.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;6. 感染前后对比&lt;/h3&gt;
+&lt;p&gt;博途软件提供了PLC程序在线与离线差异的检测功能，如下图所示。程序块后面的绿色圆圈表示在线程序与离线程序一致，蓝色与橘黄色组成的圆形表示在线程序与离线程序不一致。块为虚样式，表示博途的程序中没有此块，而PLC有。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/16.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/17.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;演示截图&lt;/h2&gt;
+&lt;p&gt;红灯表示PLC感染状态，绿灯表示PLC正常控制的终端运行状态，PLC使用的是西门子1200 V3版本，从左到右分别为PLC0，PLC1，PLC2。默认情况下，PLC1和PLC2离线的，当PLC0被感染后，PLC1和PLC2接入网络，随后PLC0就会感染PLC1和PLC2。&lt;/p&gt;
+&lt;p&gt;图1：PLC处于正常运行状态&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/20.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图2：PLC0被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/21.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图3：PLC1与PLC2联网，PLC0正在感染PLC1&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图4：PLC1被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/23.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图5：PLC2被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/24.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;防护措施&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;部署控制设备管理系统，定期对PLC控制逻辑代码进行备份，一旦PLC被感染，可以迅速通过备份的PLC程序重置进行快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置CPU访问密码，禁止非授权用户上下载逻辑代码，密码一定不能是弱口令。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对工控网络进行风险评估，识别核心资产，根据不同安全级别进行安全分区，一旦受到网络攻击，将损失控制在最小的范围内。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在工控系统中安装工控监测审计系统，通过工控协议深度解析，根据特征值的进行采集、分析与识别，如发现异常数据包，如控制器启停、程序上下载，则记录日志或报警。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;安全域边界安装工控防火墙，通过工控防火墙，对异常数据包进行检测以及隔离防护。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;针对工控网络制定应急处理预案，当遇见突发网络攻击事件，可以实现快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Thu, 11 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-11:security/plcblaster.html</guid><category>工控安全</category></item></channel></rss>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>针对西门子PLC蠕虫的实现 - 工匠安全实验室 | 专注于工控安全</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <!-- Open Graph tags -->
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="针对西门子PLC蠕虫的实现"/>
+            <meta property="og:url" content="../security/plcblaster.html"/>
+            <meta property="og:description" content="近日，工匠实验室工控安全专家针对PLC进行深入研究，通过梯形图和SCL相结合的方式，利用PLC自身通信功能, 复现了这个病毒，实现了病毒在PLC与PLC之间进行传播。同时，针对这一病毒，我们已经开发了相应的检测工具。本文主要介绍了西门子PLC蠕虫的实现方法和原理，以及针对蠕虫病毒的安全防护方案。"/>
+
+    <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
+    <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="../theme/css/bootstrap.min.css" type="text/css"/>
+    <!-- <link href="http://cdn.bootcss.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>   -->
+    <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="../theme/css/pygments/emacs.css" rel="stylesheet">
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
+
+        <link href="../feed.xml" type="application/rss+xml" rel="alternate"
+              title="工匠安全实验室 | 专注于工控安全 RSS Feed"/>
+
+    <link href="../theme/css/github-markdown.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top myheader" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="../" class="navbar-brand">
+<img src="../logo.png" width="40" height="40"/>             </a>
+                <div class="brand" id="titlename">工匠安全实验室</div>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://icsmaster.com/index.html">首页</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">最新资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">安全研究</a></li>
+                    <li><a href="http://icsmaster.com/category/tool.html">开源工具</a></li>
+                    <li><a href="http://icsmaster.com/nav.html">工控安全导航</a></li>
+                    <li><a href="http://icsmaster.com/other/about.html">关于我们</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <!--
+<li class="banner">
+    <a title="网速较慢的话请耐心等待~" href='javascript:(function(){function c(){var e=document.createElement("link");e.setAttribute("type","text/css");e.setAttribute("rel","stylesheet");e.setAttribute("href",f);e.setAttribute("class",l);document.body.appendChild(e)}function h(){var e=document.getElementsByClassName(l);for(var t=0;t<e.length;t++){document.body.removeChild(e[t])}}function p(){var e=document.createElement("div");e.setAttribute("class",a);document.body.appendChild(e);setTimeout(function(){document.body.removeChild(e)},100)}function d(e){return{height:e.offsetHeight,width:e.offsetWidth}}function v(i){var s=d(i);return s.height>e&&s.height<n&&s.width>t&&s.width<r}function m(e){var t=e;var n=0;while(!!t){n+=t.offsetTop;t=t.offsetParent}return n}function g(){var e=document.documentElement;if(!!window.innerWidth){return window.innerHeight}else if(e&&!isNaN(e.clientHeight)){return e.clientHeight}return 0}function y(){if(window.pageYOffset){return window.pageYOffset}return Math.max(document.documentElement.scrollTop,document.body.scrollTop)}function E(e){var t=m(e);return t>=w&&t<=b+w}function S(){var e=document.createElement("audio");e.setAttribute("class",l);e.src=i;e.loop=false;e.addEventListener("canplay",function(){setTimeout(function(){x(k)},500);setTimeout(function(){N();p();for(var e=0;e<O.length;e++){T(O[e])}},15500)},true);e.addEventListener("ended",function(){N();h()},true);e.innerHTML=" <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";document.body.appendChild(e);e.play()}function x(e){e.className+=" "+s+" "+o}function T(e){e.className+=" "+s+" "+u[Math.floor(Math.random()*u.length)]}function N(){var e=document.getElementsByClassName(s);var t=new RegExp("\\b"+s+"\\b");for(var n=0;n<e.length;){e[n].className=e[n].className.replace(t,"")}}var e=30;var t=30;var n=350;var r=350;var i="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";var s="mw-harlem_shake_me";var o="im_first";var u=["im_drunk","im_baked","im_trippin","im_blown"];var a="mw-strobe_light";var f="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";var l="mw_added_css";var b=g();var w=y();var C=document.getElementsByTagName("*");var k=null;for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){if(E(A)){k=A;break}}}if(A===null){console.warn("Could not find a node of the right size. Please try a different page.");return}c();S();var O=[];for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){O.push(A)}}})()'>High一下!</a>
+</li>                -->
+                <li><a href="../archives.html"><i class="fa fa-th-list"></i><span class="icon-label">归档</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+   <div class="article-content">
+    <section id="content">
+        <article>
+        <div class="panel panel-default">
+            <header class="page-header">
+                <h1 class="article-title">
+                        针对西门子PLC蠕虫的实现
+                    </a>
+                </h1>
+
+                <div class="entry-content">
+                    <div class="panel-body">
+﻿<footer class="article-meta">
+
+	<span class="item name">
+            <!-- <span class="label label-default">By</span> -->
+            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'w3h'>, <Author u'Mood-island'>, <Author u'feilt'>, <Author u'Dark_Alex'>]</a> -->
+			
+            <i class="fa fa-user"></i><a href="../author/w3h.html">  w3h </a> &nbsp;
+            <i class="fa fa-user"></i><a href="../author/mood-island.html">  Mood-island </a> &nbsp;
+            <i class="fa fa-user"></i><a href="../author/feilt.html">  feilt </a> &nbsp;
+            <i class="fa fa-user"></i><a href="../author/dark_alex.html">  Dark_Alex </a> &nbsp;
+			
+	</span>
+	
+	<span class="item time">
+	 <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-05-11T14:36:00+08:00"> 2017-10-31 15:03:35</time>
+    </span>  
+	</span>	
+
+
+	<span class="item tag">
+<!-- <span class="label label-default">Tags</span> -->
+<a href="../tag/gong-kong-an-quan.html"><span class="label label-default"> 工控安全 </span></a>
+	</span>
+	
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>                  
+            </header>
+
+            <div class="entry-content markdown-body">
+                <div class="panel-body">
+                    <h2>研究背景</h2>
+<p>随着“互联网+”、“中国智能制造2025“、“工业4.0”等概念的提出，为了提高生产率，独立、隔离的传统工控领域将迎来了新的互联网时代，越来越多的工控设备（如控制器、机器人、数控机床）将被暴露在互联网上或者与企业内网相连。随着互联网时代的来临，安全问题会越来越突出。然而，工业控制系统的安全不同于传统信息网络的安全，一旦出现网络攻击，后果不堪设想。关于工控病毒相关关键事件如下：</p>
+<ol>
+<li>2010年伊朗核设施遭受“震网”超级病毒攻击，病毒的复杂程度超出人们的想象，该事件也被称为世界上首个“网络超级武器”事件。由于工业病毒攻击可以直接导致物理设备的故障，并进一步造成生产瘫痪甚至爆炸的灾难性后果。</li>
+<li>Black Hat 2011报告<a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/Exploiting%20Siemens%20Simatic%20S7%20PLCs.pdf">《Exploiting Siemens Simatic S7 PLCs》</a>，演示了通过西门子S7Comm协议的权限缺失漏洞来远程操作PLC，对PLC进行启停控制、内存的读写。</li>
+<li>Black Hat 2015报告<a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/us-15-Klick-Internet-Facing-PLCs-A-New-Back-Orifice-wp.pdf">《Internet-facing PLCs – A New Back Orifice》</a>，演示了如何通过PLC实现通信代理，通过PLC突破网络边界，来发现内网中更多的PLC设备。</li>
+<li>Black Hat 2016报告<a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/asia-16-Spenneberg-PLC-Blaster-A-Worm-Living-Solely-In-The-PLC-wp.pdf">《PLC-Blaster: A Worm Living Solely in the PLC 》</a>，提出了PLC蠕虫病毒的概念,提出了西门子1200 V3版本协议认证的缺陷，但没有具体的实现细节。</li>
+</ol>
+<p>近日，工匠实验室工控安全专家针对PLC进行深入研究，通过梯形图和SCL相结合的方式，利用PLC自身通信功能, 复现了这个病毒，实现了病毒在PLC与PLC之间进行传播。同时，针对这一病毒，我们已经开发了相应的检测工具，这标志着华创网安在工控安全领域掌握了这方面的核心技术，也体现了工控领域的研发实力。</p>
+<h2>PLC基本结构</h2>
+<p>PLC 实质是一种专用于工业控制的计算机，其硬件结构基本上与微型计算机相同，如图所示：</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/1.gif" /></p>
+<ol>
+<li>
+<p>中央处理单元（CPU）
+中央处理单元（CPU）是PLC 的控制中枢。它按照PLC 系统程序赋予的功能接收并存储从编程器键入的用户程序和数据：检查电源、存储器、I/O 以及警戒定时器的状态，并能诊断用户程序中的语法错误，当PLC 投入运行时，首先它以扫描的方式接收现场各输入装置的状态和数据，并分别存入I/O 映象区，然后从用户程序存储器中逐条读取用户程序，经过命令解释后按指令的规定执行逻辑或算数运算的结果送入I/O 映象区或数据寄存器内。等所有的用户程序执行完毕之后，最后将I/O映象区的各输出状态或输出寄存器内的数据传送到相应的输出装置，如此循环运行，直到停止运行。
+为了进一步提高PLC 的可靠性，近年来对大型PLC 还采用双CPU 构成冗余系统，或采用三CPU 的表决式系统。这样，即使某个CPU 出现故障，整个系统仍能正常运行。</p>
+</li>
+<li>
+<p>存储器
+存放系统软件的存储器称为系统程序存储器。存放应用软件的存储器称为用户程序存储器。虽然各种PLC的CPU的最大寻址空间各不相同，但是根据PLC的工作原理其存储空间一般包括以下三个区域：系统程序存储区、系统RAM 存储区（包括I/O 映象区和系统软设备等）、用户程序存储区</p>
+</li>
+<li>
+<p>电源
+PLC 的电源在整个系统中起着十分重要得作用。如果没有一个良好的、可靠得电源系统是无法正常工作的，因此PLC 的制造商对电源的设计和制造也十分重视。一般交流电压波动在±10%（±15%）范围内，可以不采取其它措施而将PLC 直接连接到交流电网上去。</p>
+</li>
+<li>
+<p>输入/输出电路
+I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基本单元（即主机）连接在一起。</p>
+</li>
+</ol>
+<h2>蠕虫介绍</h2>
+<p>蠕虫病毒是一种常见的计算机病毒。它是利用网络进行复制和传播，传染途径是通过网络和电子邮件。最初的蠕虫病毒定义是因为在DOS环境下，病毒发作时会在屏幕上出现一条类似虫子的东西，胡乱吞吃屏幕上的字母并将其改形。蠕虫病毒是自包含的程序（或是一套程序），它能传播自身功能的拷贝或自身的某些部分到其他的计算机系统中（通常是经过网络连接）。</p>
+<p>工控蠕虫主要的针对的对象是工业控制设备，通过控制器之间进行病毒传播，这与传统计算机蠕虫是存在很大差别，传统蠕虫寄生对象都是计算机（Window或者Linux），工控蠕虫寄生对象是控制器逻辑代码中。由于病毒可以混淆于正常的控制逻辑代码中，传统防御方式都不适合于工控蠕虫的防护，检测与查杀的方式更强困难。
+虽然工控蠕虫与计算机蠕虫存在很多的不同点，但所有的蠕虫的基本架构都是相同的。所有的蠕虫攻击都可以归为一下几个阶段：搜索目标，感染目标，在目标上执行，添加恶意功能。由于PLC控制器提供网络通信能力，在PLC上蠕虫也同样支持这些功能。这篇文章将展示每个必须组件的实现方法。</p>
+<h2>蠕虫实现</h2>
+<p>蠕虫实现的主要的编程软件为西门子的TIA Portal(博途)，在TIA Portal(博途)编程软件中，用户通过编写程序来完成工业现场的控制以及工艺流程的实现。博途中分为以下几类块：</p>
+<ul>
+<li>
+<p>OB(Organization Block )：组织块，为程序的入口块，被系统直接调用（其他块不可以被系统直接调用，必须包含在OB中才可以执行）。</p>
+</li>
+<li>
+<p>FB(Function Block)：功能块，既可以是博途中已包含的功能块，也可以是用户自己编写的块，编程中需要带背景数据块（又叫实例数据块，Instance Data Block）使用。</p>
+</li>
+<li>
+<p>FC(Function)：功能，既可以是博途中已包含的功能块，也可以是户自己编写，不可以带背景数据块。</p>
+</li>
+<li>
+<p>DB(Data Block)：数据块，分为背景数据块和共享数据块，其中背景数据块为私有块。编程时，户可以定义共享数据块的数据存储结构，不可以定义背景数据块的数据存储结构，必须由FB定义。数据块中的数据掉电不丢失。</p>
+</li>
+<li>
+<p>SFB(System Function Block)：系统功能块，系统内部功能块，用户不可自己编写，不可更改，使用同FB。</p>
+</li>
+<li>
+<p>SFC(System Function)：系统功能，系统内部功能，用户不可自己编写，不可更改，使用同FC。
+博途软件支持的编程语言有： LD(梯形图)，FBD(功能块图)、SCL(结构化控制语言)、STL(语句列表)。</p>
+</li>
+</ul>
+<p>S7-1200只支持LAD、FBD和SCL三种编程语言，并且在下载过程中会先停止运行，然后下载程序，下载完成后重新启动。</p>
+<h3>1. 实现流程</h3>
+<p>病毒首先选择IP通过西门子通信端口102尝试建立连接，如果连接建立成功，则检查目标PLC是否已被感染。如连接未建立成功，或目标PLC已被感染，则选择新IP重新尝试建立连接。如目标PLC未被感染，则停止目标PLC，下装病毒程序，最后重新启动目标PLC。流程如下图所示。</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/3.gif" /></p>
+<h3>2. 寻找目标</h3>
+<p>西门子PLC通过102端口进行TCP通信，因此可以尝试通过102端口与设备建立TCP通信来寻找目标。博途开发平台提供了两个FB块——通讯连接块TCON和断开通讯连接块TDISCON，如下图所示。</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/4.gif" /></p>
+<p>程序块TCON和TDISCON的参数说明</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/5.gif" /></p>
+<ul>
+<li>使用TCON和DISTCON块尝试建立和断开连接</li>
+</ul>
+<p>如果TCON建立了连接则判断设备型号或者下载程序。由于TCON只需触发一次连接命令，就会一直尝试与目标建立连接，直到连接成功。因此，如果1s内没有建立连接则改变IP地址，尝试连接下一台PLC；如果建立了连接，则通过发送指令判断设备信号或者下载病毒程序，完成后改变IP地址，并尝试连接下一台设备。</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/6.gif" /></p>
+<p><img alt="Alt text" src="/static/images/plcblaster/7.gif" /></p>
+<ul>
+<li>更改IP</li>
+</ul>
+<p>断开连接后则更改IP地址，准备连接下一台设备</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/8.gif" /></p>
+<h3>3. 传播感染</h3>
+<p>连接建立后，病毒调用数据传送命令TSEND和数据接收命令TRCV进行传播。见下图</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/9.gif" /></p>
+<p>程序块TSEND和TRCV的参数说明</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/10.gif" /></p>
+<ul>
+<li>判断是否已感染</li>
+</ul>
+<p>病毒在传播感染之前需要判断当前对象是否已经被感染，避免重复感染。判断是否被感染，如果感染，则跳过感染，如果未感染，则执行程序传送，感染对象。具体实现如下图：</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/11.gif" /></p>
+<ul>
+<li>建立连接认证</li>
+</ul>
+<p>在程序的发送过程中，需要满足S7协议的相关通信时序以及报文格式。下图为S7建立连接的过程。首先是TCP的三次握手，接下来建立COTP连接，建立完成后进行S7协议的连接建立。</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/12.gif" /></p>
+<p>具体逻辑实现代码如下：</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/13.gif" /></p>
+<h3>4. 激活</h3>
+<p>PLC执行顺序是从OB1开始，按顺序执行到OB9999的。</p>
+<p>建立调用病毒程序的OB块OB9999，并将其存植入到目标PLC中，用以激病毒，并进行新的病毒传播感染。西门子PLC在运行时，会按照从OB1到OB9999的顺序进行调用。如下图所示。</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/14.gif" /></p>
+<p>在其他病毒块下载完成后，用OB9999（也可以用其他非系统自带的OB块，未了避免病毒的OB块与PLC中正常的OB块重复，建议块的序号尽量大些）启动病毒程序。</p>
+<h3>5. 恶意功能的实现——连接C&amp;C服务器</h3>
+<p>一旦PLC被感染病毒，会基于TCP主动去连接C&amp;C服务器。通过C&amp;C服务器，可以远程控制PLC，包括PLC的启停，输出值的改变等。当C&amp;C服务器向连接了C&amp;C服务器的PLC发送指令后，PLC会解析命令并执行。以点灯程序为例说明其危害性。下图为C&amp;C服务器点灯的解析部分：</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/15.gif" /></p>
+<h3>6. 感染前后对比</h3>
+<p>博途软件提供了PLC程序在线与离线差异的检测功能，如下图所示。程序块后面的绿色圆圈表示在线程序与离线程序一致，蓝色与橘黄色组成的圆形表示在线程序与离线程序不一致。块为虚样式，表示博途的程序中没有此块，而PLC有。</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/16.gif" /></p>
+<p><img alt="Alt text" src="/static/images/plcblaster/17.gif" /></p>
+<h2>演示截图</h2>
+<p>红灯表示PLC感染状态，绿灯表示PLC正常控制的终端运行状态，PLC使用的是西门子1200 V3版本，从左到右分别为PLC0，PLC1，PLC2。默认情况下，PLC1和PLC2离线的，当PLC0被感染后，PLC1和PLC2接入网络，随后PLC0就会感染PLC1和PLC2。</p>
+<p>图1：PLC处于正常运行状态</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/20.png" /></p>
+<p>图2：PLC0被感染病毒，反向联接C&amp;C服务器</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/21.png" /></p>
+<p>图3：PLC1与PLC2联网，PLC0正在感染PLC1</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/22.png" /></p>
+<p>图4：PLC1被感染病毒，反向联接C&amp;C服务器</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/23.png" /></p>
+<p>图5：PLC2被感染病毒，反向联接C&amp;C服务器</p>
+<p><img alt="Alt text" src="/static/images/plcblaster/24.png" /></p>
+<h2>防护措施</h2>
+<ol>
+<li>
+<p>部署控制设备管理系统，定期对PLC控制逻辑代码进行备份，一旦PLC被感染，可以迅速通过备份的PLC程序重置进行快速恢复。</p>
+</li>
+<li>
+<p>设置CPU访问密码，禁止非授权用户上下载逻辑代码，密码一定不能是弱口令。</p>
+</li>
+<li>
+<p>对工控网络进行风险评估，识别核心资产，根据不同安全级别进行安全分区，一旦受到网络攻击，将损失控制在最小的范围内。</p>
+</li>
+<li>
+<p>在工控系统中安装工控监测审计系统，通过工控协议深度解析，根据特征值的进行采集、分析与识别，如发现异常数据包，如控制器启停、程序上下载，则记录日志或报警。</p>
+</li>
+<li>
+<p>安全域边界安装工控防火墙，通过工控防火墙，对异常数据包进行检测以及隔离防护。</p>
+</li>
+<li>
+<p>针对工控网络制定应急处理预案，当遇见突发网络攻击事件，可以实现快速恢复。</p>
+</li>
+</ol>
+                </div>
+            </div>  
+  
+            <div class="panel-body">
+
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" >
+var jiathis_config={
+	data_track_clickback:true,
+	siteNum:5,
+	sm:"weixin,tqq,qzone,tsina,cqq",
+	summary:"",
+	showClose:true,
+	shortUrl:true,
+	hideMore:true
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=2128692&type=left&btn=l5.gif&move=1" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+    <div>
+        <br />
+        <hr />
+        <ul>
+            <li>
+                <a href="../security/ClearEnergy.html">
+                    上一篇文章：工业控制系统ClearEnergy勒索软件攻击
+                </a>
+            </li>
+            <li>
+                <a href="../security/wannacry.html">
+                    下一篇文章：Wannacry(永恒之蓝)勒索蠕虫跟踪分析
+                </a>
+            </li>
+        </ul>
+    </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- /.entry-content -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2138476"></script>
+<!-- UY END -->
+            </div>
+        </div>    
+        </article>
+    </section>
+	</div>
+        </div>
+        <div class="col-sm-3" id="sidebar">
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                <div>
+                    <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
+                </div>
+                    <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">               
+                            <a href="../security/Triton_src_analysis.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> Triton核心源代码分析
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/s7_300_1212C_1215C TRCV_compare.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> S7-300/1200TRCV变长度接收
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第五期（2017-12 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/hk_conference.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工匠安全实验室受邀赴港参加DragonCon2017会议
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第四期（2017-12 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第三期（2017-11 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第二期（2017-11 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/virtual_platform.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工业系统虚拟化测试平台搭建
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_10_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第一期（2017-10）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../tool/AB_VPLC.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 构建虚拟工控环境系列 - 罗克韦尔虚拟PLC
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">最新评论</span></h4></a>
+    <!-- UYAN NEW COMMENT BEGIN -->
+    <div id="uyan_newcmt_unit"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128692"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+    <!-- UYAN NEW COMMENT END -->
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-github fa-lg"></i><span class="icon-label">GitHub</span></h4>
+        <div id="gh_repos">
+            <p class="list-group-item">Status updating...</p>
+        </div>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">友情链接</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://dragoncon.hk/" target="_blank">
+                DRAGONCON
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.waitalone.cn/" target="_blank">
+                独自等待
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://plcscan.org/blog/" target="_blank">
+                灯塔实验室
+            </a>
+        </li>
+      </ul>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div>    
+        </div>
+    </div>
+</div>
+<footer class="myfooter">
+   <div class="container">
+      <div class="row">
+         <div class="col-xs-10">&copy; 2018 W3H
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
+<script src="http://code.jquery.com/jquery.js"></script>
+<!-- <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>  -->
+<script src="../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../theme/js/respond.min.js"></script>
+
+<!-- For the Tags Cloud -->
+<script type="text/javascript">
+if(document.body.scrollWidth < 1024){
+      document.getElementById("titlename").innerHTML="工匠安全实验室";
+}
+</script>
+
+    <!-- GitHub JS -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (!window.jXHR) {
+                var jxhr = document.createElement('script');
+                jxhr.type = 'text/javascript';
+                jxhr.src = '../theme/js/jXHR.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(jxhr, s);
+            }
+
+            github.showRepos({
+                user: 'w3h',
+                count: 5,
+                skip_forks: false,
+                target: '#gh_repos'
+            });
+        });
+    </script>
+    <script src="../theme/js/github.js" type="text/javascript"></script>
+    <!-- End GitHub JS Code -->
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8dd91be64f13d3df23dfc64664c3101b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>

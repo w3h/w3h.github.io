@@ -1,0 +1,451 @@
+body {
+    font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei"; 
+    background-color: #f6f6f6;
+    border-color: #080808;;
+    padding-top: 80px;
+    font-size: 16px;
+}
+
+.myheader {
+    width: 100%;
+    /*min-width: 1220px;*/
+    height: 70px;
+    line-height: 50px;
+    background: #282828;
+}
+
+.myfooter {
+    width: 100%;
+    /*min-width: 1220px;*/
+    height: 100px;
+    line-height: 50px;
+    background: #282828;
+    margin-top: 20px;
+}
+
+.panel {
+    margin-bottom: 5px;
+}
+
+.well {
+    margin-bottom: 5px;
+    background-color: #ffffff;
+}
+
+.brand {
+    font-size: 20px;
+    float: left;
+    line-height: 30px;
+    color: #FF8800;
+    /* padding-left: 0px; */
+    position: relative;
+    top: 1px;
+    /* border-left: 2px solid #eaeaea; */
+    /* margin-left: 10px; */
+    overflow: hidden;
+    height: 30px;
+    margin-top: 18px;
+}
+
+.nav>li>a:hover, .nav>li>a:focus {
+    text-decoration: none;
+    background-color: #FF8800;
+}
+
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    /*font-family: "Microsoft YaHei UI", "Microsoft YaHei", "Arial", "Verdana", "Tahoma";*/
+    font-weight: 500;
+}
+
+#sidebar .list-group, #sidebar .list-group-item {
+    background-color: transparent;
+}
+
+/* for list-groups nested within a list-group-item, reset the bottom margin */
+.list-group-item > .list-group {
+    margin-bottom: 0px;
+}
+
+/* for list-group-items nested within a list-group-item, reset the bottom
+   padding of the last item, b/c the containing item has paddimg already 
+ */
+.list-group-item .list-group-item:last-child {
+    padding-bottom: 0px;
+}
+
+.list-group-item {
+    border: none;
+}
+
+.tag-1 {
+    font-size: 15pt;
+    display: inline-block;
+    padding: 0;
+}
+
+.tag-2 {
+    font-size: 12pt;
+    display: inline-block;
+    padding: 0;
+}
+
+.tag-3 {
+    font-size: 9pt;
+    display: inline-block;
+    padding: 0;
+}
+
+.tag-4 {
+    font-size: 6pt;
+    display: inline-block;
+    padding: 0;
+}
+
+#sidebar {
+    padding-top: 0px;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+}
+
+#sidebar a {
+    /* color: inherit; */
+}
+
+.icon-label {
+    margin-left: 10px;
+}
+
+/* Example for how to control spacing between icon and label in specific
+   lists in the sidebar. To change, override in your CUSTOM_CSS           */
+#sidebar #social i {
+    margin-right: 3px;
+}
+
+a {
+    /* color: inherit; */
+    color:#FF8800;
+}
+
+a:hover {
+    /* color: inherit; */
+    color:#EE7700;
+}
+
+.entry-content {
+    color: #585858;
+    font-size: 15px;
+    line-height: 36px;
+    padding: 0 10px; */
+    width: 100%;
+}
+
+.article-list {
+    color: #585858;
+    font-size: 15px;
+    line-height: 36px;
+    /*padding: 0 20px;*/
+    width: 100%;
+}
+
+.article-content p {
+    font-size: 15px;
+    line-height: 26px;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.article-content .panel-body {
+    padding: 1px;
+}
+
+/*
+.entry-content a {
+    text-decoration: none;
+    border-bottom: 1px dotted;
+}
+
+.entry-content a:hover {
+    text-decoration: none;
+    border-bottom: 1px solid;
+}
+*/
+
+.entry-content img {
+    max-width: 90%;
+    height: auto;
+}
+
+.entry-content figcaption, .caption {
+    font-size: small;
+    margin-bottom: 2px;
+}
+
+.floatright, .align-right {
+    float: right;
+}
+
+.floatleft, .align-left {
+    float: left;
+}
+
+.floatcenter, .align-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+figure.floatright, .align-right {
+    margin-left: 4px;
+}
+
+figure.floatleft, .align-left {
+    margin-right: 4px;
+}
+
+figure.floatcenter, .align-center {
+    margin-bottom: 11px;
+}
+
+.highlighttable pre {
+    /* Removes bootstrap default margin-bottom */
+    margin-bottom: 0px;
+}
+
+.highlighttable {
+    /* Adds them margin-bottom to highlightable instead of <pre> */
+    margin-bottom: 11px;
+}
+
+.highlighttable .code {
+    width: 100%;
+}
+
+#categories ul, #tags ul {
+    list-style: none;
+    padding: 0;
+    margin-left: 0;
+}
+
+.docutils.footnote td.label {
+    display: table-cell;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-align: inherit;
+    white-space: inherit;
+    border-radius: inherit;
+}
+
+.categories-timestamp {
+    color: #AAAAAA;
+    font-size: 0.9em;
+    margin-right: 10px;
+}
+
+.archives_titles dd {
+    font-size: 2em;
+}
+.tagcloud-list {
+    line-height: 1.5;
+}
+
+
+/* Article summary */
+.summary { margin-bottom: 4em; }
+.summary pre { display: none; }
+
+#index_date {
+    font-size: small;
+}
+
+
+
+.fa-arrow-up:before {
+    content: "\f062";
+    color: #FF8800;
+}
+
+.col-xs-10 {
+    width: 83.33333333333334%;
+    color: #FF8800;
+}
+
+.article-meta {
+    font-size: 12px;
+    color: #999;
+	margin: 0 auto;
+	text-align:center
+}
+
+.article-title {
+    margin-top: 0;
+    font-size: 36px;
+    line-height: 36px;
+	margin: 0 auto;
+	text-align:center;
+    color: #000;
+}
+
+.summary {
+    float: left;
+    width: 100%;
+    /*max-height: 160px;*/
+    font-size: 15px;
+    /*font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei";*/
+    margin: 10px 0px;
+    overflow: hidden;
+	
+    color: #999;
+    word-wrap: break-word;
+    line-height: 20px;
+}
+
+.summary h1, h2 {
+    font-size: 20px;
+}
+
+.panel-title h2 {
+    float: left;
+    width: 100%;
+    line-height: 22px;
+    /*font-family: 微软雅黑, "Microsoft YaHei", "WenQuanYi Micro Hei";*/
+    font-size: 18px;
+    color: rgb(60, 60, 60);
+    /*font-weight: bold;*/
+}
+
+.panel-title h2 a:link, .panel-title h2 a:visited, .panel-title h2 dt a:active {
+    /*color: #000;*/
+    font-size: 22px;
+}
+
+.panel-body a:hover {
+    background: #EE7700;
+    color: #FFFFFF!important;
+}
+
+#sidebar h4 {
+    font-size: 18px;
+    color: #666;
+    border-bottom: 1px solid #eee;
+    margin: 0;
+    padding: 11px 2px 10px;
+    /* background: url(../img/bg.png) 0 bottom repeat-x; */
+	
+}
+
+.col-sm-9, .col-sm-3 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#sidebar .well-sm {
+    padding: 0px;
+}
+
+
+.article-content {
+    color: #585858;
+    font-size: 15px;
+    line-height: 26px;
+    /*padding: 0 20px; */
+    width: 100%;
+}
+
+.article-meta .item {
+    margin-right: 20px;
+}
+
+
+.readmore {
+    color: #FFF;
+    float: right;
+    background-repeat: repeat-x;
+    background-color: #FF8800;
+    text-align: center;
+    line-height: 1;
+    padding: 0.5em;
+    font-size: 12px;
+}
+
+.sidebar_main {
+    /**/
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    background-color: #282828;
+}
+
+.container>.navbar-header, .container-fluid>.navbar-header, .container>.navbar-collapse, .container-fluid>.navbar-collapse {
+    min-height: 69px;
+}
+
+
+.icsnav {
+    /*font-size: 87.5%;*/ 
+}
+
+.icsnav .current {
+    border-bottom: 2px solid #4183c4;
+    float: left;
+    text-decoration: none;
+}
+
+.icsnav h2 {
+    display: block;
+    font-weight: bold;
+    font-size: 18px;
+    /*border-bottom: 1px solid #ccc;*/
+    color: #000;
+    line-height: 1.714285714;
+
+    -webkit-margin-before: 0.83em;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+.icsnav .entry-content table, .comment-content table {
+    border-bottom: 1px solid #fff;
+    line-height: 2;
+    margin: 0 0 24px;
+    margin: 0 0 1.714285714rem;
+    border-top: 1px solid #fff;
+    padding: 6px 30px 6px 0;
+}
+
+.icsnav .entry-content td, .comment-content td {
+    border-top: 1px solid #fff;
+    padding: 6px 30px 6px 0;
+}
+
+
+@media screen and (max-width: 600px) {
+    .icsnav table tr {
+      margin-bottom: 10px;
+      display: block;
+      
+    }
+
+    .icsnav table td {
+      display: block;
+      text-align: left;
+    }
+
+    .icsnav table td:before {
+      content: attr(data-label);
+      float: left;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+  }

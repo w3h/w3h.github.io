@@ -1,0 +1,9 @@
+{% if article.tags %}
+<!-- <span class="label label-default">Tags</span> -->
+{% for tag in article.tags %}
+<a href="{{ SITEURL }}/{{ tag.url }}"><span class="label label-default"> {{ tag }} </span></a>
+    {% if not loop.last %}
+        &nbsp; 
+    {% endif %}
+{% endfor %}
+{% endif %}

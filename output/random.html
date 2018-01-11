@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<head>
+    <title>random</title>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+        function redirect(){
+            var urls = [
+ "/security/Triton_src_analysis.html",
+ "/security/s7_300_1212C_1215C TRCV_compare.html",
+ "/news/monthly_report_12_2.html",
+ "/news/hk_conference.html",
+ "/news/monthly_report_12_1.html",
+ "/news/monthly_report_11_2.html",
+ "/news/monthly_report_11_1.html",
+ "/security/virtual_platform.html",
+ "/news/monthly_report_10_2.html",
+ "/tool/AB_VPLC.html",
+ "/tool/WinAC_RTX.html",
+ "/security/plcinjecter.html",
+ "/tool/isf.html",
+ "/security/wincc_env.html",
+ "/news/logicblob.html",
+ "/security/wannacry.html",
+ "/security/plcblaster.html",
+ "/security/ClearEnergy.html",
+ "/tool/icstools.html",
+ "/news/Ransomware for Industrial Control Systems.html",
+ "/other/about.html",
+
+        ""];
+
+        var index = Math.floor(Math.random() * (urls.length-1));
+        window.location = urls[index];
+    }
+</script>
+<body onload="redirect()">
+</body>
+</html>

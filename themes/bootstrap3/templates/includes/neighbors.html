@@ -1,0 +1,22 @@
+{% if DISPLAY_NEIGHBORS %}
+    <div>
+        <br />
+        <hr />
+        <ul>
+            {% if article.prev_article %}
+            <li>
+                <a href="{{ SITEURL }}/{{ article.prev_article.url}}">
+                    上一篇文章：{{ article.prev_article.title }}
+                </a>
+            </li>
+            {% endif %}
+            {% if article.next_article %}
+            <li>
+                <a href="{{ SITEURL }}/{{ article.next_article.url}}">
+                    下一篇文章：{{ article.next_article.title }}
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+{% endif %}

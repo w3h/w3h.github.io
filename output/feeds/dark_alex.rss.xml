@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/dark_alex.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 02 Jan 2018 10:43:00 +0800</lastBuildDate><item><title>工控安全半月报第五期（2017-12 下）</title><link>http://icsmaster.com/news/monthly_report_12_2.html</link><description>&lt;blockquote&gt;
+&lt;p&gt;工匠安全实验室最新版块，专注工控安全的我们，精选近期全球范围内工控安全领域的重要事件，让您及时了解行业发展动态，洞悉行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;行业动态&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://www.miit.gov.cn/n1146290/n4388791/c5996116/content.html"&gt;工业和信息化部关于印发《工业控制系统信息安全行动计划（2018-2020年）》的通知&lt;/a&gt;
+为贯彻落实《国务院关于深化制造业与互联网融合发展的指导意见》《国务院关于深化“互联网+先进制造业”发展工业互联网的指导意见》等文件精神，加快我国工业控制系统信息安全保障体系建设，提升工业企业工业控制系统信息安全防护能力，促进工业信息安全产业发展，制定《工业控制系统信息安全行动计划（2018-2020年）》。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://hackernews.cc/archives/18556"&gt;美国国土安全部（DHS）相关部门就恶意软件 HatMan、Triton 等发布工控安全预警&lt;/a&gt;
+网络安全公司 FireEye 和 Dragos 于上周报道称，新型恶意软件 Triton 和 Trisis 通过破坏关键基础设施中广泛使用的施耐德电气 Triconex 安全控制器致使中东部分机构关场停工。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://netsecurity.51cto.com/art/201712/561698.htm"&gt;2018工控安全发展趋势 8个方向直击工业控制系统要害&lt;/a&gt;
+SecureList预测，2018年工控安全将会面临恶意软件及恶意工具不断出现、地下黑市提供攻击服务、定向勒索攻击、工业间谍等方面的风险，但犯罪团伙尚未找到攻击工控系统盈利的办法。与此同时，国家规定也在发生变化，工业安全保险日益走热。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://icsmaster.com/news/hk_conference.html"&gt;工匠安全实验室受邀赴港参加DragonCon2017会议（附PPT）&lt;/a&gt;
+近日，我们受邀赴港参加DragonCon2017会议，在会议上作了两场交流分享。来自中国大陆，中国香港，美国，加拿大，马来西亚，新加坡，英国，台湾等地区和国家的安全研究人员云聚于此，分享这一年的研究成果。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://news.163.com/17/1229/21/D6RQH9A700014SEH.html"&gt;到2020年，山西工控安全行业年产值达30亿元&lt;/a&gt;
+工业控制系统信息安全，是信息安全重要组成部分，山西省经信委今年9月出台了《山西省工业控制系统信息安全“十三五”规划》（以下简称《规划》）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://it.people.com.cn/n1/2017/1228/c1009-29733911.html"&gt;2017国家工业信息安全产业发展联盟年会在杭举行&lt;/a&gt;
+12月27日，由工业和信息化部指导，国家工业信息安全产业发展联盟、国家工业信息安全发展研究中心、浙江省经济和信息化委员会共同主办，浙江省信息安全行业协会承办的2017工业信息安全论坛暨国家工业信息安全产业发展联盟年会在杭州举行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=zO6CWbaVT-DLKJcmrZsm9QzFR2cN8wTAVcK44jcbe8*iHvQihETLNukvg3mgiOxk12pR7GD9oROHL2-X00NPTibUQMjal2X7mPaipxR4LSqhWCuwKGbNgoJDS4rks8bu&amp;amp;new=1"&gt;聚焦2017网络安全标准论坛，《网络安全认证规范》正式发布&lt;/a&gt;
+12月15日，以“信息安全标准讲解与技术研讨”为会议主题的“2017网络安全标准论坛暨公安部信息安全标准宣贯培训会”在上海举行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?__biz=MjM5Njc3NjM4MA%3D%3D&amp;amp;mid=2651075011&amp;amp;idx=1&amp;amp;sn=ff15d055c27a2395d6bc04b3ab7fba59&amp;amp;scene=45#wechat_redirect"&gt;你见过针对“风电”的工控安全攻防赛么&lt;/a&gt;
+能源行业的生产和控制系统是我国重要的关键信息基础设施，这一点自不必赘述，但聚焦如电力、石化等某一细分领域的工控安全攻防赛，在中国甚至是全球也并不多见。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514887896&amp;amp;ver=612&amp;amp;signature=F3cUH7*j6ul75ZEfV1Znx9fDe0BHHhRmpb5evA8qiqpMDLyGzwkVWuYMT2*9VaLFiO7glgQV1uBePnnxkK9ug36P4fEt0rc0JMBqZTu7LC0agvDlTcZqqbu2VMjK*gmX&amp;amp;new=1"&gt;工控联盟参加2017年工业信息安全技能大赛&lt;/a&gt;
+12月19日上午，2017年工业信息安全技能大赛在杭州电子科技大学鸣锣开赛。工业和信息化部信息化和软件服务业司、国家工业信息安全发展研究中心、浙江省经济和信息化委员会、国家工业信息安全产业发展联盟、杭州电子科技大学、浙江省电子信息产品检验所的相关领导和嘉宾出席开幕式并致辞。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;技术资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=9IVWOy*WeBEixwUpBY4Tp6rhJtfjJWTxs-9RorR0Jjt3-JRfJwbKM7yu6sWctY7bb-HoTiykvS27FbB0Yh*UWdy0v5SLJxHBOOk18sYd*Lnm-Luv4Q885LQU*1Zpm7rF&amp;amp;new=1"&gt;攻击者可操作射频信号从工业网络中窃取数据&lt;/a&gt;
+近期，研究人员发现了一种新型的攻击方法，即攻击者可以通过控制可编程逻辑控制器（PLC）发射出的射频信号来从空气间隙工业网络（Air-Gapped IndustrialNetwork）中窃取数据。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=wOHN2LhbjJVWrbs4wo95EgsHoFy-Us34twF21OVo3jCz8os3-yJ0UlbChOXlPwD*V7q3XI69lg-vMZzFrLbOEm7kKGYPYKReml2JSGUFov-9TJVPdHD8p*4pcf*yXCyV&amp;amp;new=1"&gt;工控系统的指纹识别技术&lt;/a&gt;
+当前，指纹识别技术已被或坏或好的广泛应用于ICT系统。攻击者通过扫描网络获取设备指纹来关联漏洞入侵系统，安全防护者则利用设备指纹来发现系统的脆弱性，检测系统的网络异常。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514885530&amp;amp;ver=612&amp;amp;signature=wOHN2LhbjJVWrbs4wo95EgsHoFy-Us34twF21OVo3jBQFde6flG2esUDUzLONOlBYlzJy0xqiP5Iw3dD8ZgggTtF5TSUMSmQPFbQMEXJAAMmdjvfIArHayN-I4bv6DEt&amp;amp;new=1"&gt;煤炭行业工控系统信息安全防护关键技术研究&lt;/a&gt;
+煤炭行业在走新型工业化发展道路，推进“两化深度融合”过程中，涉及很多新技术、新业务模式的建设和引用，数据共享越来越深入，工控系统越来越开放，而针对工控系统的安全防护措施却严重滞后，导致煤炭行业的工控系统信息安全问题异常突出。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514888481&amp;amp;ver=612&amp;amp;signature=4FM22neF0CEnPadv9uwhAKymKyNHL3p1ArZL7ER9JgsqpOyDKoBnBngbiZLOKwEnAuZiaqxcYF0kqOP5pkY2w2ODpE7AC6h35NicPULzfDOk92NXHAupSHfQw3n39JT5&amp;amp;new=1"&gt;工业安全 | 电力监控系统网络安全漏洞研究和实践&lt;/a&gt;
+电力行业作为国家关键基础设施，控制系统的网络安全关系到国民经济的正常运行，因而非常重要。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://mp.weixin.qq.com/s?src=11&amp;amp;timestamp=1514887792&amp;amp;ver=612&amp;amp;signature=cl78In6v69LKq9T-5aSgdAs507xaF40lWp-stW4H43iw2w*Eb8I6TJ5TZI3lODvc69*GzANGPLnbAJsqdjgnktV8qGZO3p53rC3ZWGcI0kwcuSeUO1Fv3DfI9Qv6aWai&amp;amp;new=1"&gt;等保2.0中工控系统安全扩展要求（一级系统）&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;安全漏洞&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-355-01"&gt;Moxa NPort W2150A and W2250A&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-355-02"&gt;Schneider Electric Pelco VideoXpert Enterprise&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-353-01"&gt;ABB Ellipse&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-353-04"&gt;Siemens LOGO! Soft Comfort&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://ics-cert.us-cert.gov/advisories/ICSA-17-353-05"&gt;WECON Technology Co., Ltd. LeviStudio HMI&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Dark_Alex</dc:creator><pubDate>Tue, 02 Jan 2018 10:43:00 +0800</pubDate><guid>tag:icsmaster.com,2018-01-02:news/monthly_report_12_2.html</guid><category>news</category></item><item><title>工匠安全实验室受邀赴港参加DragonCon2017会议</title><link>http://icsmaster.com/news/hk_conference.html</link><description>&lt;p&gt;近日，工匠安全实验室受邀赴港参加DragonCon2017会议，并在会议上作了交流分享，以下为会议概况。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/0.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;会议日程&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;时间地点&lt;/th&gt;
+&lt;th align="center"&gt;日程&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;2017/12/14  香港大学黄克競楼&lt;/td&gt;
+&lt;td align="center"&gt;Workshop&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2017/12/15  香港大学黄克競楼&lt;/td&gt;
+&lt;td align="center"&gt;ICS Workshop&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2017/12/16     富豪香港酒店&lt;/td&gt;
+&lt;td align="center"&gt;DragonCon2017&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/1.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;ICS Workshop&lt;/h2&gt;
+&lt;p&gt;15日上午，在香港大学举办了ICS Workshop，工匠安全实验室在ICS Workshop上作了180分钟的技术分享。来自世界各地的安全研究人员出席了此次ICS Workshop。工匠安全实验室在工控安全现状，工控安全防护方案方面取得的成果作了分享。同时对工控系统脆弱性进行了演示实验，分享了在工控安全防护方面可能遇到的一些新型的攻击方式。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/2.jpg" /&gt;
+在ICS Workshop中，工匠安全实验室自主开发改进的工控安全测试框架&lt;a href="https://github.com/w3h/isf"&gt;isf&lt;/a&gt;，受到各地专家的广泛好评，与会者积极沟通交流，并且亲手使用安全测试框架对工控设备进行测试实验。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/3.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;此次交流会上用到了我公司自主研发的移动式工控安全实验箱，将实验箱上预留的接口插到展示沙盘上，就可以很方便的进行各种演示实验。也是由于这种便携式的设计，让与会者有机会接触到真正的工业现场设备，可以更深刻的学习和理解工控安全。&lt;/p&gt;
+&lt;p&gt;分享交流会议持续了3个多小时，让传统安全研究人员对工控安全有了基本的了解，每个参与测试环境的研究员也真切的感受到工控设备的安全问题，也让每个人对工控安全有了更直观更深刻的感受。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/4.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠安全实验室希望成为一个播种者，能够在每个人心中都播下一颗关注工控安全的种子，因为国家基础设施都是由工控设备控制的，工控安全事关每个人的人身安全。&lt;/p&gt;
+&lt;h2&gt;DragonCon2017&lt;/h2&gt;
+&lt;p&gt;16日，在富豪香港酒店，DragonCon2017如期而至，来自中国大陆，中国香港，美国，加拿大，马来西亚，新加坡，英国，台湾等地区和国家的安全研究人员云聚于此，分享这一年的研究成果。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/5.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠安全实验室分享的主题为工控PLC蠕虫的实现原理，在源码层面解释和讨论工控PLC蠕虫的实现原理，并且对如何检测和防护做出了阐述。&lt;/p&gt;
+&lt;p&gt;在香港，马来西亚，新加坡等地区和国家，工控安全可谓是新兴课题，所以我们的分享让他们产生浓厚的兴趣，在使用工控安全实验箱进行PLC蠕虫展示实验的时候，大家纷纷拍照，他们都开始意识到工控设施所存在的隐患，以及研究工控安全的必要性。&lt;/p&gt;
+&lt;p&gt;会后，多个国家的参会者与我们进行了深度的交流，希望能够了解学习到更多有关工控安全方面的知识，能够将工控安全的观念和意识带回去传递给自己国家的人。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/hk_conference/6.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;工匠安全实验室受邀参加会议，并且在会议上作了精彩的演讲。受到各方面的一致好评，工匠安全实验室也开始以香港作为纽带和桥梁，慢慢将自己的安全研究成果分享到其他国家和地区，为工控安全行业贡献自己的一份力量。&lt;/p&gt;
+&lt;p&gt;同时，工匠安全实验室也希望能够和各个国家和地区的工控安全公司和研究者合作，交流行业尖端技术，探寻行业前进方向。&lt;/p&gt;
+&lt;p&gt;最后，附上我们在ICS Workshop和DragonCon上演讲的PPT，献给对工控安全感兴趣的你。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://github.com/w3h/icsmaster/blob/master/doc/%E5%9B%BD%E5%A4%96/Monitoring%20and%20Protecting%20Industrial%20Control%20Systems.pdf"&gt;Monitoring and Protecting ICS&lt;/a&gt;
+&lt;a href="https://github.com/w3h/icsmaster/blob/master/doc/%E5%9B%BD%E5%A4%96/A%20step%20by%20step%20guide%20of%20writing%20a%20worm%20to%20infect%20PLC-based%20systems%20using%20ladder%20logic.pdf"&gt;A step by step guide of writing a worm to infect PLC-based systems using ladder logic&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Dark_Alex</dc:creator><pubDate>Tue, 19 Dec 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-12-19:news/hk_conference.html</guid><category>国际会议</category><category>香港大学</category><category>工控PLC蠕虫</category></item><item><title>工业控制系统中的梯形逻辑炸弹</title><link>http://icsmaster.com/news/logicblob.html</link><description>&lt;div class="highlight"&gt;&lt;pre&gt;本文由工匠实验室翻译，非官方中文译文，原文《On Ladder Logic Bombs in Industrial Control Systems》
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;摘要&lt;/h2&gt;
+&lt;p&gt;在工业控制系统中，可编程逻辑控制器（PLC）通常被用于与传感器和执行器之间直接交互，并用于自动控制。 PLC的软件运行在两个不同的层上，固件层（即OS）和控制逻辑层（通过处理传感器数值，以确定控制行为）。
+我们所讨论梯形逻辑炸弹（LLB）是指用梯形图（或其他IEC 61131-3兼容语言）编写的恶意软件。这样的恶意软件将被攻击者注入到PLC上的现有控制逻辑中，改变控制动作或者等待特定的触发信号来激活恶意行为。攻击者可以用LLB篡改合法的传感器读数。我们通过Stuxnet（震网）病毒来具体说明LLB的概念，然后我们将展示几个基于真实PLC设备的设计的LLB。值得注意的是，LLB有一定的隐蔽性，也就是说操作员们难以通过人工检查的方式的检测到LLB。
+除了介绍逻辑层上的漏洞，我们还讨论了相应的对策。对此，我们提出了两种检测技术。&lt;/p&gt;
+&lt;h2&gt;关键词&lt;/h2&gt;
+&lt;p&gt;ICS;  逻辑炸弹&lt;/p&gt;
+&lt;h2&gt;1、引言&lt;/h2&gt;
+&lt;p&gt;工业控制系统（ICS）是通常控制与电力，水，气，制造和其他关键基础设施相关的运行状态的计算机系统。 ICS和监控和数据采集（SCADA）系统依靠本地可编程逻辑控制器（PLC）与传感器和执行器进行连接。虽然PLC设备由不同的厂商生产制造，但它们都通常使用与IEC 61131-3相同的编程语言编程。特别是，IEC 61131-3标准包含梯形逻辑图，功能块图和连续文本，作为不同的语言，它们一起用于编写在PLC上运行的逻辑程序，然后逻辑由PLC上运行的固件解释运行。现代PLC提供安全机制来保证上传合法固件。PLC上运行的逻辑通常可以由有网络连接或者有本地USB访问PLC权限的任何人进行更改。这种设计是与传统IT企业环境中恶意软件环境的主要区别，攻击者代码的注入通常会比传统的代码注入更加困难。
+最近，信息物理系统（CPS）以及其相关系统的安全性备受关注。特别是，诸如关键基础设施（包括电网，核电站和化工厂）等CPS都受到威胁。在CPS中，除传统的基于网络的攻击之外，组件之间的物理层交互也必须被视为潜在的攻击媒介。
+梯形逻辑炸弹（LLB），就是用梯形逻辑图编写的恶意软件。LLB由逻辑程序组成，旨在通过更改控制器行为或者由特定触发信号激活后，再激活恶意行为来中断PLC的正常操作。LLB甚至可以处于休眠状态并隐藏很长时间，直到捕获到特定的触发动作才被触发。一旦被激活，LLB就可以被攻击者用来篡改合法的传感器读数，然后由PLC将错误的值传给SCADA系统。我们根据编写LLB的目的和作用对其进行分类，并在实验室中展示了基于实际PLC设备的几种结构。
+我们在真实环境中实施和测试了ICS的攻击（SWaT testbed，参见第4节）。对于隐蔽性很强的LLB，即由操作人员难以通过手动检测PLC中运行的程序来检测到的LLB。我们将其归为基于逻辑的攻击的分类，例如由Stuxnet（震网）病毒执行的攻击。归纳我们的成果如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;我们分析目标平台上的固件以检测漏洞。&lt;/li&gt;
+&lt;li&gt;我们确定PLC的逻辑操作问题，并介绍梯形逻辑炸弹（LLB）的概念。&lt;/li&gt;
+&lt;li&gt;我们提供一系列LLB原型，特别是隐蔽性很强的LLB原型。&lt;/li&gt;
+&lt;li&gt;我们讨论基于手动和自动代码检测的对策，以及基于中央服务器的解决方案。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这篇文章的结构如下：第2部分介绍CPS系统，PLC和IEC 61131-3。第3节提出了我们的梯形逻辑炸弹（LLB）的概念，第4节中的我们用示例实现。第5节对LLB检测难度进行了一次小规模的评估。在第6节中我们提出了对LLB攻击的对策。第7节总结了该文章。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/1.png" /&gt;
+图1： 工厂控制系统的本地网络拓扑示例&lt;/p&gt;
+&lt;h2&gt;2、背景技术&lt;/h2&gt;
+&lt;p&gt;在本节中，我们将介绍我们迄今为止发现的工业控制系统（ICS）网络的一些突出特性。此外，我们将简要介绍梯形图逻辑编程语言以及与这些PLC交互所需的工具。&lt;/p&gt;
+&lt;h3&gt;2.1、ICS&lt;/h3&gt;
+&lt;p&gt;在这项工作的背景下，我们考虑用于监测和控制系统的ICS，如公共基础设施（水，电力），生产线或公共交通系统。特别地，我们假设该系统由可编程逻辑控制器，传感器，执行器和监控组件（如人机界面和服务器）组成。我们专注于具有本地连接的单站点系统，长距离连接还需要远程终端单元（见下文）等组件。所有这些组件通过公共网络拓扑连接。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;可编程逻辑控制器
+PLC通过分析传感器读数直接控制系统的部件，并遵循其控制逻辑，为连接的执行器产生命令。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;传感器和执行器
+这些组件与物理层交互，并直接连接到以太网（或间接通过远程输入/输出单元（IO）或PLC）连接。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;网络设备
+ICS经常使用网关设备在不同的工业协议（例如Modbus / TCP和Modbus / RTU）或通信介质之间进行转换。在这些网关连接到WAN的情况下，通常称为远程终端单元（RTU）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2.2、梯形逻辑图&lt;/h3&gt;
+&lt;p&gt;可编程逻辑控制器（PLC）是一种工业计算机系统，可连续监视输入设备的状态，并根据自定义程序进行决策，以控制输出设备的状态。 PLC广泛应用在工业控制系统（ICS）中，用于处理传感器和执行器，主要是因为其强大的性能和耐受恶劣条件的能力，包括严重的热，冷，灰尘和极度的潮湿。考虑到它们广泛的图2：示例梯形图逻辑代码具有三个梯级使用和PLC处理的任务的重要性质，它们对恶意操纵的安全性至关重要.PLC是用户可编程的设备。 PLC程序通常写在本地主机（个人计算机）上的特殊应用程序中，然后通过直接连接电缆或通过网络下载到PLC。该程序存储在PLC中的非易失性闪存中。虽然与替代供应商的平台的细节不同，但可能需要通过物理开关（即ControlLogix设备上的程序模式）远程更改PLC上的控制软件。我们观察到，为了方便起见，在实际系统中，PLC通常保留在该设置中，以便于远程访问。此外，具有物理访问权限的任何攻击者都可以轻松更改开关设置。因此，我们假设在本工作的其余部分可以进行远程或本地重新编程访问。 IEC 61131-3是为PLC定义了2个图形和1个文本编程语言标准的开放国际标准[10]：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;梯形逻辑图（图形）&lt;/li&gt;
+&lt;li&gt;功能框图（图形）&lt;/li&gt;
+&lt;li&gt;结构化文本（文本）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些语言中最流行的是梯形逻辑图。梯形图逻辑图背后的主要是提供类似系统接线图来抽象机电继电器的。梯形逻辑更多是由梯级实现的基于规则的图形语言，而不是传统的基于过程的语言。梯形图里的梯子代表了一个规则。它们被称为“梯形图”，因为它们类似于梯形，具有两个垂直导轨（电源）以及与表示的控制电路一样多的“梯级”（水平线）。图2描绘了在梯形图逻辑图，它包含三个梯级，它们利用各种输入，输出和指令块来实现某些逻辑。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/2.png" /&gt;
+图2 具有三个梯级的梯形图逻辑代码示例&lt;/p&gt;
+&lt;h3&gt;2.3、PLC漏洞分析&lt;/h3&gt;
+&lt;p&gt;作为我们研究工作的一部分，我们探索在PLC上运行的固件（如ControlLogix 5571）的漏洞。我们在此简要总结我们的成果。
+我们调查了具有物理访问PLC（或通过网络远程访问）的本地攻击者是否能够从PLC获取当前运行的固件，以及下装修改后版本的固件。为了更明显的观察到现象，后一种攻击在固件中安装隐藏的后门或木马，并更改固件的其他操作行为。我们发现通过使用本地USB连接，能够获得正在运行的固件。另外，如果将PLC硬件开关将设置为编程模式，则可以通过网络获取PLC固件。在下面的篇幅中，我们将讨论第二种攻击，也就是上传修改后固件。
+我们的PLC设备的固件信息为.dmk文件。该文件包含两组二进制文件（.bin）和相关的数字证书（.der）。它还包含.nvs文件，其中包含有关固件版本，产品代码和类型等的信息，该文件用作所有其他文件的头文件，将每个二进制映像与其相应的证书相链接，并加载每个文件的地址。
+数字证书由制造商（罗克韦尔自动化）签署。该数字签名是证书本身的哈希值，使用制造商的私钥通过RSA算法进行加密。此外，证书还在其数据字段之一中包含固件映像的加密散列（使用SHA-1）。在固件更新时间，模块（PLC）接收包含固件哈希值的证书和证书的数字签名。该模块计算证书的哈希值，解密签名，并比较哈希值。如果这些哈希值匹配，则证书是有效的。如果没有，则更新被拒绝。在收到整个固件映像后，该模块计算固件的哈希值，并将其与证书中的值进行比较。如果值不匹配，固件升级更新将被拒绝。在这种结构下，攻击者对固件映像的任何修改将改变散列和，导致证书中已经存在的哈希值之间的错误匹配。证书中的哈希值的任何更改将使制造商的签名无效。该过程在图3中更详细地解释&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/3.png" /&gt;
+图3 固件签名以及验证过程&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/4.png" /&gt;
+图4 闪烁的故障固件（修改后的证书）&lt;/p&gt;
+&lt;p&gt;鉴于所描述的设置，我们决定检查证书是否被PLC正确验证。我们删除了有效固件的原始证书，并将其替换为由我们自己（自行签名）CA签名的证书。我们确保伪造的证书在每个自定义数据字段中都具有匹配的内容，以匹配有效的固件映像及其散列值。然后，我们使用生成的文件（我们自己的.der）来更新PLC上的固件。更新失败，我们收到一个错误（传输：错误＃11001）。该过程可以在图4中找到，可以看出，尝试上传自定义证书时会触发错误。&lt;/p&gt;
+&lt;p&gt;结论：我们目前固件更新机制足以抵御攻击者的操纵。接下来，我们将会评估了PLC逻辑代码更新的过程。在这里，我们发现没有任何验证，来确保下装到PLC的逻辑更新来自授权的设备。在下文中，我们将目光专注于PLC逻辑的这种操作。&lt;/p&gt;
+&lt;h2&gt;3、梯形逻辑炸弹&lt;/h2&gt;
+&lt;p&gt;在本节中，我们介绍我们所提出的梯形逻辑炸弹的概念。特别地，我们注意到，虽然通过数字签名使PLC的固件更改变得异常困难，但是在PLC上执行的实际逻辑却不受这种措施的保护，而在将新的逻辑下载到PLC之前缺少安全检查和认证是造成这种局面的主要原因。攻击者可以利用这一点，通过网络访问PLC，并且可以将自定义（恶意）的逻辑程序下载到可能危及系统的PLC上。接下来，我们讨论可能利用此漏洞，实现攻击的方案和目标。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/5.gif" /&gt; 
+图5 梯形逻辑炸弹的分类&lt;/p&gt;
+&lt;h3&gt;3.1、系统和攻击者模型&lt;/h3&gt;
+&lt;p&gt;在这项工作中，我们假设攻击者能够通过网络远程访问工业控制系统中的PLC，或者物理地访问PLC。如我们所示，通常这种访问将允许攻击者在没有任何身份验证的情况下读取和修改PLC的编程逻辑。假设攻击者可以通过下载和上传逻辑配置到PLC的相应软件。&lt;/p&gt;
+&lt;p&gt;攻击者的目标可以从实现拒绝服务（DoS）到改变PLC的行为，或获取由PLC跟踪处理的传感器和控制消息的数据。为了执行这些攻击，攻击者只需要通过PLC系统的一次验证，这使得这种攻击更加危险。攻击者也可以对PLC进行零星（物理）访问。例如，攻击者每周只访问一次PLC。 在这些事件中，攻击者可以在与他的访问时间无关的点触发任何行为（即触发他的梯形逻辑炸弹代码）。&lt;/p&gt;
+&lt;p&gt;我们所考虑的情景是非常通用的，工业控制系统中的PLC，一般使用IEC 61131-3语言编程，并且可以重新编程。它与关键的传感器和执行器连接。工厂的操作员在设计时配置了PLC的逻辑。尽管他们不断监控这些PLC的状态，但很少需要改变已经运行的系统的逻辑配置。如果需要的话，他们也可以手动下载逻辑来检查它。虽然我们稍后将简要讨论使用入侵检测系统的基于网络的检测机制，但这样的解决方案将无法检测到本地攻击者的变化。因此，在这项工作中，我们不重点关注IDS。此外，物理层预防机制（摄像机，围栏等）不在监视的范围之内。&lt;/p&gt;
+&lt;p&gt;我们不认为攻击者能够攻击操作员站（如在Stuxnet中的情况），或者能够在数据传输时操纵网络流量。值得注意的是，如果攻击者能够破坏操作员站，那么操作员将无法可靠地验证任何代码。这样的攻击者可以通过使用可信的计算平台来寻址定位，而这并不是我们考虑的问题。攻击者模型也不会考虑内部攻击（例如，可能是正式工程师/操作员等有权访问和修改PLC逻辑的攻击者）。&lt;/p&gt;
+&lt;h3&gt;3.2、逻辑炸弹分类&lt;/h3&gt;
+&lt;p&gt;梯形逻辑炸弹可以广泛地分为两类（如图5所示）。 LLB可以根据其激活和触发进行分类。 他们可以通过给其一定的输入而被触发。或者，它们也可以由内部逻辑（系统状态，特定指令或数据，时钟等）触发。&lt;/p&gt;
+&lt;p&gt;LLB也可以根据它们对现有PLC系统的改变进行分类。他们可以添加或删除现有逻辑（修改功能）中的某些功能。这些逻辑炸弹也可以改变系统值，如系统日期/时间，时区，挂钟时间或类似（修改系统）。最后，这些也可以用于数据泄露，并将关键系统数据传输到间谍节点（传输信息）。另外，这些分类现在用来描述更具体的LLB。例如，在12  AM关闭泵的LLB将被分类为内部激活的功能修改LLB。&lt;/p&gt;
+&lt;h3&gt;3.3、攻击载荷类型&lt;/h3&gt;
+&lt;p&gt;在下文中，我们提供了一系列攻击载荷类型，可用于实现第3.1节所述的攻击者目标。攻击载荷可以是公开的破坏性的（例如，使用拒绝服务（DoS）），或者使隐身攻击（例如通过建立中间人的方式）来实现.MitM 攻击载荷可以用来监听通过的流量节点，或潜在地操纵这些消息的内容未被检测到。 通过操纵消息内容，攻击者可以伪造报告给其他PLC和SCADA系统的传感器读数，或更改发送到执行器的命令。下面我们详细介绍这些攻击目标。&lt;/p&gt;
+&lt;h4&gt;3.3.1梯形逻辑炸弹的Dos攻击&lt;/h4&gt;
+&lt;p&gt;非常基础（但具有破坏性）攻击载荷对PLC执行拒绝服务（DoS）攻击。 通过添加隐藏在特定PLC的梯形图逻辑中的恶意逻辑，可以将PLC失去控制并使其停止。这可能会损害由PLC控制的过程，并可能导致系统中的性能威胁状态。这样的炸弹将不断等待触发条件，一旦满足，它就可以启动死循环，重复的调用子程序等，并使PLC失效。&lt;/p&gt;
+&lt;h4&gt;3.3.2、梯形逻辑炸弹操纵传感器读数和命令&lt;/h4&gt;
+&lt;p&gt;另一类梯形逻辑炸弹可用于篡改在PLC中使用或者生成的实际数据。这种攻击的最简单的目标是从远程IO（图1中的RIO）读取传感器值。可以操纵这些值以使系统进入本不应该进入的状态。（图6）&lt;/p&gt;
+&lt;h4&gt;3.3.3、用于隐蔽记录敏感数据的逻辑炸弹&lt;/h4&gt;
+&lt;p&gt;可以使用第三类LLB来秘密跟踪并保存敏感PLC数据的日志。这可以通过使用FIFO缓冲区并将数据记录到PLC上的数组中来实现。这些炸弹是特别危险的，因为这些炸弹不会扰乱系统的工作，使得主机完全不了解它们的存在。这些可以在逻辑上保持延长的时间，无需检测，不断泄漏敏感数据和命令。&lt;/p&gt;
+&lt;h3&gt;3.4 触发&lt;/h3&gt;
+&lt;p&gt;在这里，我们描述可用于梯形逻辑炸弹的不同触发机制。
+&lt;img alt="ALT" src="/static/images/logicbombs/6.png" /&gt;
+图6：操作从RIO到HMI的传感器读数以及从HMI到RIO的控制指令&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;触发特定的输入
+当检测到预先确定的输入时，该炸弹可能被关闭。例如，我们正在针对我们实验的水处理ICS（见第4.1节）。目标PLC从其相应的液位传感器接收关于其中一个油箱中的水位的输入。当油箱达到一个特定的水平时，这个炸弹可能被关闭。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;触发序列
+当检测到特定的触发序列时，就可以触发该炸弹。这可以使得该炸弹更难以检测，因为在将特定序列作为输入检测到之前，其影响将不可见。这可以通过使用基于锁存器的有限状态机（FSM）来实现。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;计时器
+炸弹也可以使用计时器关闭。这将使LLB像一个真实世界的定时炸弹，当定时器完成其计数序列时，它将进入运动状态。使用嵌套TON计时器，可以实现将持续数天的计数序列。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;具体内部条件
+当实现特定的内部状态时，可以触发该炸弹。这种特殊的触发方案要求攻击者对PLC的逻辑有完整的了解和理解。当设置特定状态变量（例如故障代码）时，可以将炸弹设置为关闭并且执行攻击载荷逻辑。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3.5 在PLC逻辑中隐藏梯形逻辑炸弹&lt;/h3&gt;
+&lt;p&gt;检测原始逻辑（在我们的例子中是LLB）中的任何修改的原理将是从PLC设备下载控制逻辑，并手动检查它们以进行代码更改。特别地，熟悉工厂操作的工程师可以通过阅读代码并检测到恶意更改。这种方法对于小型站点和非常简单的逻辑可能是可行的，但我们将在下文中展示，攻击者可以通过几种方式来隐藏逻辑中的恶意有效负载，从而使得此类手动检查更难以检测。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="ALT" src="/static/images/logicbombs/7.png" /&gt;
+图7：SWaT Testbed的概述&lt;/p&gt;
+&lt;h2&gt;4. 现场实施攻击&lt;/h2&gt;
+&lt;p&gt;在本节中，我们详细描述了梯形逻辑炸弹的构造，并展示了如何利用它们来扰乱ICS的功能。&lt;/p&gt;
+&lt;h3&gt;4.1 SWaT Testbed&lt;/h3&gt;
+&lt;p&gt;实验在位于新加坡技术与设计大学的工业控制系统测试台（称为SWaT）进行。 如图7所示，安全水处理是一个功能齐全（按比例缩小）的水处理设备。 SWaT专门作为网络物理系统安全研究的平台。水处理过程分为六个阶段，从水槽1中的原水开始到水槽 6中过滤的输出水。每个阶段由独立的PLC控制，传感器的数据用于确定控制动作。
+传感器值和执行器命令通过工厂网络与PLC通信。该系统还包含监视器以查看并确保系统状态处于可接受的操作边界内。来自传感器的数据可用于监控和数据采集（SCADA）工作站的检查，并由历史站记录以供后续分析。&lt;/p&gt;
+&lt;h3&gt;4.2 攻击1： DoS攻击&lt;/h3&gt;
+&lt;p&gt;拒绝服务攻击（DoS）是对关键系统造成（最常见的财务或声誉）损害的常用攻击手段。在DoS攻击中，攻击者暂时或永久地减慢或停止系统的正常运行。在互联网上，分布式DoS攻击通常会通过创建大量的流量来实现，这些流量会使通信链路或服务器超负荷。由于PLC控制系统中传感器和执行器的动作，因此其运行可靠性通常至关重要。如果PLC无法控制执行器，则可能会产生灾难性的后果（例如，导致汽车组装厂中重型机械的失控）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+在这种情况下，目标是在水处理厂的一台PLC上发起DoS攻击。 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实施
+这是通过实施死循环作为逻辑炸弹来实现的。该梯形逻辑炸弹的触发机制是在接收到特定输入时。类似于Stuxnet，触发检查条件位于实际的逻辑之上，它始终保持在检查是否已接收到特定输入。一旦接收到所需的触发输入，LLB就会起作用。
+&lt;img alt="ALT" src="/static/images/logicbombs/8.png" /&gt;
+图8：恶意附加指令&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+实际上，恶意逻辑会隐藏在附加指令中。例如：创建了一个其结构与实际ADD块非常相似新的块，具有相类似的输入：2个输入A和B，以及一个输出：目标输出。它也被命名为（ADD _A）与真正的ADD块伪装。从梯形图逻辑（包含多个梯级）的顶部概述，这看起来与任何一个梯级上的其他ADD块无异。但是在这个附加块中，定义了逻辑炸弹（死循环），并对PLC操作产生不利影响。有关这方面的更多细节可以在图8中看到。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.3 攻击2：篡改传感器数据&lt;/h3&gt;
+&lt;p&gt;ICS中的另一个重要功能（除了控制执行器）是实时地从传感器读取数据。该数据可能是有关流程和系统的关键信息。根据这些数据，可以导出流程的当前状态，由PLC使用该状态来确定适当的控制动作。因此，篡改传感器数据可能会导致系统错误。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+此次攻击的目标是操纵从远程IO（图1中的RIO）到PLC传感器读数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结构
+由于这只是概念验证，我们决定操纵传感器值，让传感器值以固定的步长自增（我们任意选择了四个值）。因此，该LLB 攻击载荷是一个简单的ADD块，它获取真实的传感器值，并将其数值每次自增4，并将它们存储回原位置。然而，在这次攻击中使用了更复杂的触发机制。特别是，当检测到完整的触发序列时触发LLB。这通过使用基于锁存器的有限状态机来实现（见图9）
+&lt;img alt="ALT" src="/static/images/logicbombs/9.png" /&gt;
+图9：利用子程序内部
+&lt;img alt="ALT" src="/static/images/logicbombs/10.png" /&gt;
+图10：利用子程序的逻辑概述&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+对于这次攻击，我们还使用了一种不同的隐藏技术。通过检查水处理厂中PLC的实际逻辑，我们观察到逻辑正在调用大量子程序。事实上，程序的编写者会通过调用子程序这种方式，来保证梯形逻辑图的良好的可读性。然而，具有大量子程序调用的结构可以被攻击者利用来隐藏LLB。我们通过隐藏在梯形逻辑图的子程序来测试这个漏洞，这些子程序在每个周期都会被执行（见图10）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.4 攻击3：使用FFL进行数据窃取&lt;/h3&gt;
+&lt;p&gt;上述的攻击方式可以明显地造成损害或故障，一旦触发即可观察到其影响。然而，还有另一类LLB可能同样有害，但难以检测。特别是，这样的LLB可以用于数据记录和导出关于系统的敏感信息。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+这次攻击的目标是实现对工厂敏感信息的数据记录并不被察觉。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实施
+通过使用将数据读入数组的FIFO缓冲器来实现数据记录。FFL块已被用于此攻击。如图11所示，FFL块存储包含关于用于确定工厂状态的计数序列的敏感信息的标签——PB LT Seq。这些值存储在array2中，并被转换成.csv格式并存储在PLC的SD卡上。在我们的攻击者模型中，有可以进入工厂的，具有零星访问（物理访问PLC）特征的攻击者，他们通过读取SD卡获取这些数据。然后，将此卡插回PLC并离开。触发方式可以是一个简单的定时器，从而实现对工厂“x”天之后的数据记录。
+&lt;img alt="ALT" src="/static/images/logicbombs/11.png" /&gt;
+图11：FIFO缓冲区中的数据记录&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+该LLB可以再次隐藏在附加指令或子程序中。它也可以留在主逻辑流程中，因为这个LLB只包含一个额外的梯级，使其在大而复杂的代码中难以进行手动检测。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.5 攻击4：触发PLC异常&lt;/h3&gt;
+&lt;p&gt;我们现在讨论与DoS攻击相似的另一个攻击。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;目标
+目标是触发PLC的主要故障，导致其处理器停止，且不能通过硬复位来修复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实施
+这里我们设法在PLC上造成两个主要故障。
+&lt;strong&gt;1、无效的数组下标&lt;/strong&gt;
+这是通过对标签收集数组越界访问实现的。这可以通过创建FIFO缓冲区长度和用于存储缓冲区值的数组的大小之间的不匹配来实现。细节见图12。
+&lt;img alt="ALT" src="/static/images/logicbombs/12.png" /&gt;
+图12：无效的数组下标
+&lt;strong&gt;2、堆栈溢出&lt;/strong&gt;
+这是通过实现对其自身的递归子程序调用来实现的。这导致堆栈存储的返回指针溢出，进程停止并使PLC崩溃（图13）。
+&lt;img alt="ALT" src="/static/images/logicbombs/13.png" /&gt;
+图13：堆栈溢出&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;隐藏
+这些LLB可以隐藏在Add On指令或子程序内&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4.6 攻击分析&lt;/h3&gt;
+&lt;p&gt;理想情况下，将会有一个衡量LLB隐蔽性的指标，这表明查验出LLB的难度有多大。到目前为止，我们还没有找到一种衡量性能的好办法。在下文中，我们使用相对的附加代码行（RALOC）来测量隐蔽性。此外，逻辑中代码行的增加也可能会导致运行时内存消耗增加。我们观察到梯形图逻辑程序使用两种类型的存储器：I / O存储器和数据和逻辑存储器。作为我们分析的一部分，我们测量了添加恶意梯形逻辑炸弹时与原始逻辑的内存占用率差异（增加）。据观察，PLC的I / O存储器根本没有增加，这主要是因为没有新的输入/输出来触发或应用上面讨论的梯形逻辑炸弹。观察到的唯一增长是在数据和逻辑存储器中，这也是边缘的，如表1所示。值得注意的是，Attack 3的大小（数据记录）将取决于记录的数据量。因此，RALOC度量会增加，修改带来的影响也会更加显著。为了减轻这种影响，最好将数据保存在SD卡上，然后重置数组，以便在需要更多数据时可以重新使用。&lt;/p&gt;
+&lt;p&gt;表1：攻击时内存增加的比较
+&lt;img alt="ALT" src="/static/images/logicbombs/14.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;5. 检测难度评估&lt;/h2&gt;
+&lt;h3&gt;5.1 评估背景&lt;/h3&gt;
+&lt;p&gt;为了估计人们检测LLB的难度，我们组织举办了一场小规模的挑战赛，将其作为我们机构调查研究的一部分。来自学术界和行业内的六支队伍参加了此次活动，并参与了三个与LLB相关的挑战。我们了解到，并不是所有参与者都非常熟悉梯形逻辑编程，因此为每个团队都提供了一个测试手册，以便让其了解整体设置，软件使用和标签的初始化。分布于世界各地的团队通过远程连接参与这项挑战，与实验室中的虚拟操作员站和实际PLC连接。值得注意的是，虚拟机配置了Studio 5000和RSLinx，以向测试台PLC提供通信。参与者通过虚拟专用网络（VPN）连接到虚拟操作员站。对于所有的三个挑战，PLC都具有基本配置，与IO交互并发送选定的控制信号。现在总结一下挑战赛，其中涉及问题陈述的简要描述，以及具体的要实现的目标。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;夺旗挑战
+第一个挑战的目标是检测一个旨在读取传感器数值的LLB，它会获取传感器读数，然后将该读数转发到外部。为了完成这个挑战，参与者必须追踪从所有传感器到控制器的数据流，并且识别出不需要传感器数值的代码部分。在识别LLB代码之后，参与者可以读取所创建的标签值以代表夺旗成功。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;与ADD_ON捉迷藏
+第二个挑战是获取由某种逻辑读取到的模拟传感器读数的真实值。为了解决这个挑战，参与者必须检测一个试图隐藏为添加指令的LLB（见图8）。一旦参与者检测到LLB，他们就可以将其移除以获取真实值（或者简单地确定所使用的偏移量，并手动移除它）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;逻辑错误修复挑战
+第三个挑战是修复包含编程错误的逻辑。在PLC上运行时，代码将导致PLC主要故障“错误消息，并停止执行”，特别是我们编写的代码来访问内存数组，其索引超出了存储器阵列的长度（类似于缓冲区溢出），这样的故障可以用作LLB 攻击载荷来关闭PLC的操作，为了解决这个挑战，参与者必须了解FFL块，并检测到未初始化的存储器访问可能导致PLC处于故障状态。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;5.2 挑战结果&lt;/h3&gt;
+&lt;p&gt;本节总结了CTF事件期间获得的挑战结果。队伍的细节是匿名的。其中一个团队不包括在分析中，因为团队设法通过无关的渠道获得了旗帜。其他团队的结果总结在表2中。只有团队2能够解决所有的挑战（即他们能够检测到所有的LLB），而第5队能够解决一个挑战。其余的团队无法检测任何LLB（梯形逻辑炸弹）。&lt;/p&gt;
+&lt;p&gt;表格2：LLB比赛统计详情
+&lt;img alt="ALT" src="/static/images/logicbombs/15.png" /&gt;&lt;/p&gt;
+&lt;p&gt;我们的评估表明，在关键的基础设施控制器代码中检测到恶意代码或隐藏的逻辑炸弹绝非易事。只有两只队伍能够在大量的子程序调用，以及几个消息和指令块中找到LLB。而包含LLB在内的更高级的挑战只有由一只团队解决了。我们得出结论，对于检测LLB，操作员必须具有Studio 5000的相关知识和编程语言，如梯形图，结构文本和功能框图及其语法和语义。实际上，如果操作员检查功能不熟悉的或由分包商写的代码，这将会是很大的麻烦。&lt;/p&gt;
+&lt;h2&gt;6. 对策&lt;/h2&gt;
+&lt;p&gt;在本节中，我们将讨论针对LLB攻击的对策。特别是，我们所讨论的，基于网络的对策以及对运行代码的集中验证。
+在下文中，我们假定将对策应用于现有的工业控制系统。如果我们可以更改给PLC下装程序的方式，则可以通过引入用户认证或用于逻辑更新的加密签名。如果用户成功认证，或更新的真实性已被验证，PLC将会接受逻辑代码更新。
+以下两个提案不需要对现有PLC进行此类更改，因此在现有系统中更容易实施。在下文中，我们假设ICS中有一些已知的操作员站，允许更新PLC的控制逻辑。任何第三方更新PLC逻辑的尝试都将被视为攻击。我们假设使用默认软件用于应用逻辑程序更新，并且我们无法更改该软件的行为。
+我们之前假设的攻击者模型：攻击者有能力操纵PLC运行一次程序，但不具有永久访问权限。攻击者没有损害操作员的机器。攻击者也无法操纵第三方网络流量。&lt;/p&gt;
+&lt;h3&gt;6.1 网络对策&lt;/h3&gt;
+&lt;p&gt;如果网络中已经使用入侵检测系统（IDS）来监控流量以传播恶意软件或其他恶意流量，那么该IDS可能用于识别与连接到网络的PLC上的逻辑更新相关的特定流量。如果观察到网络上未经授权的逻辑更新，则可能会引起警报。在[8]中提出了类似的IDS，作者使用确定性有限自动机建模HMI和PLC之间的定期通信。如果消息在正常（一般）消息序列中出现位置不正确，系统将标志异常。如果IDS被配置为作为入侵防御系统（IPS）来操作，那么甚至可以实时丢弃违规流量。
+此方案的问题与授权逻辑更新的识别有关。由于我们无法更改相应软件生成的流量，因此无法嵌入特定的验证信息。因此，我们只能使用IP源地址（据称与授权人员相关）等信息做验证，而这样做是不理想的（因为它可以被欺骗）。&lt;/p&gt;
+&lt;h3&gt;6.2 集中逻辑存储&lt;/h3&gt;
+&lt;p&gt;我们的第二个方案是基于两个组成部分：a）在ICS的所有PLC上运行的最新版本的逻辑集中逻辑存储（CLS），以及b）定期从PLC中下载当前运行逻辑的工具，并与“CL”的“金色”副本验证对照。我们提出的系统的概述可以在图14中找到。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;提交“金色”样本
+所有授权的工程师在更改PLC上运行的逻辑时，必须将每个PLC的最新版本的逻辑提交给CLS。为此，他们可以使用一个简单的应用程序，要求他们识别相应的逻辑文件，目标PLC及其凭据。然后，该应用程序将使用凭据来建立到CLS的身份验证安全通道（例如使用TLS），然后将最新的逻辑版本上传到CLS（例如，在已建立的TLS会话中使用HTTP）。 
+&lt;img alt="ALT" src="/static/images/logicbombs/16.png" /&gt;
+图14：集中逻辑存储的对策&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;定期逻辑验证
+我们已经实现了一个基于python的工具来手动定期验证逻辑。用户首先使用Studio 5000将梯形图逻辑导出到本地机器上的.L5K文件（顺序文本）。接下来，我们的工具解析.L5K文件，并提取与逻辑对应的唯一序列号。然后，该工具通过使用优美的解析器（BSP）连接到搜索正确的“金色”逻辑的CLS。BSP是一个用于解析HTML和XML页面的python库，在我们的例子中，BSP解析CLS，并查找所有的.L5K文件，然后是我们的解析器，通过识别唯一的序列号来查找正确的“金色”逻辑。
+然后，该工具对PLC上找到的逻辑和“金色”样本进行比较。如果发现差异，则可以使用诸如diff的工具提供的标准功能将其显示给人类操作员。下面的算法总结了整个过程。
+算法1. 基于CLS的对策
+&lt;img alt="ALT" src="/static/images/logicbombs/17.png" /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Factory Talk Asset Centre，一款由罗克韦尔自动化开发的工具，它试图实现类似的功能来保护PLC设备。然而，它还有许多额外的依赖关系，例如：在客户端/服务器端，Factory Talk服务平台，RSLinx，RSLogix 5000上都需要一个网络适配卡。我们上面提到的基于CLS的方法很容易使用，与Factory Talk Asset Center相反，Factory Center需要运营商，具有良好的系统要求和能力知识。基于CLS的方法在来自不同供应商的平台和 PLC中使用更完整，无依赖性，通用性强。&lt;/p&gt;
+&lt;h2&gt;7. 结论&lt;/h2&gt;
+&lt;p&gt;在本文中，我们引入了梯形逻辑炸弹一词来讨论PLC的逻辑恶意软件问题，比如Stuxnet [7]所做的逻辑修改。对于这种设备的漏洞研究通常不包括对控制逻辑级别的分析，而这种逻辑级别的漏洞也被证明为的重要攻击来源。我们分析了在PLC上运行的固件的漏洞，并对实际的PLC实时案例和攻击脚本进行了研究，对工业控制系统造成损害。通过小规模的评估，我们已经明确，甚至是非常简单的LLB都难以在现实世界的控制逻辑代码中检测出来。所有的测试都是在实际的ICS上进行的，而这与当今大多数文献中提出的理论不同。最后，提出并实现了一种基于集中逻辑存储的对策技术，可以有效地检测基于逻辑层的攻击。&lt;/p&gt;
+&lt;h2&gt;8、参考文献&lt;/h2&gt;
+&lt;p&gt;[1] S. Amin, X. Litrico, S. S. Sastry, and A. M. Bayen. Stealthy deception attacks on water SCADA systems.In Proceedings of Conference on Hybrid systems: Computation and Control, pages 161-170. ACM, 2010.
+[2] B. Batke, J. Visoky, J. Kay, S. Mintz, and W. Cook. Methods for firmware signature, 2013. US Patent 8,484,474. 
+[3] D. Beresford. Exploiting Siemens Simatic S7 PLCs, 2011. Proceedings of Black Hat USA.
+[4] A. A. C′ardenas, S. Amin, and S. Sastry. Research challenges for the security of control systems. In Proceedings of USENIX workshop on Hot Topics in Security (HotSec), 2008.
+[5] M. Caselli, E. Zambon, and F. Kargl. Sequence-aware intrusion detection in industrial control systems. In Proceedings of the 1st ACM Workshop on Cyber-Physical System Security, pages 13-24. ACM, 2015.
+[6] R. Chabukswar, B. Sin′opoli, G. Karsai, A. Giani, H. Neema, and A. Davis. Simulation of network attacks on SCADA systems. In Proceedings of Workshop on Secure Control Systems, 2010.
+[7] N. Falliere, L. O. Murchu, and E. Chien. W32. Stuxnet dossier.
+[8] N. Goldenberg and A. Wool. Accurate modeling of modbus/tcp for intrusion detection in scada systems. International Journal of Critical Infrastructure Protection, 6(2):63-75, 2013.
+[9] D. Hadˇziosmanovi′c, R. Sommer, E. Zambon, and P. H. Hartel. Through the eye of the PLC: semantic security monitoring for industrial processes. In Proceedings of the Conference on Annual Computer Security Applications Conference (ACSAC), pages 126-135. ACM, 2014. 
+[10] K. H. John and M. Tiegelkamp. IEC 61131-3: Programming Industrial Automation Systems Concepts and Programming Languages, Requirements for Programming Systems, Decision-Making Aids. Springer, 2nd edition, 2010.
+[11] S. Karnouskos. Stuxnet worm impact on industrial cyber-physical system security. In Proceedings of Conference on Industrial Electronics Society (IECON), pages 4490-4494. IEEE, 2011.
+[12] D.-Y. Kim. Cyber security issues imposed on nuclear power plants. Annals of Nuclear Energy, 65:141-143, 2014.
+[13] G. H. Kim and E. H. Spafford. The design and implementation of tripwire: A file system integrity checker. In Proceedings of the 2nd ACM Conference on Computer and Communications Security, pages 18-29. ACM, 1994.
+[14] O. Kosut, L. Jia, R. Thomas, and L. Tong. Malicious data attacks on smart grid state estimation: Attack strategies and countermeasures. In Proc. of the IEEE Conference on Smart Grid Communications (SmartGridComm), pages 220-225, Oct 2010.
+[15] M. Krotofil, A. A. C′ardenas, B. Manning, and J. Larsen. CPS: driving cyber-physical systems to unsafe operating conditions by timing DoS attacks on sensor signals. In Proceedings of the Conference on Annual Computer Security Applications Conference (ACSAC), pages 146-155. ACM, 2014.
+[16] J. Lin, W. Yu, X. Yang, G. Xu, and W. Zhao. On false data injection attacks against distributed energy routing in smart grid. In Proceedings of Conference on Cyber-Physical Systems (ICCPS), 2012.
+[17] Y. Liu, P. Ning, and M. K. Reiter. False data injection attacks against state estimation in electric power grids. ACM Transactions on Information and System Security (TISSEC), 14(1):13, 2011.
+[18] S. McLaughlin. On dynamic malware pyloads aimed at programmable logic controllers. In Proceedings of USENIX conference on Hot topics in security (HotSec), pages 10-10, Aug 2013.
+[19] S. McLaughlin and P. McDaniel. SABOT: Specification-based payload generation for programmable logic controllers. In Proc. of the ACM Conference on Computer and Communications Security (CCS), pages 439-449. ACM, 2012.
+[20] S. E. McLaughlin, S. A. Zonouz, D. J. Pohly, and P. D. McDaniel. A trusted safety verifier for process controller code. In Proc. Network and Distributed System Security Symp. (NDSS), 2014.
+[21] S. A. Milinkovic and L. R. Lazic. Industrial PLC security issues. In Proceedings of Conference on Telecommunications Forum (TELFOR), pages 1536-1539. IEEE, 2012.
+[22] T. H. Morris and W. Gao. Industrial control system cyber attacks. In Proceedings of the Symposium for ICS and SCADA cyber security research (ICS-CSR). BCS Learning and Development Ltd., 2013.
+[23] J. Pollet. Electricity for free? The dirty underbelly of SCADA and smart meters, 2010. Proceedings of Black Hat USA.
+[24] E. Wang, Y. Ye, X. Xu, S. Yiu, L. Hui, and K. Chow. Security issues and challenges for cyber physical system. In Proceedings of Conference on Cyber, Physical and Social Computing (CPSCom), pages 733 -738, Dec. 2010.
+[25] B. Zhu, A. Joseph, and S. Sastry. A taxonomy of cyber attacks on SCADA systems. In Proceedings of Conference on Cyber, Physical and Social Computing (CPSCom), pages 380-388, 2011.
+[26] S. Zonouz, K. Rogers, R. Berthier, R. Bobba, W. Sanders, and T. Overbye. SCPSE: Security-oriented cyber-physical state estimation for power grid critical infrastructures. Smart Grid, IEEE Transactions on, 3(4):1790-1799, Dec 2012.
+[27] S. Zonouz, J. Rrushi, and S. McLaughlin. Detecting industrial control malware using automated PLC code analytics. Security &amp;amp; Privacy, IEEE, 12(6):40-47, 2014.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Dark_Alex</dc:creator><pubDate>Mon, 22 May 2017 11:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-22:news/logicblob.html</guid><category>工控安全</category></item><item><title>针对西门子PLC蠕虫的实现</title><link>http://icsmaster.com/security/plcblaster.html</link><description>&lt;h2&gt;研究背景&lt;/h2&gt;
+&lt;p&gt;随着“互联网+”、“中国智能制造2025“、“工业4.0”等概念的提出，为了提高生产率，独立、隔离的传统工控领域将迎来了新的互联网时代，越来越多的工控设备（如控制器、机器人、数控机床）将被暴露在互联网上或者与企业内网相连。随着互联网时代的来临，安全问题会越来越突出。然而，工业控制系统的安全不同于传统信息网络的安全，一旦出现网络攻击，后果不堪设想。关于工控病毒相关关键事件如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;2010年伊朗核设施遭受“震网”超级病毒攻击，病毒的复杂程度超出人们的想象，该事件也被称为世界上首个“网络超级武器”事件。由于工业病毒攻击可以直接导致物理设备的故障，并进一步造成生产瘫痪甚至爆炸的灾难性后果。&lt;/li&gt;
+&lt;li&gt;Black Hat 2011报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/Exploiting%20Siemens%20Simatic%20S7%20PLCs.pdf"&gt;《Exploiting Siemens Simatic S7 PLCs》&lt;/a&gt;，演示了通过西门子S7Comm协议的权限缺失漏洞来远程操作PLC，对PLC进行启停控制、内存的读写。&lt;/li&gt;
+&lt;li&gt;Black Hat 2015报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/us-15-Klick-Internet-Facing-PLCs-A-New-Back-Orifice-wp.pdf"&gt;《Internet-facing PLCs – A New Back Orifice》&lt;/a&gt;，演示了如何通过PLC实现通信代理，通过PLC突破网络边界，来发现内网中更多的PLC设备。&lt;/li&gt;
+&lt;li&gt;Black Hat 2016报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/asia-16-Spenneberg-PLC-Blaster-A-Worm-Living-Solely-In-The-PLC-wp.pdf"&gt;《PLC-Blaster: A Worm Living Solely in the PLC 》&lt;/a&gt;，提出了PLC蠕虫病毒的概念,提出了西门子1200 V3版本协议认证的缺陷，但没有具体的实现细节。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;近日，工匠实验室工控安全专家针对PLC进行深入研究，通过梯形图和SCL相结合的方式，利用PLC自身通信功能, 复现了这个病毒，实现了病毒在PLC与PLC之间进行传播。同时，针对这一病毒，我们已经开发了相应的检测工具，这标志着华创网安在工控安全领域掌握了这方面的核心技术，也体现了工控领域的研发实力。&lt;/p&gt;
+&lt;h2&gt;PLC基本结构&lt;/h2&gt;
+&lt;p&gt;PLC 实质是一种专用于工业控制的计算机，其硬件结构基本上与微型计算机相同，如图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/1.gif" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;中央处理单元（CPU）
+中央处理单元（CPU）是PLC 的控制中枢。它按照PLC 系统程序赋予的功能接收并存储从编程器键入的用户程序和数据：检查电源、存储器、I/O 以及警戒定时器的状态，并能诊断用户程序中的语法错误，当PLC 投入运行时，首先它以扫描的方式接收现场各输入装置的状态和数据，并分别存入I/O 映象区，然后从用户程序存储器中逐条读取用户程序，经过命令解释后按指令的规定执行逻辑或算数运算的结果送入I/O 映象区或数据寄存器内。等所有的用户程序执行完毕之后，最后将I/O映象区的各输出状态或输出寄存器内的数据传送到相应的输出装置，如此循环运行，直到停止运行。
+为了进一步提高PLC 的可靠性，近年来对大型PLC 还采用双CPU 构成冗余系统，或采用三CPU 的表决式系统。这样，即使某个CPU 出现故障，整个系统仍能正常运行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存储器
+存放系统软件的存储器称为系统程序存储器。存放应用软件的存储器称为用户程序存储器。虽然各种PLC的CPU的最大寻址空间各不相同，但是根据PLC的工作原理其存储空间一般包括以下三个区域：系统程序存储区、系统RAM 存储区（包括I/O 映象区和系统软设备等）、用户程序存储区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;电源
+PLC 的电源在整个系统中起着十分重要得作用。如果没有一个良好的、可靠得电源系统是无法正常工作的，因此PLC 的制造商对电源的设计和制造也十分重视。一般交流电压波动在±10%（±15%）范围内，可以不采取其它措施而将PLC 直接连接到交流电网上去。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输入/输出电路
+I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基本单元（即主机）连接在一起。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;蠕虫介绍&lt;/h2&gt;
+&lt;p&gt;蠕虫病毒是一种常见的计算机病毒。它是利用网络进行复制和传播，传染途径是通过网络和电子邮件。最初的蠕虫病毒定义是因为在DOS环境下，病毒发作时会在屏幕上出现一条类似虫子的东西，胡乱吞吃屏幕上的字母并将其改形。蠕虫病毒是自包含的程序（或是一套程序），它能传播自身功能的拷贝或自身的某些部分到其他的计算机系统中（通常是经过网络连接）。&lt;/p&gt;
+&lt;p&gt;工控蠕虫主要的针对的对象是工业控制设备，通过控制器之间进行病毒传播，这与传统计算机蠕虫是存在很大差别，传统蠕虫寄生对象都是计算机（Window或者Linux），工控蠕虫寄生对象是控制器逻辑代码中。由于病毒可以混淆于正常的控制逻辑代码中，传统防御方式都不适合于工控蠕虫的防护，检测与查杀的方式更强困难。
+虽然工控蠕虫与计算机蠕虫存在很多的不同点，但所有的蠕虫的基本架构都是相同的。所有的蠕虫攻击都可以归为一下几个阶段：搜索目标，感染目标，在目标上执行，添加恶意功能。由于PLC控制器提供网络通信能力，在PLC上蠕虫也同样支持这些功能。这篇文章将展示每个必须组件的实现方法。&lt;/p&gt;
+&lt;h2&gt;蠕虫实现&lt;/h2&gt;
+&lt;p&gt;蠕虫实现的主要的编程软件为西门子的TIA Portal(博途)，在TIA Portal(博途)编程软件中，用户通过编写程序来完成工业现场的控制以及工艺流程的实现。博途中分为以下几类块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;OB(Organization Block )：组织块，为程序的入口块，被系统直接调用（其他块不可以被系统直接调用，必须包含在OB中才可以执行）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FB(Function Block)：功能块，既可以是博途中已包含的功能块，也可以是用户自己编写的块，编程中需要带背景数据块（又叫实例数据块，Instance Data Block）使用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FC(Function)：功能，既可以是博途中已包含的功能块，也可以是户自己编写，不可以带背景数据块。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DB(Data Block)：数据块，分为背景数据块和共享数据块，其中背景数据块为私有块。编程时，户可以定义共享数据块的数据存储结构，不可以定义背景数据块的数据存储结构，必须由FB定义。数据块中的数据掉电不丢失。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFB(System Function Block)：系统功能块，系统内部功能块，用户不可自己编写，不可更改，使用同FB。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFC(System Function)：系统功能，系统内部功能，用户不可自己编写，不可更改，使用同FC。
+博途软件支持的编程语言有： LD(梯形图)，FBD(功能块图)、SCL(结构化控制语言)、STL(语句列表)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;S7-1200只支持LAD、FBD和SCL三种编程语言，并且在下载过程中会先停止运行，然后下载程序，下载完成后重新启动。&lt;/p&gt;
+&lt;h3&gt;1. 实现流程&lt;/h3&gt;
+&lt;p&gt;病毒首先选择IP通过西门子通信端口102尝试建立连接，如果连接建立成功，则检查目标PLC是否已被感染。如连接未建立成功，或目标PLC已被感染，则选择新IP重新尝试建立连接。如目标PLC未被感染，则停止目标PLC，下装病毒程序，最后重新启动目标PLC。流程如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/3.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 寻找目标&lt;/h3&gt;
+&lt;p&gt;西门子PLC通过102端口进行TCP通信，因此可以尝试通过102端口与设备建立TCP通信来寻找目标。博途开发平台提供了两个FB块——通讯连接块TCON和断开通讯连接块TDISCON，如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/4.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TCON和TDISCON的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/5.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用TCON和DISTCON块尝试建立和断开连接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果TCON建立了连接则判断设备型号或者下载程序。由于TCON只需触发一次连接命令，就会一直尝试与目标建立连接，直到连接成功。因此，如果1s内没有建立连接则改变IP地址，尝试连接下一台PLC；如果建立了连接，则通过发送指令判断设备信号或者下载病毒程序，完成后改变IP地址，并尝试连接下一台设备。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/6.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/7.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更改IP&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;断开连接后则更改IP地址，准备连接下一台设备&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/8.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;3. 传播感染&lt;/h3&gt;
+&lt;p&gt;连接建立后，病毒调用数据传送命令TSEND和数据接收命令TRCV进行传播。见下图&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/9.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TSEND和TRCV的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/10.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;判断是否已感染&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;病毒在传播感染之前需要判断当前对象是否已经被感染，避免重复感染。判断是否被感染，如果感染，则跳过感染，如果未感染，则执行程序传送，感染对象。具体实现如下图：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/11.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;建立连接认证&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在程序的发送过程中，需要满足S7协议的相关通信时序以及报文格式。下图为S7建立连接的过程。首先是TCP的三次握手，接下来建立COTP连接，建立完成后进行S7协议的连接建立。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/12.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;具体逻辑实现代码如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/13.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;4. 激活&lt;/h3&gt;
+&lt;p&gt;PLC执行顺序是从OB1开始，按顺序执行到OB9999的。&lt;/p&gt;
+&lt;p&gt;建立调用病毒程序的OB块OB9999，并将其存植入到目标PLC中，用以激病毒，并进行新的病毒传播感染。西门子PLC在运行时，会按照从OB1到OB9999的顺序进行调用。如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/14.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;在其他病毒块下载完成后，用OB9999（也可以用其他非系统自带的OB块，未了避免病毒的OB块与PLC中正常的OB块重复，建议块的序号尽量大些）启动病毒程序。&lt;/p&gt;
+&lt;h3&gt;5. 恶意功能的实现——连接C&amp;amp;C服务器&lt;/h3&gt;
+&lt;p&gt;一旦PLC被感染病毒，会基于TCP主动去连接C&amp;amp;C服务器。通过C&amp;amp;C服务器，可以远程控制PLC，包括PLC的启停，输出值的改变等。当C&amp;amp;C服务器向连接了C&amp;amp;C服务器的PLC发送指令后，PLC会解析命令并执行。以点灯程序为例说明其危害性。下图为C&amp;amp;C服务器点灯的解析部分：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/15.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;6. 感染前后对比&lt;/h3&gt;
+&lt;p&gt;博途软件提供了PLC程序在线与离线差异的检测功能，如下图所示。程序块后面的绿色圆圈表示在线程序与离线程序一致，蓝色与橘黄色组成的圆形表示在线程序与离线程序不一致。块为虚样式，表示博途的程序中没有此块，而PLC有。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/16.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/17.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;演示截图&lt;/h2&gt;
+&lt;p&gt;红灯表示PLC感染状态，绿灯表示PLC正常控制的终端运行状态，PLC使用的是西门子1200 V3版本，从左到右分别为PLC0，PLC1，PLC2。默认情况下，PLC1和PLC2离线的，当PLC0被感染后，PLC1和PLC2接入网络，随后PLC0就会感染PLC1和PLC2。&lt;/p&gt;
+&lt;p&gt;图1：PLC处于正常运行状态&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/20.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图2：PLC0被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/21.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图3：PLC1与PLC2联网，PLC0正在感染PLC1&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图4：PLC1被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/23.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图5：PLC2被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/24.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;防护措施&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;部署控制设备管理系统，定期对PLC控制逻辑代码进行备份，一旦PLC被感染，可以迅速通过备份的PLC程序重置进行快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置CPU访问密码，禁止非授权用户上下载逻辑代码，密码一定不能是弱口令。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对工控网络进行风险评估，识别核心资产，根据不同安全级别进行安全分区，一旦受到网络攻击，将损失控制在最小的范围内。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在工控系统中安装工控监测审计系统，通过工控协议深度解析，根据特征值的进行采集、分析与识别，如发现异常数据包，如控制器启停、程序上下载，则记录日志或报警。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;安全域边界安装工控防火墙，通过工控防火墙，对异常数据包进行检测以及隔离防护。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;针对工控网络制定应急处理预案，当遇见突发网络攻击事件，可以实现快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Thu, 11 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-11:security/plcblaster.html</guid><category>工控安全</category></item></channel></rss>

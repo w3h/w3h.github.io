@@ -1,0 +1,313 @@
+Title: 工业控制系统中的梯形逻辑炸弹
+Date: 2017-05-22 11:36
+Tags: 工控安全
+Authors: Dark_Alex
+Summary: 梯形逻辑炸弹（LLB）是指用梯形图编写的恶意软件。这样的恶意软件将被攻击者注入到PLC上的现有控制逻辑中，改变控制动作或者等待特定的触发信号来激活恶意行为。攻击者可以用LLB篡改合法的传感器读数。我们通过Stuxnet（震网）病毒来具体说明LLB的概念，然后我们将展示几个基于真实PLC设备的设计的LLB。值得注意的是，LLB有一定的隐蔽性，也就是说操作员们难以通过人工检查的方式的检测到LLB。
+
+    本文由工匠实验室翻译，非官方中文译文，原文《On Ladder Logic Bombs in Industrial Control Systems》
+
+##摘要
+在工业控制系统中，可编程逻辑控制器（PLC）通常被用于与传感器和执行器之间直接交互，并用于自动控制。 PLC的软件运行在两个不同的层上，固件层（即OS）和控制逻辑层（通过处理传感器数值，以确定控制行为）。
+我们所讨论梯形逻辑炸弹（LLB）是指用梯形图（或其他IEC 61131-3兼容语言）编写的恶意软件。这样的恶意软件将被攻击者注入到PLC上的现有控制逻辑中，改变控制动作或者等待特定的触发信号来激活恶意行为。攻击者可以用LLB篡改合法的传感器读数。我们通过Stuxnet（震网）病毒来具体说明LLB的概念，然后我们将展示几个基于真实PLC设备的设计的LLB。值得注意的是，LLB有一定的隐蔽性，也就是说操作员们难以通过人工检查的方式的检测到LLB。
+除了介绍逻辑层上的漏洞，我们还讨论了相应的对策。对此，我们提出了两种检测技术。
+
+##关键词
+ICS;  逻辑炸弹
+
+##1、引言
+工业控制系统（ICS）是通常控制与电力，水，气，制造和其他关键基础设施相关的运行状态的计算机系统。 ICS和监控和数据采集（SCADA）系统依靠本地可编程逻辑控制器（PLC）与传感器和执行器进行连接。虽然PLC设备由不同的厂商生产制造，但它们都通常使用与IEC 61131-3相同的编程语言编程。特别是，IEC 61131-3标准包含梯形逻辑图，功能块图和连续文本，作为不同的语言，它们一起用于编写在PLC上运行的逻辑程序，然后逻辑由PLC上运行的固件解释运行。现代PLC提供安全机制来保证上传合法固件。PLC上运行的逻辑通常可以由有网络连接或者有本地USB访问PLC权限的任何人进行更改。这种设计是与传统IT企业环境中恶意软件环境的主要区别，攻击者代码的注入通常会比传统的代码注入更加困难。
+最近，信息物理系统（CPS）以及其相关系统的安全性备受关注。特别是，诸如关键基础设施（包括电网，核电站和化工厂）等CPS都受到威胁。在CPS中，除传统的基于网络的攻击之外，组件之间的物理层交互也必须被视为潜在的攻击媒介。
+梯形逻辑炸弹（LLB），就是用梯形逻辑图编写的恶意软件。LLB由逻辑程序组成，旨在通过更改控制器行为或者由特定触发信号激活后，再激活恶意行为来中断PLC的正常操作。LLB甚至可以处于休眠状态并隐藏很长时间，直到捕获到特定的触发动作才被触发。一旦被激活，LLB就可以被攻击者用来篡改合法的传感器读数，然后由PLC将错误的值传给SCADA系统。我们根据编写LLB的目的和作用对其进行分类，并在实验室中展示了基于实际PLC设备的几种结构。
+我们在真实环境中实施和测试了ICS的攻击（SWaT testbed，参见第4节）。对于隐蔽性很强的LLB，即由操作人员难以通过手动检测PLC中运行的程序来检测到的LLB。我们将其归为基于逻辑的攻击的分类，例如由Stuxnet（震网）病毒执行的攻击。归纳我们的成果如下：
+
+* 我们分析目标平台上的固件以检测漏洞。
+* 我们确定PLC的逻辑操作问题，并介绍梯形逻辑炸弹（LLB）的概念。
+* 我们提供一系列LLB原型，特别是隐蔽性很强的LLB原型。
+* 我们讨论基于手动和自动代码检测的对策，以及基于中央服务器的解决方案。
+
+这篇文章的结构如下：第2部分介绍CPS系统，PLC和IEC 61131-3。第3节提出了我们的梯形逻辑炸弹（LLB）的概念，第4节中的我们用示例实现。第5节对LLB检测难度进行了一次小规模的评估。在第6节中我们提出了对LLB攻击的对策。第7节总结了该文章。
+
+![ALT](/static/images/logicbombs/1.png)
+图1： 工厂控制系统的本地网络拓扑示例
+
+
+##2、背景技术
+在本节中，我们将介绍我们迄今为止发现的工业控制系统（ICS）网络的一些突出特性。此外，我们将简要介绍梯形图逻辑编程语言以及与这些PLC交互所需的工具。
+
+###2.1、ICS
+
+在这项工作的背景下，我们考虑用于监测和控制系统的ICS，如公共基础设施（水，电力），生产线或公共交通系统。特别地，我们假设该系统由可编程逻辑控制器，传感器，执行器和监控组件（如人机界面和服务器）组成。我们专注于具有本地连接的单站点系统，长距离连接还需要远程终端单元（见下文）等组件。所有这些组件通过公共网络拓扑连接。
+
+* 可编程逻辑控制器
+PLC通过分析传感器读数直接控制系统的部件，并遵循其控制逻辑，为连接的执行器产生命令。
+
+* 传感器和执行器
+这些组件与物理层交互，并直接连接到以太网（或间接通过远程输入/输出单元（IO）或PLC）连接。
+
+* 网络设备
+ICS经常使用网关设备在不同的工业协议（例如Modbus / TCP和Modbus / RTU）或通信介质之间进行转换。在这些网关连接到WAN的情况下，通常称为远程终端单元（RTU）。
+
+###2.2、梯形逻辑图
+
+可编程逻辑控制器（PLC）是一种工业计算机系统，可连续监视输入设备的状态，并根据自定义程序进行决策，以控制输出设备的状态。 PLC广泛应用在工业控制系统（ICS）中，用于处理传感器和执行器，主要是因为其强大的性能和耐受恶劣条件的能力，包括严重的热，冷，灰尘和极度的潮湿。考虑到它们广泛的图2：示例梯形图逻辑代码具有三个梯级使用和PLC处理的任务的重要性质，它们对恶意操纵的安全性至关重要.PLC是用户可编程的设备。 PLC程序通常写在本地主机（个人计算机）上的特殊应用程序中，然后通过直接连接电缆或通过网络下载到PLC。该程序存储在PLC中的非易失性闪存中。虽然与替代供应商的平台的细节不同，但可能需要通过物理开关（即ControlLogix设备上的程序模式）远程更改PLC上的控制软件。我们观察到，为了方便起见，在实际系统中，PLC通常保留在该设置中，以便于远程访问。此外，具有物理访问权限的任何攻击者都可以轻松更改开关设置。因此，我们假设在本工作的其余部分可以进行远程或本地重新编程访问。 IEC 61131-3是为PLC定义了2个图形和1个文本编程语言标准的开放国际标准[10]：
+
+* 梯形逻辑图（图形）
+* 功能框图（图形）
+* 结构化文本（文本）
+
+这些语言中最流行的是梯形逻辑图。梯形图逻辑图背后的主要是提供类似系统接线图来抽象机电继电器的。梯形逻辑更多是由梯级实现的基于规则的图形语言，而不是传统的基于过程的语言。梯形图里的梯子代表了一个规则。它们被称为“梯形图”，因为它们类似于梯形，具有两个垂直导轨（电源）以及与表示的控制电路一样多的“梯级”（水平线）。图2描绘了在梯形图逻辑图，它包含三个梯级，它们利用各种输入，输出和指令块来实现某些逻辑。
+
+![ALT](/static/images/logicbombs/2.png)
+图2 具有三个梯级的梯形图逻辑代码示例
+
+###2.3、PLC漏洞分析
+
+作为我们研究工作的一部分，我们探索在PLC上运行的固件（如ControlLogix 5571）的漏洞。我们在此简要总结我们的成果。
+我们调查了具有物理访问PLC（或通过网络远程访问）的本地攻击者是否能够从PLC获取当前运行的固件，以及下装修改后版本的固件。为了更明显的观察到现象，后一种攻击在固件中安装隐藏的后门或木马，并更改固件的其他操作行为。我们发现通过使用本地USB连接，能够获得正在运行的固件。另外，如果将PLC硬件开关将设置为编程模式，则可以通过网络获取PLC固件。在下面的篇幅中，我们将讨论第二种攻击，也就是上传修改后固件。
+我们的PLC设备的固件信息为.dmk文件。该文件包含两组二进制文件（.bin）和相关的数字证书（.der）。它还包含.nvs文件，其中包含有关固件版本，产品代码和类型等的信息，该文件用作所有其他文件的头文件，将每个二进制映像与其相应的证书相链接，并加载每个文件的地址。
+数字证书由制造商（罗克韦尔自动化）签署。该数字签名是证书本身的哈希值，使用制造商的私钥通过RSA算法进行加密。此外，证书还在其数据字段之一中包含固件映像的加密散列（使用SHA-1）。在固件更新时间，模块（PLC）接收包含固件哈希值的证书和证书的数字签名。该模块计算证书的哈希值，解密签名，并比较哈希值。如果这些哈希值匹配，则证书是有效的。如果没有，则更新被拒绝。在收到整个固件映像后，该模块计算固件的哈希值，并将其与证书中的值进行比较。如果值不匹配，固件升级更新将被拒绝。在这种结构下，攻击者对固件映像的任何修改将改变散列和，导致证书中已经存在的哈希值之间的错误匹配。证书中的哈希值的任何更改将使制造商的签名无效。该过程在图3中更详细地解释
+
+![ALT](/static/images/logicbombs/3.png)
+图3 固件签名以及验证过程
+
+![ALT](/static/images/logicbombs/4.png)
+图4 闪烁的故障固件（修改后的证书）
+
+鉴于所描述的设置，我们决定检查证书是否被PLC正确验证。我们删除了有效固件的原始证书，并将其替换为由我们自己（自行签名）CA签名的证书。我们确保伪造的证书在每个自定义数据字段中都具有匹配的内容，以匹配有效的固件映像及其散列值。然后，我们使用生成的文件（我们自己的.der）来更新PLC上的固件。更新失败，我们收到一个错误（传输：错误＃11001）。该过程可以在图4中找到，可以看出，尝试上传自定义证书时会触发错误。
+
+结论：我们目前固件更新机制足以抵御攻击者的操纵。接下来，我们将会评估了PLC逻辑代码更新的过程。在这里，我们发现没有任何验证，来确保下装到PLC的逻辑更新来自授权的设备。在下文中，我们将目光专注于PLC逻辑的这种操作。
+
+##3、梯形逻辑炸弹
+
+在本节中，我们介绍我们所提出的梯形逻辑炸弹的概念。特别地，我们注意到，虽然通过数字签名使PLC的固件更改变得异常困难，但是在PLC上执行的实际逻辑却不受这种措施的保护，而在将新的逻辑下载到PLC之前缺少安全检查和认证是造成这种局面的主要原因。攻击者可以利用这一点，通过网络访问PLC，并且可以将自定义（恶意）的逻辑程序下载到可能危及系统的PLC上。接下来，我们讨论可能利用此漏洞，实现攻击的方案和目标。
+
+![ALT](/static/images/logicbombs/5.gif) 
+图5 梯形逻辑炸弹的分类
+
+###3.1、系统和攻击者模型
+
+在这项工作中，我们假设攻击者能够通过网络远程访问工业控制系统中的PLC，或者物理地访问PLC。如我们所示，通常这种访问将允许攻击者在没有任何身份验证的情况下读取和修改PLC的编程逻辑。假设攻击者可以通过下载和上传逻辑配置到PLC的相应软件。
+
+攻击者的目标可以从实现拒绝服务（DoS）到改变PLC的行为，或获取由PLC跟踪处理的传感器和控制消息的数据。为了执行这些攻击，攻击者只需要通过PLC系统的一次验证，这使得这种攻击更加危险。攻击者也可以对PLC进行零星（物理）访问。例如，攻击者每周只访问一次PLC。 在这些事件中，攻击者可以在与他的访问时间无关的点触发任何行为（即触发他的梯形逻辑炸弹代码）。
+
+我们所考虑的情景是非常通用的，工业控制系统中的PLC，一般使用IEC 61131-3语言编程，并且可以重新编程。它与关键的传感器和执行器连接。工厂的操作员在设计时配置了PLC的逻辑。尽管他们不断监控这些PLC的状态，但很少需要改变已经运行的系统的逻辑配置。如果需要的话，他们也可以手动下载逻辑来检查它。虽然我们稍后将简要讨论使用入侵检测系统的基于网络的检测机制，但这样的解决方案将无法检测到本地攻击者的变化。因此，在这项工作中，我们不重点关注IDS。此外，物理层预防机制（摄像机，围栏等）不在监视的范围之内。
+
+我们不认为攻击者能够攻击操作员站（如在Stuxnet中的情况），或者能够在数据传输时操纵网络流量。值得注意的是，如果攻击者能够破坏操作员站，那么操作员将无法可靠地验证任何代码。这样的攻击者可以通过使用可信的计算平台来寻址定位，而这并不是我们考虑的问题。攻击者模型也不会考虑内部攻击（例如，可能是正式工程师/操作员等有权访问和修改PLC逻辑的攻击者）。
+
+###3.2、逻辑炸弹分类
+
+梯形逻辑炸弹可以广泛地分为两类（如图5所示）。 LLB可以根据其激活和触发进行分类。 他们可以通过给其一定的输入而被触发。或者，它们也可以由内部逻辑（系统状态，特定指令或数据，时钟等）触发。
+
+LLB也可以根据它们对现有PLC系统的改变进行分类。他们可以添加或删除现有逻辑（修改功能）中的某些功能。这些逻辑炸弹也可以改变系统值，如系统日期/时间，时区，挂钟时间或类似（修改系统）。最后，这些也可以用于数据泄露，并将关键系统数据传输到间谍节点（传输信息）。另外，这些分类现在用来描述更具体的LLB。例如，在12  AM关闭泵的LLB将被分类为内部激活的功能修改LLB。
+
+###3.3、攻击载荷类型
+
+在下文中，我们提供了一系列攻击载荷类型，可用于实现第3.1节所述的攻击者目标。攻击载荷可以是公开的破坏性的（例如，使用拒绝服务（DoS）），或者使隐身攻击（例如通过建立中间人的方式）来实现.MitM 攻击载荷可以用来监听通过的流量节点，或潜在地操纵这些消息的内容未被检测到。 通过操纵消息内容，攻击者可以伪造报告给其他PLC和SCADA系统的传感器读数，或更改发送到执行器的命令。下面我们详细介绍这些攻击目标。
+
+####3.3.1梯形逻辑炸弹的Dos攻击
+
+非常基础（但具有破坏性）攻击载荷对PLC执行拒绝服务（DoS）攻击。 通过添加隐藏在特定PLC的梯形图逻辑中的恶意逻辑，可以将PLC失去控制并使其停止。这可能会损害由PLC控制的过程，并可能导致系统中的性能威胁状态。这样的炸弹将不断等待触发条件，一旦满足，它就可以启动死循环，重复的调用子程序等，并使PLC失效。
+
+####3.3.2、梯形逻辑炸弹操纵传感器读数和命令
+
+另一类梯形逻辑炸弹可用于篡改在PLC中使用或者生成的实际数据。这种攻击的最简单的目标是从远程IO（图1中的RIO）读取传感器值。可以操纵这些值以使系统进入本不应该进入的状态。（图6）
+
+####3.3.3、用于隐蔽记录敏感数据的逻辑炸弹
+
+可以使用第三类LLB来秘密跟踪并保存敏感PLC数据的日志。这可以通过使用FIFO缓冲区并将数据记录到PLC上的数组中来实现。这些炸弹是特别危险的，因为这些炸弹不会扰乱系统的工作，使得主机完全不了解它们的存在。这些可以在逻辑上保持延长的时间，无需检测，不断泄漏敏感数据和命令。
+
+###3.4 触发
+
+在这里，我们描述可用于梯形逻辑炸弹的不同触发机制。
+![ALT](/static/images/logicbombs/6.png)
+图6：操作从RIO到HMI的传感器读数以及从HMI到RIO的控制指令
+
+* 触发特定的输入
+当检测到预先确定的输入时，该炸弹可能被关闭。例如，我们正在针对我们实验的水处理ICS（见第4.1节）。目标PLC从其相应的液位传感器接收关于其中一个油箱中的水位的输入。当油箱达到一个特定的水平时，这个炸弹可能被关闭。
+
+* 触发序列
+当检测到特定的触发序列时，就可以触发该炸弹。这可以使得该炸弹更难以检测，因为在将特定序列作为输入检测到之前，其影响将不可见。这可以通过使用基于锁存器的有限状态机（FSM）来实现。
+
+* 计时器
+炸弹也可以使用计时器关闭。这将使LLB像一个真实世界的定时炸弹，当定时器完成其计数序列时，它将进入运动状态。使用嵌套TON计时器，可以实现将持续数天的计数序列。
+
+* 具体内部条件
+当实现特定的内部状态时，可以触发该炸弹。这种特殊的触发方案要求攻击者对PLC的逻辑有完整的了解和理解。当设置特定状态变量（例如故障代码）时，可以将炸弹设置为关闭并且执行攻击载荷逻辑。
+
+###3.5 在PLC逻辑中隐藏梯形逻辑炸弹
+
+检测原始逻辑（在我们的例子中是LLB）中的任何修改的原理将是从PLC设备下载控制逻辑，并手动检查它们以进行代码更改。特别地，熟悉工厂操作的工程师可以通过阅读代码并检测到恶意更改。这种方法对于小型站点和非常简单的逻辑可能是可行的，但我们将在下文中展示，攻击者可以通过几种方式来隐藏逻辑中的恶意有效负载，从而使得此类手动检查更难以检测。
+
+![ALT](/static/images/logicbombs/7.png)
+图7：SWaT Testbed的概述
+
+##4. 现场实施攻击
+
+在本节中，我们详细描述了梯形逻辑炸弹的构造，并展示了如何利用它们来扰乱ICS的功能。
+
+###4.1 SWaT Testbed
+
+实验在位于新加坡技术与设计大学的工业控制系统测试台（称为SWaT）进行。 如图7所示，安全水处理是一个功能齐全（按比例缩小）的水处理设备。 SWaT专门作为网络物理系统安全研究的平台。水处理过程分为六个阶段，从水槽1中的原水开始到水槽 6中过滤的输出水。每个阶段由独立的PLC控制，传感器的数据用于确定控制动作。
+传感器值和执行器命令通过工厂网络与PLC通信。该系统还包含监视器以查看并确保系统状态处于可接受的操作边界内。来自传感器的数据可用于监控和数据采集（SCADA）工作站的检查，并由历史站记录以供后续分析。
+
+###4.2 攻击1： DoS攻击
+
+拒绝服务攻击（DoS）是对关键系统造成（最常见的财务或声誉）损害的常用攻击手段。在DoS攻击中，攻击者暂时或永久地减慢或停止系统的正常运行。在互联网上，分布式DoS攻击通常会通过创建大量的流量来实现，这些流量会使通信链路或服务器超负荷。由于PLC控制系统中传感器和执行器的动作，因此其运行可靠性通常至关重要。如果PLC无法控制执行器，则可能会产生灾难性的后果（例如，导致汽车组装厂中重型机械的失控）。
+
+* 目标
+在这种情况下，目标是在水处理厂的一台PLC上发起DoS攻击。 
+
+* 实施
+这是通过实施死循环作为逻辑炸弹来实现的。该梯形逻辑炸弹的触发机制是在接收到特定输入时。类似于Stuxnet，触发检查条件位于实际的逻辑之上，它始终保持在检查是否已接收到特定输入。一旦接收到所需的触发输入，LLB就会起作用。
+![ALT](/static/images/logicbombs/8.png)
+图8：恶意附加指令
+
+* 隐藏
+实际上，恶意逻辑会隐藏在附加指令中。例如：创建了一个其结构与实际ADD块非常相似新的块，具有相类似的输入：2个输入A和B，以及一个输出：目标输出。它也被命名为（ADD _A）与真正的ADD块伪装。从梯形图逻辑（包含多个梯级）的顶部概述，这看起来与任何一个梯级上的其他ADD块无异。但是在这个附加块中，定义了逻辑炸弹（死循环），并对PLC操作产生不利影响。有关这方面的更多细节可以在图8中看到。
+
+###4.3 攻击2：篡改传感器数据
+
+ICS中的另一个重要功能（除了控制执行器）是实时地从传感器读取数据。该数据可能是有关流程和系统的关键信息。根据这些数据，可以导出流程的当前状态，由PLC使用该状态来确定适当的控制动作。因此，篡改传感器数据可能会导致系统错误。
+
+* 目标
+此次攻击的目标是操纵从远程IO（图1中的RIO）到PLC传感器读数。
+
+* 结构
+由于这只是概念验证，我们决定操纵传感器值，让传感器值以固定的步长自增（我们任意选择了四个值）。因此，该LLB 攻击载荷是一个简单的ADD块，它获取真实的传感器值，并将其数值每次自增4，并将它们存储回原位置。然而，在这次攻击中使用了更复杂的触发机制。特别是，当检测到完整的触发序列时触发LLB。这通过使用基于锁存器的有限状态机来实现（见图9）
+![ALT](/static/images/logicbombs/9.png)
+图9：利用子程序内部
+![ALT](/static/images/logicbombs/10.png)
+图10：利用子程序的逻辑概述
+
+* 隐藏
+对于这次攻击，我们还使用了一种不同的隐藏技术。通过检查水处理厂中PLC的实际逻辑，我们观察到逻辑正在调用大量子程序。事实上，程序的编写者会通过调用子程序这种方式，来保证梯形逻辑图的良好的可读性。然而，具有大量子程序调用的结构可以被攻击者利用来隐藏LLB。我们通过隐藏在梯形逻辑图的子程序来测试这个漏洞，这些子程序在每个周期都会被执行（见图10）。
+
+###4.4 攻击3：使用FFL进行数据窃取
+
+上述的攻击方式可以明显地造成损害或故障，一旦触发即可观察到其影响。然而，还有另一类LLB可能同样有害，但难以检测。特别是，这样的LLB可以用于数据记录和导出关于系统的敏感信息。
+
+* 目标
+这次攻击的目标是实现对工厂敏感信息的数据记录并不被察觉。
+
+* 实施
+通过使用将数据读入数组的FIFO缓冲器来实现数据记录。FFL块已被用于此攻击。如图11所示，FFL块存储包含关于用于确定工厂状态的计数序列的敏感信息的标签——PB LT Seq。这些值存储在array2中，并被转换成.csv格式并存储在PLC的SD卡上。在我们的攻击者模型中，有可以进入工厂的，具有零星访问（物理访问PLC）特征的攻击者，他们通过读取SD卡获取这些数据。然后，将此卡插回PLC并离开。触发方式可以是一个简单的定时器，从而实现对工厂“x”天之后的数据记录。
+![ALT](/static/images/logicbombs/11.png)
+图11：FIFO缓冲区中的数据记录
+
+* 隐藏
+该LLB可以再次隐藏在附加指令或子程序中。它也可以留在主逻辑流程中，因为这个LLB只包含一个额外的梯级，使其在大而复杂的代码中难以进行手动检测。
+
+###4.5 攻击4：触发PLC异常
+
+我们现在讨论与DoS攻击相似的另一个攻击。
+
+* 目标
+目标是触发PLC的主要故障，导致其处理器停止，且不能通过硬复位来修复。
+
+* 实施
+这里我们设法在PLC上造成两个主要故障。
+**1、无效的数组下标**
+这是通过对标签收集数组越界访问实现的。这可以通过创建FIFO缓冲区长度和用于存储缓冲区值的数组的大小之间的不匹配来实现。细节见图12。
+![ALT](/static/images/logicbombs/12.png)
+图12：无效的数组下标
+**2、堆栈溢出**
+这是通过实现对其自身的递归子程序调用来实现的。这导致堆栈存储的返回指针溢出，进程停止并使PLC崩溃（图13）。
+![ALT](/static/images/logicbombs/13.png)
+图13：堆栈溢出
+
+* 隐藏
+这些LLB可以隐藏在Add On指令或子程序内
+
+###4.6 攻击分析
+
+理想情况下，将会有一个衡量LLB隐蔽性的指标，这表明查验出LLB的难度有多大。到目前为止，我们还没有找到一种衡量性能的好办法。在下文中，我们使用相对的附加代码行（RALOC）来测量隐蔽性。此外，逻辑中代码行的增加也可能会导致运行时内存消耗增加。我们观察到梯形图逻辑程序使用两种类型的存储器：I / O存储器和数据和逻辑存储器。作为我们分析的一部分，我们测量了添加恶意梯形逻辑炸弹时与原始逻辑的内存占用率差异（增加）。据观察，PLC的I / O存储器根本没有增加，这主要是因为没有新的输入/输出来触发或应用上面讨论的梯形逻辑炸弹。观察到的唯一增长是在数据和逻辑存储器中，这也是边缘的，如表1所示。值得注意的是，Attack 3的大小（数据记录）将取决于记录的数据量。因此，RALOC度量会增加，修改带来的影响也会更加显著。为了减轻这种影响，最好将数据保存在SD卡上，然后重置数组，以便在需要更多数据时可以重新使用。
+
+表1：攻击时内存增加的比较
+![ALT](/static/images/logicbombs/14.png)
+
+##5. 检测难度评估
+
+###5.1 评估背景
+
+为了估计人们检测LLB的难度，我们组织举办了一场小规模的挑战赛，将其作为我们机构调查研究的一部分。来自学术界和行业内的六支队伍参加了此次活动，并参与了三个与LLB相关的挑战。我们了解到，并不是所有参与者都非常熟悉梯形逻辑编程，因此为每个团队都提供了一个测试手册，以便让其了解整体设置，软件使用和标签的初始化。分布于世界各地的团队通过远程连接参与这项挑战，与实验室中的虚拟操作员站和实际PLC连接。值得注意的是，虚拟机配置了Studio 5000和RSLinx，以向测试台PLC提供通信。参与者通过虚拟专用网络（VPN）连接到虚拟操作员站。对于所有的三个挑战，PLC都具有基本配置，与IO交互并发送选定的控制信号。现在总结一下挑战赛，其中涉及问题陈述的简要描述，以及具体的要实现的目标。
+
+* 夺旗挑战
+第一个挑战的目标是检测一个旨在读取传感器数值的LLB，它会获取传感器读数，然后将该读数转发到外部。为了完成这个挑战，参与者必须追踪从所有传感器到控制器的数据流，并且识别出不需要传感器数值的代码部分。在识别LLB代码之后，参与者可以读取所创建的标签值以代表夺旗成功。
+
+* 与ADD_ON捉迷藏
+第二个挑战是获取由某种逻辑读取到的模拟传感器读数的真实值。为了解决这个挑战，参与者必须检测一个试图隐藏为添加指令的LLB（见图8）。一旦参与者检测到LLB，他们就可以将其移除以获取真实值（或者简单地确定所使用的偏移量，并手动移除它）。
+
+* 逻辑错误修复挑战
+第三个挑战是修复包含编程错误的逻辑。在PLC上运行时，代码将导致PLC主要故障“错误消息，并停止执行”，特别是我们编写的代码来访问内存数组，其索引超出了存储器阵列的长度（类似于缓冲区溢出），这样的故障可以用作LLB 攻击载荷来关闭PLC的操作，为了解决这个挑战，参与者必须了解FFL块，并检测到未初始化的存储器访问可能导致PLC处于故障状态。
+
+###5.2 挑战结果
+
+本节总结了CTF事件期间获得的挑战结果。队伍的细节是匿名的。其中一个团队不包括在分析中，因为团队设法通过无关的渠道获得了旗帜。其他团队的结果总结在表2中。只有团队2能够解决所有的挑战（即他们能够检测到所有的LLB），而第5队能够解决一个挑战。其余的团队无法检测任何LLB（梯形逻辑炸弹）。
+
+表格2：LLB比赛统计详情
+![ALT](/static/images/logicbombs/15.png)
+
+我们的评估表明，在关键的基础设施控制器代码中检测到恶意代码或隐藏的逻辑炸弹绝非易事。只有两只队伍能够在大量的子程序调用，以及几个消息和指令块中找到LLB。而包含LLB在内的更高级的挑战只有由一只团队解决了。我们得出结论，对于检测LLB，操作员必须具有Studio 5000的相关知识和编程语言，如梯形图，结构文本和功能框图及其语法和语义。实际上，如果操作员检查功能不熟悉的或由分包商写的代码，这将会是很大的麻烦。
+
+##6. 对策
+
+在本节中，我们将讨论针对LLB攻击的对策。特别是，我们所讨论的，基于网络的对策以及对运行代码的集中验证。
+在下文中，我们假定将对策应用于现有的工业控制系统。如果我们可以更改给PLC下装程序的方式，则可以通过引入用户认证或用于逻辑更新的加密签名。如果用户成功认证，或更新的真实性已被验证，PLC将会接受逻辑代码更新。
+以下两个提案不需要对现有PLC进行此类更改，因此在现有系统中更容易实施。在下文中，我们假设ICS中有一些已知的操作员站，允许更新PLC的控制逻辑。任何第三方更新PLC逻辑的尝试都将被视为攻击。我们假设使用默认软件用于应用逻辑程序更新，并且我们无法更改该软件的行为。
+我们之前假设的攻击者模型：攻击者有能力操纵PLC运行一次程序，但不具有永久访问权限。攻击者没有损害操作员的机器。攻击者也无法操纵第三方网络流量。
+
+###6.1 网络对策
+
+如果网络中已经使用入侵检测系统（IDS）来监控流量以传播恶意软件或其他恶意流量，那么该IDS可能用于识别与连接到网络的PLC上的逻辑更新相关的特定流量。如果观察到网络上未经授权的逻辑更新，则可能会引起警报。在[8]中提出了类似的IDS，作者使用确定性有限自动机建模HMI和PLC之间的定期通信。如果消息在正常（一般）消息序列中出现位置不正确，系统将标志异常。如果IDS被配置为作为入侵防御系统（IPS）来操作，那么甚至可以实时丢弃违规流量。
+此方案的问题与授权逻辑更新的识别有关。由于我们无法更改相应软件生成的流量，因此无法嵌入特定的验证信息。因此，我们只能使用IP源地址（据称与授权人员相关）等信息做验证，而这样做是不理想的（因为它可以被欺骗）。
+
+###6.2 集中逻辑存储
+
+我们的第二个方案是基于两个组成部分：a）在ICS的所有PLC上运行的最新版本的逻辑集中逻辑存储（CLS），以及b）定期从PLC中下载当前运行逻辑的工具，并与“CL”的“金色”副本验证对照。我们提出的系统的概述可以在图14中找到。
+
+* 提交“金色”样本
+所有授权的工程师在更改PLC上运行的逻辑时，必须将每个PLC的最新版本的逻辑提交给CLS。为此，他们可以使用一个简单的应用程序，要求他们识别相应的逻辑文件，目标PLC及其凭据。然后，该应用程序将使用凭据来建立到CLS的身份验证安全通道（例如使用TLS），然后将最新的逻辑版本上传到CLS（例如，在已建立的TLS会话中使用HTTP）。 
+![ALT](/static/images/logicbombs/16.png)
+图14：集中逻辑存储的对策
+
+* 定期逻辑验证
+我们已经实现了一个基于python的工具来手动定期验证逻辑。用户首先使用Studio 5000将梯形图逻辑导出到本地机器上的.L5K文件（顺序文本）。接下来，我们的工具解析.L5K文件，并提取与逻辑对应的唯一序列号。然后，该工具通过使用优美的解析器（BSP）连接到搜索正确的“金色”逻辑的CLS。BSP是一个用于解析HTML和XML页面的python库，在我们的例子中，BSP解析CLS，并查找所有的.L5K文件，然后是我们的解析器，通过识别唯一的序列号来查找正确的“金色”逻辑。
+然后，该工具对PLC上找到的逻辑和“金色”样本进行比较。如果发现差异，则可以使用诸如diff的工具提供的标准功能将其显示给人类操作员。下面的算法总结了整个过程。
+算法1. 基于CLS的对策
+![ALT](/static/images/logicbombs/17.png)
+
+Factory Talk Asset Centre，一款由罗克韦尔自动化开发的工具，它试图实现类似的功能来保护PLC设备。然而，它还有许多额外的依赖关系，例如：在客户端/服务器端，Factory Talk服务平台，RSLinx，RSLogix 5000上都需要一个网络适配卡。我们上面提到的基于CLS的方法很容易使用，与Factory Talk Asset Center相反，Factory Center需要运营商，具有良好的系统要求和能力知识。基于CLS的方法在来自不同供应商的平台和 PLC中使用更完整，无依赖性，通用性强。
+
+##7. 结论
+
+在本文中，我们引入了梯形逻辑炸弹一词来讨论PLC的逻辑恶意软件问题，比如Stuxnet [7]所做的逻辑修改。对于这种设备的漏洞研究通常不包括对控制逻辑级别的分析，而这种逻辑级别的漏洞也被证明为的重要攻击来源。我们分析了在PLC上运行的固件的漏洞，并对实际的PLC实时案例和攻击脚本进行了研究，对工业控制系统造成损害。通过小规模的评估，我们已经明确，甚至是非常简单的LLB都难以在现实世界的控制逻辑代码中检测出来。所有的测试都是在实际的ICS上进行的，而这与当今大多数文献中提出的理论不同。最后，提出并实现了一种基于集中逻辑存储的对策技术，可以有效地检测基于逻辑层的攻击。
+
+##8、参考文献
+
+[1] S. Amin, X. Litrico, S. S. Sastry, and A. M. Bayen. Stealthy deception attacks on water SCADA systems.In Proceedings of Conference on Hybrid systems: Computation and Control, pages 161-170. ACM, 2010.
+[2] B. Batke, J. Visoky, J. Kay, S. Mintz, and W. Cook. Methods for firmware signature, 2013. US Patent 8,484,474. 
+[3] D. Beresford. Exploiting Siemens Simatic S7 PLCs, 2011. Proceedings of Black Hat USA.
+[4] A. A. C′ardenas, S. Amin, and S. Sastry. Research challenges for the security of control systems. In Proceedings of USENIX workshop on Hot Topics in Security (HotSec), 2008.
+[5] M. Caselli, E. Zambon, and F. Kargl. Sequence-aware intrusion detection in industrial control systems. In Proceedings of the 1st ACM Workshop on Cyber-Physical System Security, pages 13-24. ACM, 2015.
+[6] R. Chabukswar, B. Sin′opoli, G. Karsai, A. Giani, H. Neema, and A. Davis. Simulation of network attacks on SCADA systems. In Proceedings of Workshop on Secure Control Systems, 2010.
+[7] N. Falliere, L. O. Murchu, and E. Chien. W32. Stuxnet dossier.
+[8] N. Goldenberg and A. Wool. Accurate modeling of modbus/tcp for intrusion detection in scada systems. International Journal of Critical Infrastructure Protection, 6(2):63-75, 2013.
+[9] D. Hadˇziosmanovi′c, R. Sommer, E. Zambon, and P. H. Hartel. Through the eye of the PLC: semantic security monitoring for industrial processes. In Proceedings of the Conference on Annual Computer Security Applications Conference (ACSAC), pages 126-135. ACM, 2014. 
+[10] K. H. John and M. Tiegelkamp. IEC 61131-3: Programming Industrial Automation Systems Concepts and Programming Languages, Requirements for Programming Systems, Decision-Making Aids. Springer, 2nd edition, 2010.
+[11] S. Karnouskos. Stuxnet worm impact on industrial cyber-physical system security. In Proceedings of Conference on Industrial Electronics Society (IECON), pages 4490-4494. IEEE, 2011.
+[12] D.-Y. Kim. Cyber security issues imposed on nuclear power plants. Annals of Nuclear Energy, 65:141-143, 2014.
+[13] G. H. Kim and E. H. Spafford. The design and implementation of tripwire: A file system integrity checker. In Proceedings of the 2nd ACM Conference on Computer and Communications Security, pages 18-29. ACM, 1994.
+[14] O. Kosut, L. Jia, R. Thomas, and L. Tong. Malicious data attacks on smart grid state estimation: Attack strategies and countermeasures. In Proc. of the IEEE Conference on Smart Grid Communications (SmartGridComm), pages 220-225, Oct 2010.
+[15] M. Krotofil, A. A. C′ardenas, B. Manning, and J. Larsen. CPS: driving cyber-physical systems to unsafe operating conditions by timing DoS attacks on sensor signals. In Proceedings of the Conference on Annual Computer Security Applications Conference (ACSAC), pages 146-155. ACM, 2014.
+[16] J. Lin, W. Yu, X. Yang, G. Xu, and W. Zhao. On false data injection attacks against distributed energy routing in smart grid. In Proceedings of Conference on Cyber-Physical Systems (ICCPS), 2012.
+[17] Y. Liu, P. Ning, and M. K. Reiter. False data injection attacks against state estimation in electric power grids. ACM Transactions on Information and System Security (TISSEC), 14(1):13, 2011.
+[18] S. McLaughlin. On dynamic malware pyloads aimed at programmable logic controllers. In Proceedings of USENIX conference on Hot topics in security (HotSec), pages 10-10, Aug 2013.
+[19] S. McLaughlin and P. McDaniel. SABOT: Specification-based payload generation for programmable logic controllers. In Proc. of the ACM Conference on Computer and Communications Security (CCS), pages 439-449. ACM, 2012.
+[20] S. E. McLaughlin, S. A. Zonouz, D. J. Pohly, and P. D. McDaniel. A trusted safety verifier for process controller code. In Proc. Network and Distributed System Security Symp. (NDSS), 2014.
+[21] S. A. Milinkovic and L. R. Lazic. Industrial PLC security issues. In Proceedings of Conference on Telecommunications Forum (TELFOR), pages 1536-1539. IEEE, 2012.
+[22] T. H. Morris and W. Gao. Industrial control system cyber attacks. In Proceedings of the Symposium for ICS and SCADA cyber security research (ICS-CSR). BCS Learning and Development Ltd., 2013.
+[23] J. Pollet. Electricity for free? The dirty underbelly of SCADA and smart meters, 2010. Proceedings of Black Hat USA.
+[24] E. Wang, Y. Ye, X. Xu, S. Yiu, L. Hui, and K. Chow. Security issues and challenges for cyber physical system. In Proceedings of Conference on Cyber, Physical and Social Computing (CPSCom), pages 733 -738, Dec. 2010.
+[25] B. Zhu, A. Joseph, and S. Sastry. A taxonomy of cyber attacks on SCADA systems. In Proceedings of Conference on Cyber, Physical and Social Computing (CPSCom), pages 380-388, 2011.
+[26] S. Zonouz, K. Rogers, R. Berthier, R. Bobba, W. Sanders, and T. Overbye. SCPSE: Security-oriented cyber-physical state estimation for power grid critical infrastructures. Smart Grid, IEEE Transactions on, 3(4):1790-1799, Dec 2012.
+[27] S. Zonouz, J. Rrushi, and S. McLaughlin. Detecting industrial control malware using automated PLC code analytics. Security & Privacy, IEEE, 12(6):40-47, 2014.

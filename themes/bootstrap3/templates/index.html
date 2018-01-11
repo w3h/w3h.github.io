@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if articles %}
+        {% for article in (articles_page.object_list if articles_page else articles) %}
+            <article>
+	   <div class="article-list">	
+       <div class="panel panel-default">
+           <div class="panel-title"> 
+                <h2>&nbsp&nbsp<a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></h2>
+           </div>
+
+           <div class="panel-body">
+                {% if DISPLAY_ARTICLE_INFO_ON_INDEX %}
+                    <div class="well well-sm">
+                        {% include "includes/article_info.html" %}
+                    </div>
+                {% endif %}
+                <div class="summary">{{ article.summary }}
+                    {% include 'includes/comment_count.html' %}
+                    <a class="readmore" href="{{ SITEURL }}/{{ article.url }}">READ MORE</a>
+                </div>
+           </div>
+        </div>
+		</div>
+            </article>
+        {% endfor %}
+    {% endif %}
+
+    {% include 'includes/pagination.html' %}
+{% endblock content %}

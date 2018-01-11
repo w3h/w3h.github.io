@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工匠安全实验室 | 专注于工控安全</title><link>http://icsmaster.com/</link><description></description><atom:link href="http://icsmaster.com/feeds/mood-island.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 10 Nov 2017 10:24:00 +0800</lastBuildDate><item><title>工业系统虚拟化测试平台搭建</title><link>http://icsmaster.com/security/virtual_platform.html</link><description>&lt;h2&gt;一、系统概述&lt;/h2&gt;
+&lt;p&gt;基于虚拟化技术搭建的工业自动化测试平台。多个品牌多套控制系统有机融合在一个虚拟化环境里。对最终的客户或学院屏蔽底层细节。模拟真实的Engineer和Operation 工作站环境。从以太网端口镜像可以截取真实的报文。&lt;/p&gt;
+&lt;h2&gt;二、工业自动化虚拟测试平台&lt;/h2&gt;
+&lt;h3&gt;1. 目前暂时未完全实现虚拟化的系统&lt;/h3&gt;
+&lt;h4&gt;施耐德-福克斯波罗  I/A  DCS和Evo DCS系统&lt;/h4&gt;
+&lt;p&gt;Foxboro（福克斯波罗）的DCS系统采用专用的MESH网络，该网络基于以太网原理但又不同于以太网。计算机工作站里需要插入专用的MESH网卡。目前暂时未完成虚拟化的主要问题是该MESH网卡暂时未提供“经过VMware 或Citrxi、KVM等验证测试过的驱动程序”。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/1.jpg" /&gt;&lt;/p&gt;
+&lt;h4&gt;横河 Centum VP  DCS系统；&lt;/h4&gt;
+&lt;p&gt;Yokogawa（横河公司）的DCS系统此前采用VNet专用控制网，后升级为VNet/IP控制网。底层基于 TCP/IP协议，网络模型基本上符合以太网原理，但又和以太网有着较大的不同。计算机工作站里需要插入专用的VNet/IP网卡（VI702网卡）。目前暂时未完成虚拟化的主要问题是该VNet/IP网卡暂时未提供“经过VMware 或Citrxi、KVM等验证测试过的驱动程序”。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/2.png" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 已经测试并大规模应用于实际工业现场的系统&lt;/h3&gt;
+&lt;h4&gt;Siemens公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Siemens  PCS7 DCS系统英文版。
+国内应用业绩较少。主要原因是中文版本PCS7 DCS系统使用了USB 硬加密锁，该加密锁在映射至虚拟机时，有一定程度的兼容性问题。
+而英文版本PCS7 不采用USB硬加密锁。所以英文版PCS7 在欧洲和美洲有大量项目实例运行在虚拟化环境内。
+目前中文版和英文版没有功能差异，主要的差异就是在于“界面”是英文语言还是中文语言。&lt;/li&gt;
+&lt;li&gt;Siemens  Step7 + WinCC  PLC系统
+目前测试应用实例很多。&lt;/li&gt;
+&lt;li&gt;Siemens  TIA Portal  Step7 + WinCC  PLC系统
+目前博图平台软件在新版本中已经考虑了虚拟化环境运行问题。
+但是中文版本的博图WinCC 依然有USB硬加密锁的问题存在。
+而同样的，英文版不存在该问题。&lt;/li&gt;
+&lt;li&gt;Siemens SPPA-T3000  DCS 系统
+T3000  DCS系统大约从2007年开始大面积部署在虚拟化环境里。
+西门子公司发布的环境为Citrix公司的Xen Server。
+经测试，其系统充分考虑了虚拟化环境下的运行问题，在VMware vSphere和KVM系统上搭建测试环境，也没有问题。
+T3000 DCS系统主要用于大型火电厂，燃气发电，核电站常规岛控制部分。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/3.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Rockwell-AB 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;AB公司的编程软件Studio 5000 
+经测试AB公司Studio 5000 PLC编程软件V20以上版本完全兼容各个虚拟化环境。并且从V19版本开始，AB公司在诸多大项目中开始实际应用虚拟化环境的解决方案。&lt;/li&gt;
+&lt;li&gt;AB公司的人机界面监控软件FT View
+目前新版本的FT View软件统一了AB公司老版本的，RSView SE、RSView32和RSView ME。 并且以后只有FT View一个整合的版本。新版本的FT View除了功能更加强大外，还支持虚拟化环境。
+除了欧美一些项目外，在中国国内也已经有多个超大项目使用了虚拟化环境，也有多个中等项目运行在虚拟化环境里。&lt;/li&gt;
+&lt;li&gt;AB公司的其他软件
+目前资产管理软件FT Asset Center、实时数据库软件FT Histrion、 Web Server门户软件FT View Point 均可运行在虚拟化环境下。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/4.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;GE 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;PAC8000 系统&lt;/li&gt;
+&lt;li&gt;iFix监控软件
+iFix监控软件在中国十分流行，甚至其流行和普及程度远远超过iFix在北美的流行程度。目前新版本的iFix可以运行在虚拟化环境内。
+iFix软件保护版权采用的是USB硬加密锁方式。目前可以使用USB Over EtherNet 转换设备将USB硬加密锁转换至以太网链路，可以使得虚拟机内的软件识别到。兼容性还不错。&lt;/li&gt;
+&lt;li&gt;Cimplicity 监控软件
+Cimplicity软件可运行在虚拟化环境内。USB硬加密锁解决方法同iFix。&lt;/li&gt;
+&lt;li&gt;Proficy  ME编程软件
+Proficy ME从2006年开始起就对虚拟化环境没有任何的“限制”，即在没有宣布正式支持虚拟化环境的时候，Proficy ME软件已经可以正常的稳定的在虚拟化环境内运行，时间达十来年之久。&lt;/li&gt;
+&lt;li&gt;GE-Xinhua OC6000E  DCS系统
+GE新华的DCS系统。也可稳定运行在VMware虚拟化环境和Citirx环境中。KVM和Hyper-V环境据反馈尚有一些Bug。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/5.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;ABB 公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;AC500  PLC系统&lt;/li&gt;
+&lt;li&gt;Freelance  DCS系统&lt;/li&gt;
+&lt;li&gt;800xA  DCS系统
+因为800xA DCS系统安装恢复等过程十分复杂，ABB公司推荐采用虚拟化分发部署的方式来实施项目。除了确保兼容性稳定性外，还可以大大提升项目实施的效率。&lt;/li&gt;
+&lt;li&gt;Symphony Plus系统
+Symphony Plus系统也充分考虑了虚拟化环境运行问题。关于授权加密锁也要丰富的解决方案。
+而传统的老版本的Symphony系统则目前无法运行在虚拟化环境内。
+主要原因在于其使用了专用的Scsi 接口卡。该接口卡运行在虚拟化环境内有很大的兼容性问题。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/6.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Emerson公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Ovation DCS系统
+目前在火电厂项目实际应用中运行在虚拟化环境的业绩尚不多。反而是最近几年核电厂新项目中Ovation系统开始广泛采用虚拟化技术。
+Emerson公司内部的所有测试环境均为虚拟化环境。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DeltaV  DCS系统
+DeltaV 自V10.3.1版本起，运行在虚拟化环境内没有任何问题。
+官方推荐虚拟化环境为VMware。 但是测试Citrix也无问题。
+DeltaV采用USB硬加密锁。需要USB Over Ethernet解决方案。
+&lt;img alt="Alt text" src="/static/images/virtual_platform/7.jpg" /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Honeywell公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Honeywell  PKS DCS系统
+PKS DCS系统从R410版本开始可运行在虚拟化环境内；从R430版本开始官方推荐运行在虚拟化环境内而不是实体机环境内。
+R311版本我们也因为一些特殊的项目需要，进行了充分的系统测试。除了对网卡，显卡有一些限制条件外。也可以稳定运行在虚拟化环境内。
+Honeywell公司在新功能的拓展上，表现的态度为“积极甚至激进”。很多新功能往往是业界第一个支持，第一个推出。
+Honeywell更老版本的DCS系统，如TPS等，目前不可以运行在虚拟化环境中。不过这些老系统虽然在工业现场还有大面积的应用，但是Honeywell公司已经将其停产超过10年了。&lt;/li&gt;
+&lt;li&gt;Honeywell HS Scada软件
+HS Scada软件可运行在虚拟化环境内。
+USB硬加密锁解决方案也采用USB Over Ethernet。&lt;/li&gt;
+&lt;li&gt;Honeywell SM  SIS系统
+&lt;img alt="Alt text" src="/static/images/virtual_platform/8.jpg" /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;浙大中控、和利时、新华、国电智深、科远&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;浙大中控Supcon
+Supcon目前JX-300XP、ECS-100、ECS-700 均可运行在虚拟环境中。
+AdvantTrol Pro 和Super Visual软件也没有问题。
+USB硬加密锁解决方案同上所述。&lt;/li&gt;
+&lt;li&gt;和利时
+和利时KM系统，MACS V6.X软件可运行在虚拟环境内。
+MACS V4.X软件目前暂不能运行在虚拟环境内。
+MACS V5.X软件官方未做充分测试。因为目前也不再主推V5软件。所以其稳定性不好验证。&lt;/li&gt;
+&lt;li&gt;新华
+新华OnXDC 系统可以运行在虚拟化环境内。&lt;/li&gt;
+&lt;li&gt;国电智深
+国电智深EDPF-NT+ 也支持虚拟化环境。&lt;/li&gt;
+&lt;li&gt;科远
+科远公司宣传支持虚拟化环境。但是未获得其软件进行测试验证。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Schneider（施耐德）公司&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;施耐德Unity Pro  PLC编程软件支持&lt;/li&gt;
+&lt;li&gt;施耐德Citect Scada监控软件新版本支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Clear Scada监控软件支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Intouch 监控软件新版本支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德Intouch-WAS 企业版监控软件支持虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德-福克斯波罗 Evo Scada软件支持虚拟化环境，并推荐虚拟化环境&lt;/li&gt;
+&lt;li&gt;施耐德-泰尔文特 OASys DNA Scada软件支持虚拟化环境。
+可多平台并存，如Server采用Windows或Linux，数据库采用SUN Solaris，操作站采用Windows。 为减少系统兼容性，降低实施难度，泰尔文特公司也推荐虚拟化部署。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;施耐德公司目前旗下拥有最多的HMI/Scada软件产品。小中大型均有。
+主流、非主流也有。Windows平台和非Windows平台也都有。&lt;/p&gt;
+&lt;h4&gt;Omron、Mitsubishi、Beckoff等&lt;/h4&gt;
+&lt;p&gt;因为工作原因，对Omron和Mitsubishi相关产品近十年内未再关注和测试。
+暂不清楚具体情况。
+倍福公司（Beckoff）倒是宣称完美支持虚拟化环境。并且有相关业绩证明。&lt;/p&gt;
+&lt;h3&gt;3. 虚拟化测试平台的搭建&lt;/h3&gt;
+&lt;h4&gt;虚拟化平台的选择。&lt;/h4&gt;
+&lt;p&gt;拟采用VMware vSpher或者Citrix XenServer。如果是单一平台时，倾向于VMware。
+或者不排除考虑，2种平台均搭建。
+目前绝大部分自动化行业领导者均优先支持VMware的系统。
+拟用版本vSphere v6.0u3. 暂不考虑使用最新版本v6.5 。已降低系统Bug造成的潜在风险。&lt;/p&gt;
+&lt;h4&gt;系统搭建步骤&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;搭建服务器硬件资源池。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;A方案，采用10台低配置的HP MicroServer Gen8 或者类似机器。
+每台服务器内正常时只运行1-2个VMs（虚拟机实例）。
+数量多，但是每台单价低。此时因为虚拟机不集中运行在少数量机器中。风险也较低。同时MicroServer  Gen8这类机器体积小巧。
+搬迁、拆卸、维护也方便，占用空间并不比三四台大型服务器多，甚至占用空间更小。
+
+B方案，采用2-4台（根据项目的实际需求）DELL R920或者HP ML350P Gen9这类大型服务器。
+每台服务器运行4-6个VMs。服务器数量控制在2-4台。一般的实验室，2台即差不多可满足要求。
+因为多个VMs运行在同一台硬件上，因此建议必须采用冗余的热插拔电源，冗余的热插拔阵列硬盘。
+服务器内也须插多个网卡。最好每个VMs都有自己独立的网卡。
+
+C方案，可采用今年来流行的四子星、八子星等硬件，如DELL C6320或HP SL230S 等刀片式服务器。
+一般每个刀箱可容纳4个或8个刀片服务器。
+刀片配置可高可低。
+也可以一开始就配置较高配置的刀箱，但是刀片数量初期保持为3-4个，后期可以慢慢再根据实际需求，经费预算进行扩展。
+刀片式一般均为冗余热插拔电源。
+
+D方案，采用美国容错（Stratus）、日本NEC、中国海得等容错服务器硬件平台。
+系统运行在硬容错平台的虚拟化环境内。
+系统安全性大大提升。
+但容错平台相对较昂贵。
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;搭建VMware  vSphere平台
+按照硬件厂家推荐的vSphere版本，严格遵照部署手册，部署vSphere平台。
+应充分考虑到兼容性、可扩展性、容错性。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;搭建虚拟化环境内的自动化软件环境
+须严格按照各个自控系统厂家推荐的方式来部署虚拟化环境。
+对于要求网卡直通的软件必须设置网卡直通。
+对于不要求网卡直通的软件推荐采用网卡直通。
+为降低兼容性风险，应尽量采用较新的自动化软件版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;搭建自动化控制网络
+有的PLC系统网络可以合并在一套交换机上。
+而有的DCS系统网络必须是单独的一套或者两套交换机。
+当系统厂家众多时，网络会显得十分凌乱，需要丰富的经验进行梳理。
+对于能合并的尽量进行合并。
+对于不能合并的系统，应尽量将其单独隔离开来。并尽量将网络比较复杂的DCS系统部署在一套服务器上。 将网络比较简单的PLC系统部署在一套服务器上。
+为便于侦听报文，交换机应选择兼容性好，性能强，带有端口镜像功能的高级管理型交换机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;建设灾备和恢复系统
+系统搭建完成后，必须构建灾备系统。
+以防止意外故障，或者攻防时导致系统瘫痪时，可将系统环境快速的复原。不致影响正常运行。
+除灾备软件、杀毒软件和防火墙等外，还应部署独立的存储服务器。推荐群晖公司的产品。&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">mood-island</dc:creator><pubDate>Fri, 10 Nov 2017 10:24:00 +0800</pubDate><guid>tag:icsmaster.com,2017-11-10:security/virtual_platform.html</guid><category>虚拟PLC</category><category>软PLC</category></item><item><title>针对西门子PLC蠕虫的实现</title><link>http://icsmaster.com/security/plcblaster.html</link><description>&lt;h2&gt;研究背景&lt;/h2&gt;
+&lt;p&gt;随着“互联网+”、“中国智能制造2025“、“工业4.0”等概念的提出，为了提高生产率，独立、隔离的传统工控领域将迎来了新的互联网时代，越来越多的工控设备（如控制器、机器人、数控机床）将被暴露在互联网上或者与企业内网相连。随着互联网时代的来临，安全问题会越来越突出。然而，工业控制系统的安全不同于传统信息网络的安全，一旦出现网络攻击，后果不堪设想。关于工控病毒相关关键事件如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;2010年伊朗核设施遭受“震网”超级病毒攻击，病毒的复杂程度超出人们的想象，该事件也被称为世界上首个“网络超级武器”事件。由于工业病毒攻击可以直接导致物理设备的故障，并进一步造成生产瘫痪甚至爆炸的灾难性后果。&lt;/li&gt;
+&lt;li&gt;Black Hat 2011报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/Exploiting%20Siemens%20Simatic%20S7%20PLCs.pdf"&gt;《Exploiting Siemens Simatic S7 PLCs》&lt;/a&gt;，演示了通过西门子S7Comm协议的权限缺失漏洞来远程操作PLC，对PLC进行启停控制、内存的读写。&lt;/li&gt;
+&lt;li&gt;Black Hat 2015报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/us-15-Klick-Internet-Facing-PLCs-A-New-Back-Orifice-wp.pdf"&gt;《Internet-facing PLCs – A New Back Orifice》&lt;/a&gt;，演示了如何通过PLC实现通信代理，通过PLC突破网络边界，来发现内网中更多的PLC设备。&lt;/li&gt;
+&lt;li&gt;Black Hat 2016报告&lt;a href="https://github.com/w3h/icsmaster/raw/master/doc/%E5%9B%BD%E5%A4%96/asia-16-Spenneberg-PLC-Blaster-A-Worm-Living-Solely-In-The-PLC-wp.pdf"&gt;《PLC-Blaster: A Worm Living Solely in the PLC 》&lt;/a&gt;，提出了PLC蠕虫病毒的概念,提出了西门子1200 V3版本协议认证的缺陷，但没有具体的实现细节。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;近日，工匠实验室工控安全专家针对PLC进行深入研究，通过梯形图和SCL相结合的方式，利用PLC自身通信功能, 复现了这个病毒，实现了病毒在PLC与PLC之间进行传播。同时，针对这一病毒，我们已经开发了相应的检测工具，这标志着华创网安在工控安全领域掌握了这方面的核心技术，也体现了工控领域的研发实力。&lt;/p&gt;
+&lt;h2&gt;PLC基本结构&lt;/h2&gt;
+&lt;p&gt;PLC 实质是一种专用于工业控制的计算机，其硬件结构基本上与微型计算机相同，如图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/1.gif" /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;中央处理单元（CPU）
+中央处理单元（CPU）是PLC 的控制中枢。它按照PLC 系统程序赋予的功能接收并存储从编程器键入的用户程序和数据：检查电源、存储器、I/O 以及警戒定时器的状态，并能诊断用户程序中的语法错误，当PLC 投入运行时，首先它以扫描的方式接收现场各输入装置的状态和数据，并分别存入I/O 映象区，然后从用户程序存储器中逐条读取用户程序，经过命令解释后按指令的规定执行逻辑或算数运算的结果送入I/O 映象区或数据寄存器内。等所有的用户程序执行完毕之后，最后将I/O映象区的各输出状态或输出寄存器内的数据传送到相应的输出装置，如此循环运行，直到停止运行。
+为了进一步提高PLC 的可靠性，近年来对大型PLC 还采用双CPU 构成冗余系统，或采用三CPU 的表决式系统。这样，即使某个CPU 出现故障，整个系统仍能正常运行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存储器
+存放系统软件的存储器称为系统程序存储器。存放应用软件的存储器称为用户程序存储器。虽然各种PLC的CPU的最大寻址空间各不相同，但是根据PLC的工作原理其存储空间一般包括以下三个区域：系统程序存储区、系统RAM 存储区（包括I/O 映象区和系统软设备等）、用户程序存储区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;电源
+PLC 的电源在整个系统中起着十分重要得作用。如果没有一个良好的、可靠得电源系统是无法正常工作的，因此PLC 的制造商对电源的设计和制造也十分重视。一般交流电压波动在±10%（±15%）范围内，可以不采取其它措施而将PLC 直接连接到交流电网上去。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输入/输出电路
+I/O扩展接口用于将扩充外部输入/输出端子数的扩展单元与基本单元（即主机）连接在一起。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;蠕虫介绍&lt;/h2&gt;
+&lt;p&gt;蠕虫病毒是一种常见的计算机病毒。它是利用网络进行复制和传播，传染途径是通过网络和电子邮件。最初的蠕虫病毒定义是因为在DOS环境下，病毒发作时会在屏幕上出现一条类似虫子的东西，胡乱吞吃屏幕上的字母并将其改形。蠕虫病毒是自包含的程序（或是一套程序），它能传播自身功能的拷贝或自身的某些部分到其他的计算机系统中（通常是经过网络连接）。&lt;/p&gt;
+&lt;p&gt;工控蠕虫主要的针对的对象是工业控制设备，通过控制器之间进行病毒传播，这与传统计算机蠕虫是存在很大差别，传统蠕虫寄生对象都是计算机（Window或者Linux），工控蠕虫寄生对象是控制器逻辑代码中。由于病毒可以混淆于正常的控制逻辑代码中，传统防御方式都不适合于工控蠕虫的防护，检测与查杀的方式更强困难。
+虽然工控蠕虫与计算机蠕虫存在很多的不同点，但所有的蠕虫的基本架构都是相同的。所有的蠕虫攻击都可以归为一下几个阶段：搜索目标，感染目标，在目标上执行，添加恶意功能。由于PLC控制器提供网络通信能力，在PLC上蠕虫也同样支持这些功能。这篇文章将展示每个必须组件的实现方法。&lt;/p&gt;
+&lt;h2&gt;蠕虫实现&lt;/h2&gt;
+&lt;p&gt;蠕虫实现的主要的编程软件为西门子的TIA Portal(博途)，在TIA Portal(博途)编程软件中，用户通过编写程序来完成工业现场的控制以及工艺流程的实现。博途中分为以下几类块：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;OB(Organization Block )：组织块，为程序的入口块，被系统直接调用（其他块不可以被系统直接调用，必须包含在OB中才可以执行）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FB(Function Block)：功能块，既可以是博途中已包含的功能块，也可以是用户自己编写的块，编程中需要带背景数据块（又叫实例数据块，Instance Data Block）使用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;FC(Function)：功能，既可以是博途中已包含的功能块，也可以是户自己编写，不可以带背景数据块。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DB(Data Block)：数据块，分为背景数据块和共享数据块，其中背景数据块为私有块。编程时，户可以定义共享数据块的数据存储结构，不可以定义背景数据块的数据存储结构，必须由FB定义。数据块中的数据掉电不丢失。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFB(System Function Block)：系统功能块，系统内部功能块，用户不可自己编写，不可更改，使用同FB。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SFC(System Function)：系统功能，系统内部功能，用户不可自己编写，不可更改，使用同FC。
+博途软件支持的编程语言有： LD(梯形图)，FBD(功能块图)、SCL(结构化控制语言)、STL(语句列表)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;S7-1200只支持LAD、FBD和SCL三种编程语言，并且在下载过程中会先停止运行，然后下载程序，下载完成后重新启动。&lt;/p&gt;
+&lt;h3&gt;1. 实现流程&lt;/h3&gt;
+&lt;p&gt;病毒首先选择IP通过西门子通信端口102尝试建立连接，如果连接建立成功，则检查目标PLC是否已被感染。如连接未建立成功，或目标PLC已被感染，则选择新IP重新尝试建立连接。如目标PLC未被感染，则停止目标PLC，下装病毒程序，最后重新启动目标PLC。流程如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/3.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;2. 寻找目标&lt;/h3&gt;
+&lt;p&gt;西门子PLC通过102端口进行TCP通信，因此可以尝试通过102端口与设备建立TCP通信来寻找目标。博途开发平台提供了两个FB块——通讯连接块TCON和断开通讯连接块TDISCON，如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/4.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TCON和TDISCON的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/5.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用TCON和DISTCON块尝试建立和断开连接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果TCON建立了连接则判断设备型号或者下载程序。由于TCON只需触发一次连接命令，就会一直尝试与目标建立连接，直到连接成功。因此，如果1s内没有建立连接则改变IP地址，尝试连接下一台PLC；如果建立了连接，则通过发送指令判断设备信号或者下载病毒程序，完成后改变IP地址，并尝试连接下一台设备。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/6.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/7.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;更改IP&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;断开连接后则更改IP地址，准备连接下一台设备&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/8.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;3. 传播感染&lt;/h3&gt;
+&lt;p&gt;连接建立后，病毒调用数据传送命令TSEND和数据接收命令TRCV进行传播。见下图&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/9.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;程序块TSEND和TRCV的参数说明&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/10.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;判断是否已感染&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;病毒在传播感染之前需要判断当前对象是否已经被感染，避免重复感染。判断是否被感染，如果感染，则跳过感染，如果未感染，则执行程序传送，感染对象。具体实现如下图：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/11.gif" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;建立连接认证&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在程序的发送过程中，需要满足S7协议的相关通信时序以及报文格式。下图为S7建立连接的过程。首先是TCP的三次握手，接下来建立COTP连接，建立完成后进行S7协议的连接建立。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/12.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;具体逻辑实现代码如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/13.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;4. 激活&lt;/h3&gt;
+&lt;p&gt;PLC执行顺序是从OB1开始，按顺序执行到OB9999的。&lt;/p&gt;
+&lt;p&gt;建立调用病毒程序的OB块OB9999，并将其存植入到目标PLC中，用以激病毒，并进行新的病毒传播感染。西门子PLC在运行时，会按照从OB1到OB9999的顺序进行调用。如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/14.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;在其他病毒块下载完成后，用OB9999（也可以用其他非系统自带的OB块，未了避免病毒的OB块与PLC中正常的OB块重复，建议块的序号尽量大些）启动病毒程序。&lt;/p&gt;
+&lt;h3&gt;5. 恶意功能的实现——连接C&amp;amp;C服务器&lt;/h3&gt;
+&lt;p&gt;一旦PLC被感染病毒，会基于TCP主动去连接C&amp;amp;C服务器。通过C&amp;amp;C服务器，可以远程控制PLC，包括PLC的启停，输出值的改变等。当C&amp;amp;C服务器向连接了C&amp;amp;C服务器的PLC发送指令后，PLC会解析命令并执行。以点灯程序为例说明其危害性。下图为C&amp;amp;C服务器点灯的解析部分：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/15.gif" /&gt;&lt;/p&gt;
+&lt;h3&gt;6. 感染前后对比&lt;/h3&gt;
+&lt;p&gt;博途软件提供了PLC程序在线与离线差异的检测功能，如下图所示。程序块后面的绿色圆圈表示在线程序与离线程序一致，蓝色与橘黄色组成的圆形表示在线程序与离线程序不一致。块为虚样式，表示博途的程序中没有此块，而PLC有。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/16.gif" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/17.gif" /&gt;&lt;/p&gt;
+&lt;h2&gt;演示截图&lt;/h2&gt;
+&lt;p&gt;红灯表示PLC感染状态，绿灯表示PLC正常控制的终端运行状态，PLC使用的是西门子1200 V3版本，从左到右分别为PLC0，PLC1，PLC2。默认情况下，PLC1和PLC2离线的，当PLC0被感染后，PLC1和PLC2接入网络，随后PLC0就会感染PLC1和PLC2。&lt;/p&gt;
+&lt;p&gt;图1：PLC处于正常运行状态&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/20.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图2：PLC0被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/21.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图3：PLC1与PLC2联网，PLC0正在感染PLC1&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/22.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图4：PLC1被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/23.png" /&gt;&lt;/p&gt;
+&lt;p&gt;图5：PLC2被感染病毒，反向联接C&amp;amp;C服务器&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Alt text" src="/static/images/plcblaster/24.png" /&gt;&lt;/p&gt;
+&lt;h2&gt;防护措施&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;部署控制设备管理系统，定期对PLC控制逻辑代码进行备份，一旦PLC被感染，可以迅速通过备份的PLC程序重置进行快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置CPU访问密码，禁止非授权用户上下载逻辑代码，密码一定不能是弱口令。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对工控网络进行风险评估，识别核心资产，根据不同安全级别进行安全分区，一旦受到网络攻击，将损失控制在最小的范围内。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在工控系统中安装工控监测审计系统，通过工控协议深度解析，根据特征值的进行采集、分析与识别，如发现异常数据包，如控制器启停、程序上下载，则记录日志或报警。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;安全域边界安装工控防火墙，通过工控防火墙，对异常数据包进行检测以及隔离防护。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;针对工控网络制定应急处理预案，当遇见突发网络攻击事件，可以实现快速恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">w3h</dc:creator><pubDate>Thu, 11 May 2017 14:36:00 +0800</pubDate><guid>tag:icsmaster.com,2017-05-11:security/plcblaster.html</guid><category>工控安全</category></item></channel></rss>
